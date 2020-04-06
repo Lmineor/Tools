@@ -1,4 +1,6 @@
 
+import env from './env';
+
 export default {
   mode: 'universal',
   /*
@@ -12,6 +14,7 @@ export default {
       { hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
     ],
     link: [
+      //TODO:favicon.ico
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
@@ -38,6 +41,7 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    './plugins/request1.js',
     {
       src: './components/UI/index.js',
     },
@@ -50,6 +54,10 @@ export default {
     },
     {
       src: './plugins/vuejs-noty.js',
+      ssr: false
+    },
+    {
+      src: './plugins/shortid.js',
       ssr: false
     },
     {
@@ -87,6 +95,17 @@ export default {
           }
       ]
   ],
+
+  /*
+  ** Axios module configuration
+  */
+  axios: {
+    baseURL: env.axios,
+    progress: false
+  // See https://github.com/nuxt-community/axios-module#options
+  },
+
+
   /*
   ** Build configuration
   */

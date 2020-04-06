@@ -24,6 +24,7 @@
     "postcss-pxtorem": "^4.0.1",
     "qr-image": "^3.2.0",
     "sass-loader": "^8.0.0",
+    "shortid": "^2.2.15",
     "v-viewer": "^1.4.2",
     "validator": "^11.1.0",
     "vue-clipboard2": "^0.3.1",
