@@ -26,7 +26,7 @@ class ShortUrl(db.Model):
     origin_url = db.Column(db.String(80), unique=True)
     short_url = db.Column(db.String(30), unique=True)
     def __repr__(self):
-        return '<Role {}> '.format(self.name)
+        return '<Role {}> '.format(self.__tablename__)
 
 
 @app.route('/shorten', methods=['POST'])
@@ -36,6 +36,12 @@ def main():
     logger.info('输入的url为：' + url)
     if not url:
         return None;
+    su = pre_get(url)
+    if su:
+        return {
+            'code': 200,
+            'url': su
+            }
     try:
         shortU = ShortUrl(origin_url = url)
         db.session.add(shortU)
@@ -48,8 +54,11 @@ def main():
         db.session.flush()
         db.session.commit()
     except Exception as e:
-        logger.error(e)
-        su = ''
+        logger.error(url + ' 重复')
+    if not su:
+        item = ShortUrl.query.filter(ShortUrl.origin_url == url).first()
+        if item:
+            su = item.short_url
     return {
         'code': 200,
         'url': su
@@ -66,10 +75,20 @@ def red(code):
     except Exception as e:
         origin_url = ''
         logger.error(e)
-    if origin_url and !origin_url.startswith('http'):
+    if origin_url and ~origin_url.startswith('http'):
         origin_url = 'http://' + origin_url
     return redirect(origin_url)
 
 
+def pre_get(url):
+    su = ''
+    try:
+        item = ShortUrl.query.filter(ShortUrl.origin_url == url).first()
+        if item:
+            su = item.short_url
+    except Exception as e:
+        logger.error(e)
+    return su
 if __name__ == '__main__':
     app.run()
+

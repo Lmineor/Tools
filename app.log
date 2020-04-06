@@ -1,0 +1,5 @@
+INFO:werkzeug: * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+INFO:werkzeug: * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+INFO:root:输入的url为：www.QQ.com
+INFO:root:输入的url为：www.QQ.com
+INFO:werkzeug: * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)

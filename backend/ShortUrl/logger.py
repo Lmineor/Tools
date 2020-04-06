@@ -5,7 +5,6 @@ _g_logger = None
 def get_logger():
     global _g_logger
     if _g_logger is None:
-        logging.basicConfig(filename='my.log')
         __datetime = "%Y-%m-%d %H:%M:%S"
         __format_str = "%(asctime)s %(levelname).1s [%(filename)s:%(lineno)s] %(message)s"
         _g_logger = logging.getLogger()
