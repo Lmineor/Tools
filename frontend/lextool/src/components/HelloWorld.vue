@@ -84,6 +84,7 @@
 </template>
 
 <script>
+import Welcome from './Welcome'
 export default {
   name: 'HelloWorld',
   data () {

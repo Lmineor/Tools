@@ -1,4 +1,4 @@
-# lextools
+# lextool
 
 > 工具合集
 
