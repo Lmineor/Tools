@@ -9,6 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from local_config import PASSWORD, SQLALCHEMY_DATABASE_URI
 from shorturl import shorturl
+from logger import logger
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = PASSWORD
@@ -32,18 +33,23 @@ class ShortUrl(db.Model):
 def main():
     # url = request.lurl.get('lurl', '')
     url = request.get_json()['url']
+    logger.info('输入的url为：' + url)
     if not url:
         return None;
-    shortU = ShortUrl(origin_url = url)
-    db.session.add(shortU)
-    db.session.flush()
-    urlid = shortU.id # 得到最后一调数据插入的id
-
-    su = shorturl(urlid) # 生成短链
-    shortU.short_url = su
-    db.session.add(shortU)
-    db.session.flush()
-    db.session.commit()
+    try:
+        shortU = ShortUrl(origin_url = url)
+        db.session.add(shortU)
+        db.session.flush()
+        urlid = shortU.id # 得到最后一调数据插入的id
+        su = shorturl(urlid) # 生成短链
+        logger.info("短链成功生成")
+        shortU.short_url = su
+        db.session.add(shortU)
+        db.session.flush()
+        db.session.commit()
+    except Exception as e:
+        logger.error(e)
+        su = ''
     return {
         'code': 200,
         'url': su
@@ -57,14 +63,13 @@ def red(code):
     try:
         item = ShortUrl.query.filter(ShortUrl.short_url == str(code)).first()
         origin_url = item.origin_url
-    except:
+    except Exception as e:
         origin_url = ''
-    if not origin_url.startswith('http'):
+        logger.error(e)
+    if origin_url and !origin_url.startswith('http'):
         origin_url = 'http://' + origin_url
     return redirect(origin_url)
 
 
 if __name__ == '__main__':
-    # db.drop_all()
-    # db.create_all()
     app.run()
