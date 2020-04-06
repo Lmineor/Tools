@@ -11,7 +11,10 @@ from local_config import PASSWORD, SQLALCHEMY_DATABASE_URI
 from shorturl import shorturl
 from logger import logger
 
+from flask_cors import CORS
 app = Flask(__name__)
+CORS(app, supports_credentials=True)
+
 app.config['SECRET_KEY'] = PASSWORD
 app.config['SQLALCHEMY_DATABASE_URI']= SQLALCHEMY_DATABASE_URI
 #这里登陆的是root用户，要填上自己的密码，MySQL的默认端口是3306，填上之前创建的数据库名test
@@ -32,6 +35,7 @@ class ShortUrl(db.Model):
 @app.route('/shorten', methods=['POST'])
 def main():
     # url = request.lurl.get('lurl', '')
+    print(request.get_json())
     url = request.get_json()['url']
     logger.info('输入的url为：' + url)
     if not url:
