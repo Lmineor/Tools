@@ -1,24 +1,18 @@
 <template>
     <div class="vfooter">
-        <a title="QQ群" href="https://jq.qq.com/?_wv=1027&k=5aPVskX" target="_blank" rel="noopener noreferrer">
+        <a title="Lex的博客" href="https://www.lex666.online" target="_blank" rel="noopener noreferrer">
             <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-QQ" />
-            </svg>
-        </a>
-
-        <a title="Twitter" href="https://twitter.com/Ice_Hazymoon" target="_blank" rel="noopener noreferrer">
-            <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-twitter" />
+                <use xlink:href="#icon-boke3" />
             </svg>
         </a>
         
-        <a title="GitHub" href="https://github.com/Ice-Hazymoon/MikuTools" target="_blank" rel="noopener noreferrer">
+        <a title="GitHub" href="https://github.com/Prolht/Tools/" target="_blank" rel="noopener noreferrer">
             <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-github" />
+                <use xlink:href="#icon-git" />
             </svg>
         </a>
         
-        <a title="Telegram" href="https://t.me/mikutools" target="_blank" rel="noopener noreferrer">
+        <!-- <a title="Telegram" href="https://t.me/mikutools" target="_blank" rel="noopener noreferrer">
             <svg class="icon" aria-hidden="true">
                 <use xlink:href="#icon-telegram" />
             </svg>
@@ -28,7 +22,7 @@
             <svg class="icon" aria-hidden="true">
                 <use xlink:href="#icon-weibo" />
             </svg>
-        </a>
+        </a> -->
     </div>
 </template>
 
