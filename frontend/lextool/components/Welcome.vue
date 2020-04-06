@@ -1,8 +1,8 @@
 <template>
     <nya-container v-if="$store.state.welcome" class="welcome">
-        <h2>欢迎使用MikuTools</h2>
+        <h2>欢迎使用LexTools</h2>
         <p>
-            目前共开发了数十款有趣的小功能，数量还在持续增加中。如果觉得某一款不错，不妨安利给他人使用。
+            这是我自己开发或收集的小工具合集，若有新的工具欢迎提建议。
         </p>
         <div class="close" title="关闭" @click="close">
             <i class="eva eva-close-outline"></i>

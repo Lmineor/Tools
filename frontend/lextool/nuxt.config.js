@@ -18,16 +18,44 @@ export default {
   /*
   ** Customize the progress-bar color
   */
-  loading: { color: '#fff' },
+  loading: { 
+    color: '#00adb5',
+    height: '4px'
+  },
   /*
   ** Global CSS
   */
   css: [
+    'normalize.css',
+    '~styles/main.scss',
+    'eva-icons/style/eva-icons.css'
   ],
+  
+  styleResources: {
+    scss: ['styles/variables.scss']
+  },
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
+    {
+      src: './components/UI/index.js',
+    },
+    {
+      src: '~/plugins/vue-good-table.js'
+    },
+    {
+      src: './plugins/vue-lazyload.js',
+      ssr: false
+    },
+    {
+      src: './plugins/vuejs-noty.js',
+      ssr: false
+    },
+    {
+      src: './plugins/modal.js',
+      ssr: false
+    },
   ],
   /*
   ** Nuxt.js dev-modules
@@ -38,15 +66,67 @@ export default {
   ** Nuxt.js modules
   */
   modules: [
+      // Doc: https://axios.nuxtjs.org/usage
+      '@nuxtjs/axios',
+      '@nuxtjs/pwa',
+      '@nuxtjs/style-resources',
+      // [
+      //     '@nuxtjs/google-analytics',
+      //     {
+      //         id: ''
+      //     }
+      // ],
+      [
+          'vue-sweetalert2/nuxt',
+          {
+              confirmButtonColor: '#249ffd',
+              animation: false,
+              customClass: {
+                  popup: 'sweetalert2'
+              }
+          }
+      ]
   ],
   /*
   ** Build configuration
   */
-  build: {
-    /*
-    ** You can extend webpack config here
-    */
-    extend (config, ctx) {
+ build: {
+  /*
+   ** You can extend webpack config here
+   */
+  postcss: {
+      plugins: {
+          'postcss-pxtorem': {
+              rootValue: 16,
+              propList: ['*'],
+              selectorBlackList: ['html']
+          },
+          autoprefixer: {}
+      }
     }
-  }
-}
+  },
+  manifest: {
+    description: '收集实用的小工具',
+    display: 'standalone',
+    name: 'MikuTools',
+    short_name: 'MikuTools',
+    start_url: '/',
+    background_color: '#ffffff',
+    theme_color: '#ffffff',
+    scope: '/',
+    lang: 'zh-cn'
+  },
+    // workbox: {
+    //     runtimeCaching: [
+    //         {
+    //             urlPattern: 'https://mikutools.cdn.hazymoon.vip/.*'
+    //         }
+    //     ],
+    //     offlinePage: '/offline.html',
+    //     offlineAssets: ['/offline.html']
+    // },
+    router: {
+      prefetchLinks: false,
+      middleware: ['getCurrentTool', 'baidupush']
+    }
+};
