@@ -43,7 +43,6 @@ export default {
                     },
                 )
                 .then(re => {
-                    console.log(re);
                     this.res = re.data.url;
                 })
                 .catch(err => {
