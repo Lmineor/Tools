@@ -3,3 +3,9 @@ local_config.py
 *.pyc
 *.log
 __pycache__/
+
+
+# 宝塔
+*.user.ini
+*.html
+*.htaccess
