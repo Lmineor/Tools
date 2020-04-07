@@ -94,5 +94,9 @@ def pre_get(url):
         logger.error(e)
     return su
 if __name__ == '__main__':
+    try:
+        db.create_all()
+    except Exception as e:
+        pass
     app.run()
 
