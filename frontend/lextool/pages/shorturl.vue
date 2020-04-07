@@ -21,7 +21,7 @@
 </template>
 
 <script>
-
+import envs from '../env'
 export default {
     name: 'ShortUrl',
     head() {
@@ -30,13 +30,14 @@ export default {
     data() {
         return {
             res:'',
+            url:'',
         };
     },
     methods: {
         getShortUrl() {
             this.$axios
                 .post(
-                    'http://localhost:5000/shorten',
+                    envs.apiUrl + '/shorturl',
                     {
                         url: this.url,
                     },
