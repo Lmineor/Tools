@@ -1,9 +1,9 @@
 #!/bin/bash
 # author:lex<luohai2233@163.com>
 # config variables
-PROJECT_BASE_PATH = /www/wwwroot/Tools/frontend/
-PROJECT_NAME = $1
-GIT = git@github.com:Prolht/Tools.git
+PROJECT_BASE_PATH=/www/wwwroot/Tools/frontend/
+PROJECT_NAME=$1
+GIT=git@github.com:Prolht/Tools.git
 
 if [ $PROJECT_NAME ]
 then
