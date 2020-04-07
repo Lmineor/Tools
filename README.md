@@ -41,7 +41,7 @@ npm start
 
 4、pm2开启进程守护
 ```bash
-pm2 start npm --name "xxx" -- run start
+pm2 start npm --name "xxx" -- start
 # xxx 是项目名称 在package.json中
 ```
 
