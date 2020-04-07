@@ -127,8 +127,8 @@ export default {
   manifest: {
     description: '收集实用的小工具',
     display: 'standalone',
-    name: 'MikuTools',
-    short_name: 'MikuTools',
+    name: 'LexTools',
+    short_name: 'LexTools',
     start_url: '/',
     background_color: '#ffffff',
     theme_color: '#ffffff',
