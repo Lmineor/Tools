@@ -13,7 +13,7 @@ PROJECT_PORT=$2 # backend port
 
 GIT=git@github.com:Prolht/Tools.git
 
-if [ $PROJECT_NAME_B && $PROJECT_PORT ]
+if [[ $PROJECT_NAME_B && $PROJECT_PORT ]]
 then
     # stop backend
     lsof-i:${PROJECT_PORT}|awk'{print$2}'|grep-vPID|xargskill-9 # 暂停
