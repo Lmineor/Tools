@@ -1,24 +1,45 @@
 #!/bin/bash
 # author:lex<luohai2233@163.com>
+
 # config variables
-PROJECT_BASE_PATH=/www/wwwroot/Tools/frontend/
-PROJECT_NAME=$1
+# Path
+PROJECT_F_BASE_PATH=/www/wwwroot/Tools/frontend/ # frontend
+PROJECT_B_BASE_PATH=/www/wwwroot/Tools/backend/ # backend
+
+# Name
+PROJECT_NAME_F=lextool # frontend name
+PROJECT_NAME_B=$1 # backend name
+PROJECT_PORT=$2 # backend port
+
 GIT=git@github.com:Prolht/Tools.git
 
-if [ $PROJECT_NAME ]
+if [ $PROJECT_NAME_B && $PROJECT_PORT ]
 then
-    # stop and pull
-    pm2 stop $PROJECT_NAME
+    # stop backend
+    lsof-i:${PROJECT_PORT}|awk'{print$2}'|grep-vPID|xargskill-9 # 暂停
+
+    # stop frontend
+    pm2 stop $PROJECT_NAME_F
+
+    #pull
     git pull
 
     # install dependence & build
-    cd $PROJECT_BASE_PATH$PROJECT_NAME
+    # backend
+    cd $PROJECT_B_BASE_PATH$PROJECT_NAME_B
+    pip install -r requirements.txt
+    # start
+    nohup python main.py >> server.log 2>&1 &
+    echo "Complete Backend"
+
+    # frontend
+    cd $PROJECT_F_BASE_PATH$PROJECT_NAME_F
     npm run install
     npm run build
 
-    # restart
-    pm2 restart $PROJECT_NAME
-    echo "重启完成"
+    # start
+    pm2 restart $PROJECT_NAME_F
+    echo "Complete Fronteend"
 else
-    echo "请输入项目名称"
+    echo "error!!!"
 fi
