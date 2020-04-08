@@ -35,6 +35,10 @@ export default {
     },
     methods: {
         getShortUrl() {
+            if (this.url == ''){
+                window.alert("网址不能为空");
+                return false;
+            }
             this.$axios
                 .post(
                     envs.apiUrl + '/shorturl',
