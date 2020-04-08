@@ -4,7 +4,7 @@
 <p align="center">工具集合</p>
 <p align="center">
     <a href="https://github.com/Prolht/Tools/blob/master/LICENSE">
-        <img src="	https://badgen.net/github/license/micromatch/micromatch" alt="MIT License" />
+        <img src="https://badgen.net/github/license/micromatch/micromatch" alt="MIT License" />
     </a>
     <a href="https://vuejs.org/">
         <img src="https://img.shields.io/badge/nuxt.js-v5.x-green.svg" alt="for Nuxt.js 5">
@@ -16,7 +16,7 @@
         <img src="https://img.shields.io/badge/%F0%9F%9A%80-open--in--browser-e10079.svg" alt="Live Demo">
     </a>
     <a>
-        <img src="https://badgen.net/badge/icon/npm?icon=npm&label">
+        <img src="https://badgen.net/badge/icon/npm?icon=npm&label" alt="Npm>
     </a>
 </p>
 
