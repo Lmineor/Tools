@@ -16,7 +16,7 @@
         <img src="https://img.shields.io/badge/%F0%9F%9A%80-open--in--browser-e10079.svg" alt="Live Demo">
     </a>
     <a>
-        <img src="https://badgen.net/badge/icon/npm?icon=npm&label" alt="Npm>
+        <img src="https://badgen.net/badge/icon/npm?icon=npm&label" alt="Npm">
     </a>
 </p>
 
