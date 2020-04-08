@@ -1,3 +1,23 @@
+<p align="center"><img src="./frontend/lextool/static/ico.png"
+        alt="Logo" width="128" height="128" style="max-width: 100%;"></p>
+<h1 align="center">LexTools</h1>
+<p align="center">工具集合</p>
+<p align="center">
+    <a href="https://github.com/Prolht/Tools/blob/master/LICENSE">
+        <img src="	https://img.shields.io/github/license/Prolht/Tools" alt="MIT License" />
+    </a>
+    <a href="https://vuejs.org/">
+        <img src="https://img.shields.io/badge/nuxt.js-v5.x-green.svg" alt="for Nuxt.js 5">
+    </a>
+    <a href="https://www.lex666.online/">
+        <img src="https://badgen.net/badge/author/Lex/f2a" alt="Author">
+    </a>
+    <a href="http://tools.lex666.online/">
+        <img src="https://img.shields.io/badge/%F0%9F%9A%80-open--in--browser-e10079.svg" alt="Live Demo">
+    </a>
+</p>
+
+
 ### 工具集合
 #### 说明
 自己做的或收集的工具合集，项目更新中。。。
