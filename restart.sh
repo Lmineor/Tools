@@ -36,7 +36,7 @@ then
 
     # frontend
     cd $PROJECT_F_BASE_PATH$PROJECT_NAME_F
-    npm run install
+    npm install
     npm run build
 
     # start
