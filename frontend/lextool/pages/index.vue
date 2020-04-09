@@ -48,7 +48,7 @@
             >
                 <template v-for="(tool, index2) in item.list">
                     <nuxt-link
-                        v-if="showBtn(tool)"
+                        v-if="showBtn(tool) && tool.path[0] === '/'"
                         :key="index2"
                         :target="$store.state.setting.inNewTab ? '_blank' : '_self'"
                         :title="tool.name"
@@ -58,6 +58,17 @@
                     >
                         {{ tool.name }}
                     </nuxt-link>
+                    <a
+                        v-else-if="showBtn(tool) && tool.path[0] !== '/'" 
+                        :key="index2"
+                        :target="$store.state.setting.inNewTab ? '_blank' : '_self'"
+                        :title="tool.name"
+                        :href="tool.path"
+                        class="nya-btn"
+                        :class="[tool.hot, {'badge': tool.hot}]"
+                    >
+                        {{ tool.name }}
+                    </a>
                 </template>
             </nya-container>
         </template>
