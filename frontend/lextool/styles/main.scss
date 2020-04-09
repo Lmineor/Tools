@@ -106,6 +106,10 @@ body {
     width: 100vw;
     overflow: hidden;
     background-color: #f4f8fb;
+    background-image: url('../static/BG.jpg');
+    background-repeat:no-repeat;
+    background-attachment: fixed;
+    opacity: 0.8;
     color: var(--t1);
 }
 
