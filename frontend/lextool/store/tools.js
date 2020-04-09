@@ -62,14 +62,14 @@ export const state = () => {
             title: '网站相关',
             icon: 'settings-2-outline',
             list: [
-                {
-                    name: '网站设置',
-                    path: '/setting'
-                },
-                {
-                    name: '工具隐藏',
-                    path: '/hide_tool'
-                },
+                // {
+                //     name: '网站设置',
+                //     path: '/setting'
+                // },
+                // {
+                //     name: '工具隐藏',
+                //     path: '/hide_tool'
+                // },
                 {
                     name: '友情链接',
                     path: '/links'

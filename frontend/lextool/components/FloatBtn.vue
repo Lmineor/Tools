@@ -91,7 +91,7 @@ export default {
                 url: process.env.url + this.$route.path,
                 title: this.$store.state.currentTool.name,
                 content: description,
-                pic: process.env.url + '/icon.png'
+                pic: process.env.url + '/ico.png'
             };
         }
     },

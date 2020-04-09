@@ -10,7 +10,7 @@ export default {
     url:
         process.env.NODE_ENV === 'development'
             ? 'http://tools.lex666.online'
-            : 'https://www.lex666.online',
+            : 'http://tools.lex666.online',
     apiUrl:
         process.env.NODE_ENV === 'development'
             ? 'http://api.lex666.online'

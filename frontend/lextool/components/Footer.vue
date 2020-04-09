@@ -1,15 +1,15 @@
 <template>
     <div class="vfooter">
-        <a title="Lex的博客" href="https://www.lex666.online" target="_blank" rel="noopener noreferrer">
-            <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-boke3" />
-            </svg>
-        </a>
-        
-        <a title="GitHub" href="https://github.com/Prolht/Tools/" target="_blank" rel="noopener noreferrer">
-            <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-git" />
-            </svg>
+            <a title="Lex的博客" href="https://www.lex666.online" target="_blank" rel="noopener noreferrer">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-boke3" />
+                </svg>
+            </a>
+            
+            <a title="GitHub" href="https://github.com/Prolht/Tools/" target="_blank" rel="noopener noreferrer">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-git" />
+                </svg>
         </a>
         
         <!-- <a title="Telegram" href="https://t.me/mikutools" target="_blank" rel="noopener noreferrer">
