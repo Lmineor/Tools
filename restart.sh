@@ -3,6 +3,7 @@
 
 # config variables
 # Path
+CONDA_ENV=tools
 PROJECT_F_BASE_PATH=/www/wwwroot/Tools/frontend/ # frontend
 PROJECT_B_BASE_PATH=/www/wwwroot/Tools/backend/ # backend
 
@@ -29,6 +30,7 @@ then
     cd $PROJECT_B_BASE_PATH$PROJECT_NAME_B
     pip install -r requirements.txt
     # start
+    source activate $CONDA_ENV
     nohup python main.py >> server.log 2>&1 &
     echo "Complete Backend"
 
