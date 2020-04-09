@@ -2,7 +2,7 @@ export const state = () => {
     const tools = [
         {
             title: '热点相关',
-            icon: 'code-outline',
+            icon: 'options-2-outline',
             list: [
                 {
                     name: '重启的武汉',
