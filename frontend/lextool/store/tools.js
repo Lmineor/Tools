@@ -1,6 +1,28 @@
 export const state = () => {
     const tools = [
         {
+            title: '热点相关',
+            icon: 'code-outline',
+            list: [
+                {
+                    name: '重启的武汉',
+                    path: 'https://www.bilibili.com/video/BV18i4y187BB',
+                    head: {
+                        keywords: ['武汉', '肺炎'],
+                        description: '武汉重启的介绍'
+                    }
+                },
+                {
+                    name: '新冠肺炎',
+                    path: 'https://ncov.dxy.cn/ncovh5/view/pneumonia',
+                    head: {
+                        keywords: ['武汉', '肺炎'],
+                        description: '武汉重启的介绍'
+                    }
+                },
+            ]
+        },
+        {
             title: '编程开发',
             icon: 'code-outline',
             list: [
@@ -19,16 +41,16 @@ export const state = () => {
             icon: 'layers-outline',
             list: [
                 {
-                    name: 'Sci-Hub',
-                    path: '/screen_record',
+                    name: 'Sci-Hub可用网址',
+                    path: 'http://www.howsci.com/sci-hub-alternative.html',
                     head: {
                         keywords: ['屏幕录制', '在线录屏'],
                         description: '在网页上完成录屏'
                     }
                 },
                 {
-                    name: 'Sci',
-                    path: 'https://www.baidu.com',
+                    name: '科研动力',
+                    path: 'http://www.howsci.com/',
                     head: {
                         keywords: ['屏幕录制', '在线录屏'],
                         description: '在网页上完成录屏'
