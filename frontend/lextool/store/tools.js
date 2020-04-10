@@ -34,6 +34,14 @@ export const state = () => {
                         description: '短链生成工具'
                     }
                 },
+                {
+                    name: 'Leetcode',
+                    path: 'https://leetcode-cn.com/',
+                    head: {
+                        keywords: ['刷题', '技能get'],
+                        description: 'leetcode'
+                    }
+                },
             ]
         },
         {
