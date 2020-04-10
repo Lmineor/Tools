@@ -42,6 +42,14 @@ export const state = () => {
                         description: 'leetcode'
                     }
                 },
+                {
+                    name: 'Markdown',
+                    path: '/markdown',
+                    head: {
+                        keywords: ['Markdown'],
+                        description: 'Markdown'
+                    }
+                },
             ]
         },
         {
