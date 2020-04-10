@@ -46,9 +46,6 @@ export default {
       src: './components/UI/index.js',
     },
     {
-      src: './components/markdown/index.js',
-    },
-    {
       src: '~/plugins/vue-good-table.js'
     },
     {

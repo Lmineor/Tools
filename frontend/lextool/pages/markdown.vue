@@ -13,13 +13,14 @@
 
 
 <script>
-import MarkdownPro from '~/components/markdown/pro';
-import MarkdownPreview from '~/components/markdown/preview';
+import MarkdownPro from '@/components/mk/pro';
+import MarkdownPreview from '@/components/mk/preview';
 
 export default {
         name: "markdown",
         components: {
-            Markdown
+            MarkdownPro,
+            MarkdownPreview,
         }
     }
 </script>
