@@ -41,7 +41,7 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    './plugins/request1.js',
+    './plugins/request.js',
     {
       src: './components/UI/index.js',
     },
