@@ -64,6 +64,10 @@ export default {
       src: './plugins/modal.js',
       ssr: false
     },
+    {
+      src: '@/plugins/vue-mavon-editor',
+      ssr: false
+    }
   ],
   /*
   ** Nuxt.js dev-modules
