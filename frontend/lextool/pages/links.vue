@@ -77,7 +77,8 @@ export default {
                 }
             ],
             project: [
-                'https://akveo.github.io/eva-icons/',
+                'https://github.com/hinesboy/mavonEditor/blob/master/README.md', //Markdown
+                'https://akveo.github.io/eva-icons/', //icon
                 'https://github.com/nuxt',
                 'https://github.com/iamkun/dayjs',
                 'https://github.com/expressjs/express',
