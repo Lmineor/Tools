@@ -67,7 +67,7 @@ export default {
     {
       src: '@/plugins/vue-mavon-editor',
       ssr: false
-    }
+    },
   ],
   /*
   ** Nuxt.js dev-modules
