@@ -34,6 +34,9 @@ export default {
         };
     },
     methods: {
+        checkFormat(){
+            pattern = "((http://)|(https://))?([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}(/)"
+        },
         getShortUrl() {
             if (this.url === ''){
                 window.alert("网址不能为空");
