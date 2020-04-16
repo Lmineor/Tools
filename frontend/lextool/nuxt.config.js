@@ -7,12 +7,57 @@ export default {
   ** Headers of the page
   */
   head: {
-    title: process.env.npm_package_name || '',
+    title: 'lex吐司',
     meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
-    ],
+      {
+          charset: 'utf-8'
+      },
+      {
+          hid: 'viewport',
+          name: 'viewport',
+          content: 'width=device-width, initial-scale=1'
+      },
+      // {
+      //     hid: 'keywords',
+      //     name: 'keywords',
+      //     content: keywords
+      // },
+      {
+          hid: 'description',
+          name: 'description',
+          itemprop: 'description',
+          content: '一个轻量的工具集合'
+      },
+      {
+          hid: 'author',
+          name: 'author',
+          content: 'Lex'
+      },
+      {
+          name: 'HandheldFriendly',
+          content: true
+      },
+      {
+          property: 'og:site_name',
+          content: 'lextool'
+      },
+      {
+          name: 'mobile-web-app-capable',
+          content: 'yes'
+      },
+      {
+          name: 'apple-mobile-web-app-title',
+          content: 'lex吐司'
+      },
+      {
+          name: 'apple-mobile-web-app-status-bar-style',
+          content: 'white'
+      },
+      {
+          name: 'theme-color',
+          content: '#ffffff'
+      }
+  ],
     link: [
       //TODO:favicon.ico
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
