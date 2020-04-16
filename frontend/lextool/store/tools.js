@@ -60,16 +60,16 @@ export const state = () => {
                     name: 'Sci-Hub可用网址',
                     path: 'http://www.howsci.com/sci-hub-alternative.html',
                     head: {
-                        keywords: ['屏幕录制', '在线录屏'],
-                        description: '在网页上完成录屏'
+                        keywords: ['嗑盐', '嗑盐'],
+                        description: 'Sci-Hub可用网址'
                     }
                 },
                 {
                     name: '科研动力',
                     path: 'http://www.howsci.com/',
                     head: {
-                        keywords: ['屏幕录制', '在线录屏'],
-                        description: '在网页上完成录屏'
+                        keywords: ['嗑盐', '动力'],
+                        description: '科研动力'
                     }
                 },
             ]
