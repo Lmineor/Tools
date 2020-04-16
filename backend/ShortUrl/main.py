@@ -6,6 +6,7 @@ import re
 from flask import Flask
 from flask import request, redirect
 from flask_sqlalchemy import SQLAlchemy
+from flask import render_template
 
 from local_config import PASSWORD, SQLALCHEMY_DATABASE_URI
 from shorturl import shorturl
@@ -79,9 +80,12 @@ def red(code):
     except Exception as e:
         origin_url = ''
         logger.error(e)
-    if origin_url and ~origin_url.startswith('http'):
-        origin_url = 'http://' + origin_url
-    return redirect(origin_url)
+    if not origin_url:
+        return render_template('404.html')
+    elif not origin_url.startswith('http'):
+        return redirect('http://' + origin_url)
+    else:
+        return redirect(origin_url)
 
 
 def pre_get(url):
