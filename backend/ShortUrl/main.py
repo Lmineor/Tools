@@ -68,7 +68,7 @@ def main():
         'url': su
     }
 
-@app.route('/<code>')
+@app.route('/s/<code>', methods=['GET'])
 def red(code):
     """
     重定向部分
