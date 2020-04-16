@@ -75,6 +75,28 @@ export const state = () => {
             ]
         },
         {
+            title: '中国文学',
+            icon: 'book-outline',
+            list: [
+                {
+                    name: '诗词歌赋',
+                    path: '/poem',
+                    head: {
+                        keywords: ['唐诗', '宋词'],
+                        description: '唐诗宋词元曲'
+                    }
+                },
+                {
+                    name: '科研动力',
+                    path: 'http://www.howsci.com/',
+                    head: {
+                        keywords: ['嗑盐', '动力'],
+                        description: '科研动力'
+                    }
+                },
+            ]
+        },
+        {
             title: '网站相关',
             icon: 'settings-2-outline',
             list: [
