@@ -1,20 +1,20 @@
 export const state = () => {
     const tools = [
-        {
-            title: '乱七八糟',
-            icon: 'layers-outline',
-            list: [
-                {
-                    name: '甜言蜜语',
-                    path: '/honeywords',
-                    head: {
-                        keywords: ['甜言', '蜜语'],
-                        description: '甜言蜜语'
-                    },
-                    hot:'new'//debug new recommend
-                },
-            ]
-        },
+        // {
+        //     title: '乱七八糟',
+        //     icon: 'heart-outline',
+        //     list: [
+        //         {
+        //             name: '甜言蜜语',
+        //             path: '/honeywords',
+        //             head: {
+        //                 keywords: ['甜言', '蜜语'],
+        //                 description: '甜言蜜语'
+        //             },
+        //             hot:'new'//debug new recommend
+        //         },
+        //     ]
+        // },
         {
             title: '热点相关',
             icon: 'options-2-outline',
