@@ -9,8 +9,10 @@ PROJECT_B_BASE_PATH=/www/wwwroot/Tools/backend/ # backend
 
 # Name
 PROJECT_NAME_F=lextool # frontend name
-PROJECT_NAME_B=$1 # backend name
+# PROJECT_NAME_B=$1 # backend name
 PROJECT_PORT=$2 # backend port
+PROJECT_NAME_B=ShortUrl
+PROJECT_PORT=5000 # backend port
 
 GIT=git@github.com:Prolht/Tools.git
 
