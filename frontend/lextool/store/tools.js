@@ -86,14 +86,6 @@ export const state = () => {
                         description: '唐诗宋词元曲'
                     }
                 },
-                {
-                    name: '科研动力',
-                    path: 'http://www.howsci.com/',
-                    head: {
-                        keywords: ['嗑盐', '动力'],
-                        description: '科研动力'
-                    }
-                },
             ]
         },
         {

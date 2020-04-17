@@ -20,12 +20,8 @@ export const state = () => ({
         js: '',
         inNewTab: null,
         bg: {
-            type: 'none',
-            upload: {
-                url: '',
-                deleteUrl: ''
-            },
-            customUrl: '',
+            type: 'fix',  //fix or random  frontend\lextool\static\image\12.jpg
+            file_path: '../assets/images/cottons/',
             blur: 4,
             opacity: 50,
             transparentEl: true

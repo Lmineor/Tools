@@ -31,7 +31,6 @@
             opacity: 1;
             }
         </style>
-
         <!-- 自定义背景 -->
         <div class="bgimg" :style="{ 'background-image': `url(${backgroundImage})`, 'filter': `blur(${$store.state.setting.bg.blur}px)`, 'opacity': $store.state.setting.bg.opacity / 100 }"></div>
         <!-- 夜间模式样式 -->
@@ -100,20 +99,16 @@ export default {
         backgroundImage() {
             const setting = this.$store.state.setting.bg;
             let url;
-            if (setting.type === 'bing') {
-                url = '//api.dujin.org/bing/1920.php';
-            } else if (setting.type === 'anime') {
-                url =
-                    '//api.btstu.cn/sjbz/?lx=dongman&k=' +
+            if (setting.type === 'fix') {
+                url = setting.file_path + '13.jpg'
+            } else if (setting.type === 'random') {
+                url = setting.file_path +
                     Math.random()
                         .toString(10)
-                        .substring(2);
-            } else if (setting.type === 'custom') {
-                url = setting.customUrl;
-            } else if (setting.type === 'upload') {
-                url = setting.upload.url;
+                        .substring(2) + '.jpg';
             } else url = '';
-            return url;
+            console.log(url)
+            return require(url);
         }
     },
     watch: {
