@@ -1,22 +1,5 @@
 <template>
-    <div class="shorturl">
-        <nya-container title="诗词歌赋">
-            <nya-input
-                v-model.trim="url"
-                label="请输入URL"
-                :placeholder="`${$store.state.env.url}`"
-                autocomplete="off"
-                autofocus
-                fullwidth
-            />
-            <div class="nya-btn" @click="getShortUrl">
-                生成
-            </div>
-        </nya-container>
-
-        <nya-container v-if="res" title="结果">
-            <div v-html="res"></div>
-        </nya-container>
+    <div class="poem">开发中
     </div>
 </template>
 
