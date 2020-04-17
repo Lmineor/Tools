@@ -109,6 +109,7 @@ body {
     background-image: url('../static/BG.jpg');
     background-repeat:no-repeat;
     background-attachment: fixed;
+    // filter: blur(1px);
     opacity: 0.8;
     color: var(--t1);
 }
