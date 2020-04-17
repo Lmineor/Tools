@@ -1,6 +1,21 @@
 export const state = () => {
     const tools = [
         {
+            title: '乱七八糟',
+            icon: 'layers-outline',
+            list: [
+                {
+                    name: '甜言蜜语',
+                    path: '/honeywords',
+                    head: {
+                        keywords: ['甜言', '蜜语'],
+                        description: '甜言蜜语'
+                    },
+                    hot:'new'//debug new recommend
+                },
+            ]
+        },
+        {
             title: '热点相关',
             icon: 'options-2-outline',
             list: [
@@ -10,7 +25,8 @@ export const state = () => {
                     head: {
                         keywords: ['武汉', '肺炎'],
                         description: '武汉重启的介绍'
-                    }
+                    },
+                    hot:'new'//debug new recommend
                 },
                 {
                     name: '新冠肺炎',
@@ -18,7 +34,8 @@ export const state = () => {
                     head: {
                         keywords: ['武汉', '肺炎'],
                         description: '武汉重启的介绍'
-                    }
+                    },
+                    hot:'new'//debug new recommend
                 },
             ]
         },
@@ -32,7 +49,8 @@ export const state = () => {
                     head: {
                         keywords: ['url', '短链'],
                         description: '短链生成工具'
-                    }
+                    },
+                    hot:'new'//debug new recommend
                 },
                 {
                     name: 'Leetcode',
@@ -40,7 +58,8 @@ export const state = () => {
                     head: {
                         keywords: ['刷题', '技能get'],
                         description: 'leetcode'
-                    }
+                    },
+                    hot:'new'//debug new recommend
                 },
                 {
                     name: 'Markdown',
@@ -48,7 +67,8 @@ export const state = () => {
                     head: {
                         keywords: ['Markdown'],
                         description: 'Markdown'
-                    }
+                    },
+                    hot:'new'//debug new recommend
                 },
             ]
         },
@@ -62,7 +82,8 @@ export const state = () => {
                     head: {
                         keywords: ['嗑盐', '嗑盐'],
                         description: 'Sci-Hub可用网址'
-                    }
+                    },
+                    hot:'new'//debug new recommend
                 },
                 {
                     name: '科研动力',
@@ -70,7 +91,8 @@ export const state = () => {
                     head: {
                         keywords: ['嗑盐', '动力'],
                         description: '科研动力'
-                    }
+                    },
+                    hot:'new'//debug new recommend
                 },
             ]
         },
@@ -78,14 +100,15 @@ export const state = () => {
             title: '中国文学',
             icon: 'book-outline',
             list: [
-                {
-                    name: '诗词歌赋',
-                    path: '/poem',
-                    head: {
-                        keywords: ['唐诗', '宋词'],
-                        description: '唐诗宋词元曲'
-                    }
-                },
+                // {
+                //     name: '诗词歌赋',
+                //     path: '/poem',
+                //     head: {
+                //         keywords: ['唐诗', '宋词'],
+                //         description: '唐诗宋词元曲'
+                //     },
+                //     hot:'debug'//debug new recommend
+                // },
             ]
         },
         {
