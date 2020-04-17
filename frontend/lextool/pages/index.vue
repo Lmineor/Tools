@@ -77,11 +77,11 @@
             <ul class="nya-list">
                 <li>前端致敬 <a href="https://tools.miku.ac/" target="_blank" rel="noopener noreferrer">MikuTools</a></li>
                 <li>本项目基于 <a href="https://github.com/Prolht/Tools" target="_blank" rel="noopener noreferrer">LexTools</a> 构建而成</li>
-                <!-- <li>
+                <li>
                     <div class="badge-info">
-                        <span class="badge hot">热门</span> <span class="badge vip">VIP</span> <span class="badge new">新功能</span> <span class="badge recommend">推荐</span>
+                        <span class="badge hot">热门</span> <span class="badge debug">debug中</span> <span class="badge new">新功能</span> <span class="badge recommend">推荐</span>
                     </div>
-                </li> -->
+                </li>
                 <li><b>欢迎将本站收藏到收藏夹，以便以后使用</b></li>
                 <li>
                     本站域名：<a
@@ -93,10 +93,13 @@
                 <li v-if="$store.state.isMobile.any">
                     如果遇到无法使用或者样式问题，请更换浏览器后重试，推荐使用 Chrome 浏览器，对 iOS 设备兼容性可能不太好
                 </li>
+                <li v-on:click="wantpay" style="cursor: pointer">
+                    觉得不错？点我
+                </li>
             </ul>
         </nya-container>
 
-        <!-- <nya-container v-if="!$store.state.setting.hidePay" v-show="!searchText" title="打赏" icon="credit-card-outline">
+        <nya-container v-if="!$store.state.setting.hidePay && !hidepay" v-show="!searchText" title="打赏" icon="credit-card-outline">
             <ul class="pay">
                 <li>
                     <img src="../assets/wechat.png" alt="weixin">
@@ -111,7 +114,7 @@
                     </div>
                 </li>
             </ul>
-        </nya-container> -->
+        </nya-container>
     </div>
 </template>
 
@@ -136,7 +139,8 @@ export default {
         return {
             title: `${process.env.title} - ${process.env.description}`,
             searchText: '',
-            isMobile
+            isMobile,
+            hidepay:true
         };
     },
     computed: {
@@ -149,6 +153,9 @@ export default {
         }
     },
     methods: {
+        wantpay(){
+            this.hidepay = !this.hidepay;
+        },
         enterFirst(e) {
             if (this.$store.state.setting.inNewTab) {
                 window.open(e.path);
@@ -260,7 +267,7 @@ export default {
         &.hot::after {
             background-color: var(--theme-danger);
         }
-        &.vip::after {
+        &.debug::after {
             background-color: #f79817;
         }
         &.recommend::after {

@@ -20,8 +20,8 @@ export const state = () => ({
         js: '',
         inNewTab: null,
         bg: {
-            type: 'fix',  //fix or random  frontend\lextool\static\image\12.jpg
-            file_path: '../assets/images/cottons/',
+            type: 'none',  //fix or random  frontend\lextool\static\image\12.jpg
+            file_path: '',
             blur: 4,
             opacity: 50,
             transparentEl: true

@@ -32,7 +32,7 @@
             }
         </style>
         <!-- 自定义背景 -->
-        <div class="bgimg" :style="{ 'background-image': `url(${backgroundImage})`, 'filter': `blur(${$store.state.setting.bg.blur}px)`, 'opacity': $store.state.setting.bg.opacity / 100 }"></div>
+        <!-- <div class="bgimg" :style="{ 'background-image': `url(${backgroundImage})`, 'filter': `blur(${$store.state.setting.bg.blur}px)`, 'opacity': $store.state.setting.bg.opacity / 100 }"></div> -->
         <!-- 夜间模式样式 -->
         <style v-if="$store.state.dark">
             :root {
@@ -107,8 +107,7 @@ export default {
                         .toString(10)
                         .substring(2) + '.jpg';
             } else url = '';
-            console.log(url)
-            return require(url);
+            return url;
         }
     },
     watch: {
