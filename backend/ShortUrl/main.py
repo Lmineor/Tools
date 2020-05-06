@@ -87,7 +87,7 @@ def redir(code):
 
 
 @app.route('/OriginUrl', methods=['POST'])
-def get_originurl(code):
+def get_originurl():
     """
     短链还原部分
     """

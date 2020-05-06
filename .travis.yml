@@ -1,3 +1,0 @@
-deploy:
-  provider: script
-  script: restart.sh
