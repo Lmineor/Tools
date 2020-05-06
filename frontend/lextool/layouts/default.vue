@@ -69,7 +69,6 @@
         <div v-show="$store.state.globalLoading" class="view-loading">
             <nya-loading />
         </div>
-        <FloatBtn />
         <ThemeBtn />
     </div>
 </template>
@@ -77,7 +76,6 @@
 <script>
 import Navbar from '../components/Navbar';
 import Dialog from '../components/Dialog';
-import FloatBtn from '../components/FloatBtn';
 import isMobile from 'ismobilejs';
 import Vfooter from '~/components/Footer';
 import ThemeBtn from '~/components/ThemeBtn';
@@ -86,7 +84,6 @@ export default {
     components: {
         Navbar,
         Dialog,
-        FloatBtn,
         Vfooter,
         ThemeBtn
     },
@@ -167,11 +164,6 @@ export default {
         margin-top: 18px;
         box-shadow: none;
         border: 1px solid #ebebeb;
-    }
-    .navbar,
-    .vfooter,
-    .float-btn {
-        display: none !important;
     }
 }
 .index_page {
