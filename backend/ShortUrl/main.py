@@ -93,7 +93,7 @@ def get_originurl():
     """
     shorturl = request.get_json()['shorturl']
     logger.info('输入的shorturl为：' + shorturl)
-    if not url:
+    if not shorturl:
         return None;
     try:
         item = ShortUrl.query.filter(ShortUrl.short_url == shorturl).first()
