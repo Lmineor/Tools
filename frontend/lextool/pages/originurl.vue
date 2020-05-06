@@ -51,7 +51,7 @@ export default {
             }
             this.$axios
                 .post(
-                    envs.apiUrl + '/OriginUrl',
+                    envs.apiUrl + '/shorturl/OriginUrl',
                     {
                         shorturl: this.shorturl,
                     },

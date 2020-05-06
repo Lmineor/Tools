@@ -43,7 +43,7 @@ export default {
             }
             this.$axios
                 .post(
-                    envs.apiUrl + '/shorturl',
+                    envs.apiUrl + '/shorturl/shorten',
                     {
                         url: this.url,
                     },
