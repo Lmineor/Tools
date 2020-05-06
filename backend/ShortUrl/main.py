@@ -35,8 +35,6 @@ class ShortUrl(db.Model):
 
 @app.route('/shorten', methods=['POST'])
 def main():
-    # url = request.lurl.get('lurl', '')
-    print(request.get_json())
     url = request.get_json()['url']
     logger.info('输入的url为：' + url)
     if not url:
@@ -70,7 +68,7 @@ def main():
     }
 
 @app.route('/s/<code>', methods=['GET'])
-def red(code):
+def redir(code):
     """
     重定向部分
     """
@@ -86,6 +84,27 @@ def red(code):
         return redirect('http://' + origin_url)
     else:
         return redirect(origin_url)
+
+
+@app.route('/OriginUrl', methods=['POST'])
+def OriginUrl(code):
+    """
+    短链还原部分
+    """
+    shorturl = request.get_json()['shorturl']
+    logger.info('输入的shorturl为：' + shorturl)
+    if not url:
+        return None;
+    try:
+        item = ShortUrl.query.filter(ShortUrl.short_url == shorturl).first()
+        origin_url = item.origin_url
+    except Exception as e:
+        origin_url = ''
+        logger.error(e)
+    return {
+        'code': 200,
+        'OriginUrl': origin_url
+    }
 
 
 def pre_get(url):

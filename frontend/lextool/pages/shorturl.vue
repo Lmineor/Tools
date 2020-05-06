@@ -13,7 +13,6 @@
                 生成
             </div>
         </nya-container>
-
         <nya-container v-if="res" title="结果">
             <div v-html="res"></div>
         </nya-container>

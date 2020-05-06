@@ -26,7 +26,7 @@ export const state = () => {
                         keywords: ['武汉', '肺炎'],
                         description: '武汉重启的介绍'
                     },
-                    hot:'new'//debug new recommend
+                    hot:''//debug new recommend
                 },
                 {
                     name: '新冠肺炎',
@@ -35,7 +35,7 @@ export const state = () => {
                         keywords: ['武汉', '肺炎'],
                         description: '武汉重启的介绍'
                     },
-                    hot:'new'//debug new recommend
+                    hot:''//debug new recommend
                 },
             ]
         },
@@ -50,6 +50,15 @@ export const state = () => {
                         keywords: ['url', '短链'],
                         description: '短链生成工具'
                     },
+                    hot:''//debug new recommend
+                },
+                {
+                    name: '短链还原',
+                    path: '/originurl',
+                    head: {
+                        keywords: ['还原', '短链'],
+                        description: '短链还原工具'
+                    },
                     hot:'new'//debug new recommend
                 },
                 {
@@ -59,7 +68,7 @@ export const state = () => {
                         keywords: ['刷题', '技能get'],
                         description: 'leetcode'
                     },
-                    hot:'new'//debug new recommend
+                    hot:''//debug new recommend
                 },
                 {
                     name: 'Markdown',
@@ -68,7 +77,7 @@ export const state = () => {
                         keywords: ['Markdown'],
                         description: 'Markdown'
                     },
-                    hot:'new'//debug new recommend
+                    hot:''//debug new recommend
                 },
             ]
         },
@@ -83,7 +92,7 @@ export const state = () => {
                         keywords: ['嗑盐', '嗑盐'],
                         description: 'Sci-Hub可用网址'
                     },
-                    hot:'new'//debug new recommend
+                    hot:''//debug new recommend
                 },
                 {
                     name: '科研动力',
@@ -92,7 +101,7 @@ export const state = () => {
                         keywords: ['嗑盐', '动力'],
                         description: '科研动力'
                     },
-                    hot:'new'//debug new recommend
+                    hot:''//debug new recommend
                 },
             ]
         },
@@ -100,15 +109,15 @@ export const state = () => {
             title: '中国文学',
             icon: 'book-outline',
             list: [
-                // {
-                //     name: '诗词歌赋',
-                //     path: '/poem',
-                //     head: {
-                //         keywords: ['唐诗', '宋词'],
-                //         description: '唐诗宋词元曲'
-                //     },
-                //     hot:'debug'//debug new recommend
-                // },
+                {
+                    name: '诗词歌赋',
+                    path: '/poem',
+                    head: {
+                        keywords: ['唐诗', '宋词'],
+                        description: '唐诗宋词元曲'
+                    },
+                    hot:'debug'//debug new recommend
+                },
             ]
         },
         {
