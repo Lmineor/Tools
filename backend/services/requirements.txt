@@ -3,3 +3,4 @@ flask-sqlalchemy == 2.4.1
 flask-cors == 3.0.8
 mysqlclient == 1.4.6
 pytest == 5.4.1
+Flask-Cache == 0.13.1

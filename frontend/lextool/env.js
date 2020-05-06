@@ -13,12 +13,12 @@ export default {
             : 'http://tools.lex666.online',
     apiUrl:
         process.env.NODE_ENV === 'development'
-            ? 'http://api.lex666.online'
+            ? 'http://localhost:5000'
             : 'http://api.lex666.online',
     // pinyin: pinyin,
     development: process.env.NODE_ENV === 'development',
     axios:
         process.env.NODE_ENV === 'development'
-            ? 'http://127.0.0.1:5000/shorten'
+            ? 'http://127.0.0.1:5000'
             : 'https://www.lex666.online'
 };
