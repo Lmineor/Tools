@@ -1,39 +1,104 @@
 <template>
-    <div class="poem">开发中
+    <div class="main">
+        <nya-container title="诗词歌赋">
+            <nya-select v-if="showDynasty" v-model="dynasty" style="width:33%" :items="dynastys" label="朝代" v-on:change="getwriters" />
+            <nya-select  v-if="showWriters" v-model="writer" style="width:33%" :items="writers" label="诗人"  v-on:change="getpoems"/>
+            <nya-select  v-if="showPoems" v-model="poem" style="width:33%" :items="poems" label="诗（词）名" v-on:change="getcontent"/>
+            <div v-if="hasPoem" class="poem">
+                <li class="poem title"><span class="prefix">《</span>{{poems[poem]}}<span class="prefix">》</span></li>
+                <li class="poem writer"><span class="prefix">{{dynastys[dynasty]}}·</span>{{writers[writer]}}</li>
+                <li v-for="item in content" :key="item.index" class="poem content">
+                    {{ item }}
+                </li>
+            </div>
+        </nya-container>
     </div>
 </template>
 
 <script>
 import envs from '../env'
 export default {
-    name: 'ShortUrl',
+    name: 'poem',
     head() {
         return this.$store.state.currentTool.head;
     },
     data() {
         return {
-            res:'',
-            url:'',
+            showDynasty: true,
+            showWriters: false,
+            showPoems: false,
+            getDynasty: false,
+            hasPoem: false,
+            dynastys:[
+                    '唐',
+                    '宋',
+                    '元',
+            ],
+            writers: [],
+            poems: [],
+            poem: '',
+            dynasty:'',
+            writer:'',
+            content: [''],
+
         };
     },
+    computed:{
+    },
     methods: {
-        checkFormat(){
-            pattern = "((http://)|(https://))?([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}(/)"
-        },
-        getShortUrl() {
-            if (this.url === ''){
-                window.alert("网址不能为空");
-                return false;
-            }
+        getwriters (){
+            this.writers = [],
+            this.poems = [],
+            this.hasPoem = false,
             this.$axios
                 .post(
-                    envs.apiUrl + '/shorturl',
+                    envs.apiUrl + '/poem/getauthor',
                     {
-                        url: this.url,
+                        dynasty: this.dynastys[this.dynasty],
                     },
                 )
                 .then(re => {
-                    this.res = re.data.url;
+                    this.writers = re.data.authors;
+                    this.showWriters = true
+                })
+                .catch(err => {
+                    this.res = '生成失败';
+                    this.loading = false;
+                });
+        },
+        getpoems (){
+            this.poems = [],
+            this.hasPoem = false,
+            this.$axios
+                .post(
+                    envs.apiUrl + '/poem/gettitle',
+                    {
+                        dynasty: this.dynastys[this.dynasty],
+                        author: this.writers[this.writer]
+                    },
+                )
+                .then(re => {
+                    this.poems = re.data.titles;
+                    this.showPoems = true
+                })
+                .catch(err => {
+                    this.res = '生成失败';
+                    this.loading = false;
+                });
+        },
+        getcontent(){
+            this.$axios
+                .post(
+                    envs.apiUrl + '/poem/getpoem',
+                    {
+                        dynasty: this.dynastys[this.dynasty],
+                        author: this.writers[this.writer],
+                        title: this.poems[this.poem]
+                    },
+                )
+                .then(re => {
+                    this.content = re.data.poem.split('。'),
+                    this.hasPoem = true
                 })
                 .catch(err => {
                     this.res = '生成失败';
@@ -45,9 +110,23 @@ export default {
 </script>
 
 <style lang="scss">
-.shorturl {
-    .nya-btn {
-        margin-top: 15px;
+.main {
+    .poem{
+        font-size: 25px;
+        text-align: center;
+        list-style: none;
+        color: #000000;
+        .prefix{
+            color: #000000;
+        }
+        .title{
+            margin-top: 20px;
+            font-size: 40px;
+            font-weight: 100;
+        }
+        font-family: "楷体","楷体_GB2312";
+        
     }
 }
+
 </style>
