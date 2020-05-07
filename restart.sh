@@ -29,10 +29,10 @@ then
 
     # install dependence & build
     # backend
+    source activate $CONDA_ENV
     cd $PROJECT_B_BASE_PATH$PROJECT_NAME_B
     pip install -r requirements.txt
     # start
-    source activate $CONDA_ENV
     nohup python main.py >> server.log 2>&1 &
     echo "Complete Backend"
 
