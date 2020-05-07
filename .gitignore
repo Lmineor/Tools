@@ -94,3 +94,4 @@ sw.*
 *.user.ini
 *.html
 *.htaccess
+flask_cache/

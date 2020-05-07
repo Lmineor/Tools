@@ -1,8 +1,10 @@
 local_config.py
 .vscode
 *.pyc
+*.log.*
 *.log
 __pycache__/
+flask_cache/
 
 
 # 宝塔

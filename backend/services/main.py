@@ -7,26 +7,33 @@ from flask import Flask
 from flask import request, redirect, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from flask_caching import Cache
 
-from local_config import PASSWORD, SQLALCHEMY_DATABASE_URI, SQLALCHEMY_BINDS
+from local_config import SQLALCHEMY_DATABASE_URI, SQLALCHEMY_BINDS
 from logger import logger
-
-
 
 
 logger = logger(log_filename="app.log")
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
+# ----------------------------------------------------------------
+# 缓存配置（文件系统缓存）
+FILESYSTEM = {
+    'CACHE_TYPE': 'filesystem',
+    'CACHE_DIR': './flask_cache',
+    'CACHE_DEFAULT_TIMEOUT': 922337203685477580,
+    'CACHE_THRESHOLD': 922337203685477580
+}
+cache = Cache(app,config=FILESYSTEM)
 
-app.config['SECRET_KEY'] = PASSWORD
 
+
+# ----------------------------------------------------------------
+# 数据库配置
 app.config['SQLALCHEMY_DATABASE_URI']= SQLALCHEMY_DATABASE_URI
 app.config['SQLALCHEMY_BINDS']= SQLALCHEMY_BINDS
-
-
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=True 
 #设置这一项是每次请求结束后都会自动提交数据库中的变动
-
 #实例化
 db = SQLAlchemy(app)
 class ShortUrl(db.Model):
@@ -65,6 +72,8 @@ class PoemTangSong(db.Model):
     dynasty = db.Column(db.String(10))
 
 
+# ----------------------------------------------------------------
+# 路由
 @app.route('/poem/getauthor', methods=['POST'])
 def get_author():
     """
@@ -72,16 +81,21 @@ def get_author():
     """
     dynasty = request.get_json()['dynasty']
     logger.info('dynasty' + dynasty)
-    try:
-        items = PoemTangSong.query.filter_by(dynasty = dynasty).all()
-        authors = list(set([item.author for item in items]))
-    except Exception as e:
-        authors = []
-        logger.error(e)
-    return {
+    if cache.get(dynasty):
+        authors =  cache.get(dynasty)
+    else:
+        try:
+            items = PoemTangSong.query.filter_by(dynasty = dynasty).all()
+            authors = list(set([item.author for item in items]))
+        except Exception as e:
+            authors = []
+            logger.error(e)
+        cache.set(dynasty, authors)
+    data = {
         'code': 200,
         'authors': authors
     }
+    return data
 
 
 @app.route('/poem/gettitle', methods=['POST'])
@@ -92,12 +106,16 @@ def get_title():
     author = request.get_json()['author']
     dynasty = request.get_json()['dynasty']
     logger.info('author' + author)
-    try:
-        items = PoemTangSong.query.filter_by(author = author, dynasty=dynasty).all()
-        titles = list(set([item.title for item in items]))
-    except Exception as e:
-        titles = []
-        logger.error(e)
+    if cache.get(author + dynasty):
+        titles = cache.get(author + dynasty)
+    else:
+        try:
+            items = PoemTangSong.query.filter_by(author = author, dynasty=dynasty).all()
+            titles = list(set([item.title for item in items]))
+        except Exception as e:
+            titles = []
+            logger.error(e)
+        cache.set(author + dynasty, titles)
     return {
         'code': 200,
         'titles': titles
@@ -113,11 +131,15 @@ def get_poem():
     dynasty = request.get_json()['dynasty']
     title = request.get_json()['title']
     logger.info('author' + author)
-    try:
-        poem = PoemTangSong.query.filter_by(author = author, dynasty=dynasty, title=title).first().paragraphs
-    except Exception as e:
-        poem = ''
-        logger.error(e)
+    if cache.get(author + dynasty + title):
+        poem = cache.get(author + dynasty + title)
+    else:
+        try:
+            poem = PoemTangSong.query.filter_by(author = author, dynasty=dynasty, title=title).first().paragraphs
+        except Exception as e:
+            poem = ''
+            logger.error(e)
+        cache.set(author + dynasty + title, poem)
     return {
         'code': 200,
         'poem': poem
