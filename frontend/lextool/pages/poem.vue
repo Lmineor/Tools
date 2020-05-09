@@ -1,6 +1,7 @@
 <template>
     <div class="main">
         <nya-container title="诗词歌赋">
+            <!-- <nya-dropdown style="width:33%" label="朝代" :itemlist="itemlist" :nodatatext="nodatatext"></nya-dropdown> -->
             <nya-select v-if="showDynasty" v-model="dynasty" style="width:33%" :items="dynastys" label="朝代" v-on:change="getwriters" />
             <nya-select  v-if="showWriters" v-model="writer" style="width:33%" :items="writers" label="诗人"  v-on:change="getpoems"/>
             <nya-select  v-if="showPoems" v-model="poem" style="width:33%" :items="poems" label="诗（词）名" v-on:change="getcontent"/>
@@ -12,6 +13,7 @@
                 </li>
             </div>
         </nya-container>
+        
     </div>
 </template>
 
@@ -40,15 +42,23 @@ export default {
             dynasty:'',
             writer:'',
             content: [''],
-
+            loading : false,
         };
     },
     computed:{
     },
     methods: {
+        dropDownClick(e) {
+        console.log(e.name, e.val)
+        },
         getwriters (){
+            this.loading = true,
             this.writers = [],
             this.poems = [],
+            this.poem = '',
+            this.writer = '',
+            this.showWriters = false,
+            this.showPoems = false,
             this.hasPoem = false,
             this.$axios
                 .post(
@@ -60,6 +70,7 @@ export default {
                 .then(re => {
                     this.writers = re.data.authors;
                     this.showWriters = true
+                    this.loading = false;
                 })
                 .catch(err => {
                     this.res = '生成失败';
@@ -68,7 +79,9 @@ export default {
         },
         getpoems (){
             this.poems = [],
+            this.poem = '',
             this.hasPoem = false,
+            this.showPoems = false,
             this.$axios
                 .post(
                     envs.apiUrl + '/poem/gettitle',
@@ -80,6 +93,7 @@ export default {
                 .then(re => {
                     this.poems = re.data.titles;
                     this.showPoems = true
+                    this.loading = true;
                 })
                 .catch(err => {
                     this.res = '生成失败';
