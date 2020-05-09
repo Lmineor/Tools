@@ -5,7 +5,7 @@
         </label>
         <div class="select">
             <select :id="id" v-bind="$attrs" @input="$emit('input', $event.target.value)" @change="$emit('change')">
-                <option v-for="(item, index) in items" :key="index" :value="index">
+                <option v-for="(item, index) in items" :key="index" :value="index" class="op">
                     {{ item }}
                 </option>
             </select>
@@ -69,6 +69,13 @@ export default {
 
     .select {
         position: relative;
+        .op{
+            margin-top: 10px;
+            font-size: 15px;
+            color: #000000;
+            background: transparent;
+            // opacity: 0.2;
+        }
     }
 
     select {
@@ -96,7 +103,7 @@ export default {
         display: flex;
         align-items: center;
         padding-right: 7px;
-        font-size: 25px;
+        font-size: 30px;
         height: calc(100% - 8px);
         box-sizing: border-box;
     }

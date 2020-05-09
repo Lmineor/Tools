@@ -48,9 +48,6 @@ export default {
     computed:{
     },
     methods: {
-        dropDownClick(e) {
-        console.log(e.name, e.val)
-        },
         getwriters (){
             this.loading = true,
             this.writers = [],
@@ -68,9 +65,10 @@ export default {
                     },
                 )
                 .then(re => {
-                    this.writers = re.data.authors;
+                    this.writers = re.data.authors.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'}));
                     this.showWriters = true
                     this.loading = false;
+                    console.log(this.writers)
                 })
                 .catch(err => {
                     this.res = '生成失败';
@@ -91,7 +89,7 @@ export default {
                     },
                 )
                 .then(re => {
-                    this.poems = re.data.titles;
+                    this.poems = re.data.titles.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'}));
                     this.showPoems = true
                     this.loading = true;
                 })
