@@ -8,6 +8,7 @@ import nyaRadio from './nya-radio/nya-radio.vue';
 import nyaRadioGroup from './nya-radio/nya-radio-group.vue';
 import nyaCopy from './nya-copy.vue';
 import nyaCircle from './nya-circle.vue';
+import nyaDropDown from './nya-dropdown.vue';
 
 export default () => {
     Vue.component('nya-copy', nyaCopy);
@@ -19,4 +20,5 @@ export default () => {
     Vue.component('nya-radio', nyaRadio);
     Vue.component('nya-radio-group', nyaRadioGroup);
     Vue.component('nya-circle', nyaCircle);
+    Vue.component('nya-dropdown', nyaDropDown);
 };
