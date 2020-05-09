@@ -78,14 +78,14 @@ import Navbar from '../components/Navbar';
 import Dialog from '../components/Dialog';
 import isMobile from 'ismobilejs';
 import Vfooter from '~/components/Footer';
-import ThemeBtn from '~/components/ThemeBtn';
+// import ThemeBtn from '~/components/ThemeBtn';
 export default {
     name: 'Index',
     components: {
         Navbar,
         Dialog,
         Vfooter,
-        ThemeBtn
+        // ThemeBtn
     },
     data() {
         return {
