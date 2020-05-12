@@ -5,7 +5,7 @@ export default {
     domain:
         process.env.NODE_ENV === 'development'
             ? 'https://www.lex666.online'
-            : 'lex666.online/',
+            : 'https://www.lex666.online/',
     description: '一个轻量的工具集合',
     url:
         process.env.NODE_ENV === 'development'
