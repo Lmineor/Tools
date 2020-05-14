@@ -76,7 +76,6 @@
         <nya-container v-if="!$store.state.setting.hideNotice" v-show="!searchText" title="公告" icon="volume-down-outline">
             <ul class="nya-list">
                 <li>前端致敬 <a href="https://tools.miku.ac/" target="_blank" rel="noopener noreferrer">MikuTools</a></li>
-                <li>本项目基于 <a href="https://github.com/Prolht/Tools" target="_blank" rel="noopener noreferrer">LexTools</a> 构建而成</li>
                 <li>
                     <div class="badge-info">
                         <span class="badge hot">热门</span> <span class="badge debug">debug中</span> <span class="badge new">新功能</span> <span class="badge recommend">推荐</span>
