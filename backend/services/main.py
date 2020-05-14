@@ -11,6 +11,7 @@ from flask_caching import Cache
 
 from local_config import SQLALCHEMY_DATABASE_URI, SQLALCHEMY_BINDS
 from logger import logger
+from gen_dwz import gen_dwz
 
 
 logger = logger(log_filename="app.log")
@@ -151,7 +152,7 @@ def main():
     url = request.get_json()['url']
     logger.info('输入的url为：' + url)
     if not url:
-        return None;
+        return None
     su = __pre_get(url)
     if su:
         return {
@@ -163,7 +164,7 @@ def main():
         db.session.add(shortU)
         db.session.flush()
         urlid = shortU.id # 得到最后一调数据插入的id
-        su = shorturl(urlid) # 生成短链
+        su = gen_dwz(urlid) # 生成短链
         logger.info("短链成功生成")
         shortU.short_url = su
         db.session.add(shortU)
@@ -171,6 +172,7 @@ def main():
         db.session.commit()
     except Exception as e:
         logger.error(url + ' 重复')
+        logger.error(e)
     if not su:
         item = ShortUrl.query.filter(ShortUrl.origin_url == url).first()
         if item:
