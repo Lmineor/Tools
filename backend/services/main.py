@@ -180,7 +180,7 @@ def main():
         'code': 200,
         'url': su
     }
-    return Response(data)
+    return data
 
 
 @app.route('/s/<code>', methods=['GET'])
