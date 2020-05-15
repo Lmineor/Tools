@@ -87,7 +87,7 @@ export const state = () => {
             list: [
                 {
                     name: 'Sci-Hub可用网址',
-                    path: 'http://www.howsci.com/sci-hub-alternative.html',
+                    path: '/sci',
                     head: {
                         keywords: ['嗑盐', '嗑盐'],
                         description: 'Sci-Hub可用网址'
