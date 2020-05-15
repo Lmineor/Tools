@@ -10,11 +10,10 @@ from flask_cors import CORS
 from flask_caching import Cache
 
 from local_config import SQLALCHEMY_DATABASE_URI, SQLALCHEMY_BINDS
-from logger import logger
-from gen_dwz import gen_dwz
+from .logger import logger
+from .gen_dwz import gen_dwz
+from .sciSpider import Sci
 
-
-logger = logger(log_filename="app.log")
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 # ----------------------------------------------------------------
@@ -222,6 +221,17 @@ def get_originurl():
         'code': 200,
         'OriginUrl': origin_url
     }
+
+
+@app.route('/sci', methods=['GET'])
+def get_sci():
+    sci_url = Sci()
+    urls = sci_url.raw_url()
+    data = {
+        'code': 200,
+        'urls': urls
+    }
+    return data
 
 
 def __pre_get(url):
