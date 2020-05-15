@@ -1,6 +1,6 @@
 <template>
     <div class="links">
-        <nya-container title="友情链接">
+        <nya-container :title="title">
             <div v-for="(item, index) in links" :key="index">
                 <div class="nya-subtitle">
                     {{ item.title }}
@@ -43,7 +43,7 @@ export default {
     },
     data() {
         return {
-            title: `友情链接 - ${process.env.title}`,
+            title: '友情链接',
             links: [
                 {
                     title: '主要维护人员',

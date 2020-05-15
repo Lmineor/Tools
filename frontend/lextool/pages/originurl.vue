@@ -32,7 +32,9 @@ import envs from '../env'
 export default {
     name: 'OriginUrl',
     head() {
-        return this.$store.state.currentTool.head;
+        return {
+            title: '短链还原'
+        };
     },
     data() {
         return {

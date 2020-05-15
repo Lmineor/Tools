@@ -16,6 +16,11 @@ import createFile from  '~/utils/createFile.js';
 import handbooks from '~/utils/handbook.js';
 
 export default {
+    head() {
+        return {
+            title: 'Markdown编辑器'
+        };
+    },
     data() {
         return {
             // handbook: "#### 开始使用"

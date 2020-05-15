@@ -1,6 +1,6 @@
 <template>
     <div class="main">
-        <nya-container title="诗词歌赋">
+        <nya-container :title="title">
             <!-- <nya-dropdown style="width:33%" label="朝代" :itemlist="itemlist" :nodatatext="nodatatext"></nya-dropdown> -->
             <nya-select v-if="showDynasty" v-model="dynasty" style="width:33%" :items="dynastys" label="朝代" v-on:change="getwriters" />
             <nya-select  v-if="showWriters" v-model="writer" style="width:33%" :items="writers" label="诗人"  v-on:change="getpoems"/>
@@ -22,10 +22,13 @@ import envs from '../env'
 export default {
     name: 'poem',
     head() {
-        return this.$store.state.currentTool.head;
+        return{
+            title:this.title
+        }
     },
     data() {
         return {
+            title: '诗词歌赋',
             showDynasty: true,
             showWriters: false,
             showPoems: false,

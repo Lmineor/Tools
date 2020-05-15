@@ -24,7 +24,9 @@ import envs from '../env'
 export default {
     name: 'ShortUrl',
     head() {
-        return this.$store.state.currentTool.head;
+        return{
+            title: '短链生成'
+        }
     },
     data() {
         return {
