@@ -143,4 +143,4 @@ def _get_logger(log_to_file=False, log_filename="", log_level="DEBUG"):
     return _logger
 
 
-logger = _get_logger
+logger = _get_logger(log_filename="app.log")
