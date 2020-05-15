@@ -69,13 +69,14 @@
         <div v-show="$store.state.globalLoading" class="view-loading">
             <nya-loading />
         </div>
-        <ThemeBtn />
+        <!-- <ThemeBtn /> -->
     </div>
 </template>
 
 <script>
 import Navbar from '../components/Navbar';
 import Dialog from '../components/Dialog';
+import Panel from '../components/Panel';
 import isMobile from 'ismobilejs';
 import Vfooter from '~/components/Footer';
 // import ThemeBtn from '~/components/ThemeBtn';

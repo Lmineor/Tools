@@ -77,7 +77,7 @@ export const state = () => {
                         keywords: ['Markdown'],
                         description: 'Markdown'
                     },
-                    hot:''//debug new recommend
+                    hot:'', //debug new recommend
                 },
             ]
         },

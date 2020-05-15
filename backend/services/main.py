@@ -75,6 +75,37 @@ class PoemTangSong(db.Model):
 
 # ----------------------------------------------------------------
 # 路由
+@app.route('/login', methods=['POST'])
+def user_login():
+    """
+    test
+    """
+    email = request.get_json()['email']
+    password = request.get_json()['password']
+    logger.info('email' + email)
+    logger.info('password' + password)
+    res = {
+        'token': 'adfafdfadfafd',
+        'code': 200
+    }
+    return res
+
+
+@app.route('/register', methods=['POST'])
+def user_register():
+    """
+    test
+    """
+    email = request.get_json()['email']
+    password = request.get_json()['password']
+    logger.info('email' + email)
+    logger.info('password' + password)
+    res = {
+        'code': 200
+    }
+    return res
+
+
 @app.route('/poem/getauthor', methods=['POST'])
 def get_author():
     """
