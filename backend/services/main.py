@@ -10,9 +10,9 @@ from flask_cors import CORS
 from flask_caching import Cache
 
 from local_config import SQLALCHEMY_DATABASE_URI, SQLALCHEMY_BINDS
-from .logger import logger
-from .gen_dwz import gen_dwz
-from .sciSpider import Sci
+from logger import logger
+from gen_dwz import gen_dwz
+from sciSpider import Sci
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
