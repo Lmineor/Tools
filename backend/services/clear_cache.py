@@ -3,8 +3,6 @@ from flask_caching import Cache
 from main import app, FILESYSTEM
 from logger import logger
 
-logger = logger(log_filename="app.log")
-
 cache = Cache()
 
 

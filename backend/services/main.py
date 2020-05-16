@@ -72,6 +72,15 @@ class PoemTangSong(db.Model):
     dynasty = db.Column(db.String(10))
 
 
+class PoemLunyu(db.Model):
+    __bind_key__ = 'poem' # 已设置__bind_key__,则采用设置的数据库引擎
+    __tablename__ = 'lunyu'
+
+    id = db.Column(db.Integer, primary_key=True)
+    paragraphs = db.Column(db.Text)
+    chapter = db.Column(db.String(50))
+
+
 # ----------------------------------------------------------------
 # 路由
 @app.route('/poem/getauthor', methods=['POST'])
@@ -144,6 +153,44 @@ def get_poem():
         'code': 200,
         'poem': poem
     }
+
+@app.route('/poem/lunyu', methods=['POST', 'GET'])
+def get_lunyu():
+    """
+    test
+    """
+    if request.method == 'GET':
+        if cache.get('chapters'):
+            chapters = cache.get('chapters')
+        else:
+            try:
+                items = PoemLunyu.query.all()
+                print(items[0])
+                chapters = list(set([item.chapter for item in items]))
+            except Exception as e:
+                chapters = []
+                logger.error(e)
+            cache.set('chapters', chapters)
+        return {
+            'code': 200,
+            'chapters': chapters
+        }
+    else:
+        chapter = request.get_json()['chapter']
+        logger.info('chapter: ' + chapter)
+        if cache.get('chapter'):
+            paragraphs = cache.get('chapter')
+        else:
+            try:
+                paragraphs = PoemLunyu.query.filter_by(chapter = chapter).first().paragraphs
+            except Exception as e:
+                paragraphs = ''
+                logger.error(e)
+            cache.set(chapter, paragraphs)
+        return {
+            'code': 200,
+            'paragraphs': paragraphs.split('|')
+        }
 
 
 @app.route('/shorturl/shorten', methods=['POST'])

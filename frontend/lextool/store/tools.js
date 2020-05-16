@@ -118,6 +118,15 @@ export const state = () => {
                     },
                     hot:'debug'//debug new recommend
                 },
+                {
+                    name: '论语',
+                    path: '/lunyu',
+                    head: {
+                        keywords: ['论语', '子曰'],
+                        description: '论语'
+                    },
+                    hot:'new'//debug new recommend
+                },
             ]
         },
         {
