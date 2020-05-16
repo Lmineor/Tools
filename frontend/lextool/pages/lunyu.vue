@@ -44,7 +44,7 @@ export default {
                     envs.apiUrl + '/poem/lunyu',
                 )
                 .then(re => {
-                    this.chapters = re.data.chapters;
+                    this.chapters = re.data.chapters.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'}));;
                     this.loading = false;
                 })
                 .catch(err => {
