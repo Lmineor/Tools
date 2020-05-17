@@ -13,6 +13,7 @@
             @on-change='changeFun'
         >
             <Option v-for="(item, index) in items" :key="index" :value="index">{{ item }}</Option>
+            <Page v-if ="pageable" :total="total" class="page" @on-change='changePage' :page-size="30"/>
         </Select>
     </div>
 </template>
@@ -45,6 +46,14 @@ export default {
             default: '',
             type: String
         },
+        total:{
+            default:50,
+            type:Number
+        },
+        pageable: {
+            type: Boolean,
+            default: true
+        },
         fullwidth: {
             default: false,
             type: Boolean
@@ -54,6 +63,9 @@ export default {
         changeFun(data){//下拉框值发生改变时调用
             this.$emit('change',data);//data有value和label
         },
+        changePage(page){
+            this.$emit('pagechange', page);
+        }
     },
     data(){
         return {
@@ -61,9 +73,6 @@ export default {
         };
     },
     mounted() {
-        // changeGrade(grade){
-        //     this.gradeId = grade
-        // },
         this.id = this.$shortid.generate();
     }
 }
@@ -83,6 +92,8 @@ export default {
         margin-bottom: 10px;
         font-weight: bold;
     }
-
+    .page{
+        text-align: center;
+    }
 }
 </style>

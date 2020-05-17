@@ -68,3 +68,13 @@ class PoemSongci(db.Model):
     paragraphs = db.Column(db.Text)
     rhythmic = db.Column(db.String(40))
     author = db.Column(db.String(20))
+
+
+class CiAuthor(db.Model):
+    __bind_key__ = 'poem' # 已设置__bind_key__,则采用设置的数据库引擎
+    __tablename__ = 'ciauthor'
+
+    id = db.Column(db.Integer, primary_key=True)
+    long_desc = db.Column(db.Text)
+    short_desc = db.Column(db.Text)
+    name = db.Column(db.String(20))

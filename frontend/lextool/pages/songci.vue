@@ -1,8 +1,24 @@
 <template>
     <div class="main">
         <nya-container :title="title">
-            <nya-dropdown v-model="author" style="width:33%" label="词人" :items="authors" v-on:change="getrhythmics" ></nya-dropdown>
-            <nya-dropdown v-if="showRhythmics" v-model="rhythmic" style="width:33%" :items="rhythmics" label="词牌名" v-on:change="getparagraphs"/></nya-dropdown>
+            <nya-dropdown
+                v-model="author"
+                style="width:33%"
+                label="词人"
+                :items="authors"
+                v-on:change="getrhythmics"
+                v-on:pagechange="changeAuthorPage"
+                :total="total"
+            />
+            <nya-dropdown
+                v-if="showRhythmics"
+                v-model="rhythmic"
+                style="width:33%"
+                :items="rhythmics"
+                :pageable="false"
+                label="词牌名"
+                v-on:change="getparagraphs"
+            />
             <div v-if="hasparagraphs" class="content">
                 <li class="title"><span class="prefix">《</span>{{rhythmic}}<span class="prefix">》</span></li>
                 <li class="writer"><span class="prefix">宋·</span>{{author}}</li>
@@ -36,22 +52,49 @@ export default {
             loading : true,
             showAuthors: false,
             showRhythmics: false,
+            defaultpage:1,
+            total: 1,
         };
     },
     mounted (){
         this.getauthors()
     },
     methods: {
+        changeAuthorPage(current){
+            this.$axios
+                .post(
+                    envs.apiUrl + '/poem/songci',
+                    {
+                        author: '',
+                        rhythmic: '',
+                        page: current,
+                    },
+                )
+                .then(re => {
+                    this.authors = re.data.authors.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'}));
+                    this.loading = false;
+                })
+                .catch(err => {
+                    this.authors = [];
+                    this.loading = false;
+                });
+        },
         getauthors(){
             this.showAuthors = true,
             this.author = '',
             this.loading = true,
             this.$axios
-                .get(
+                .post(
                     envs.apiUrl + '/poem/songci',
+                    {
+                        author: '',
+                        rhythmic: '',
+                        page: this.defaultpage,
+                    },
                 )
                 .then(re => {
                     this.authors = re.data.authors.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'}));
+                    this.total = re.data.total;
                     this.loading = false;
                 })
                 .catch(err => {
@@ -72,6 +115,7 @@ export default {
                     {
                         author: this.authors[id],
                         rhythmic: '',
+                        page: '',
                     },
                 )
                 .then(re => {
@@ -94,6 +138,7 @@ export default {
                     {
                         author: this.author,
                         rhythmic: this.rhythmics[id],
+                        page: '',
                     },
                 )
                 .then(re => {

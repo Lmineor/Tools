@@ -11,15 +11,17 @@ from db import *
 from logger import logger
 from gen_dwz import gen_dwz
 from sciSpider import Sci
+from local_config import PER_PAGE
 
-# app 在db种
+# app 在db中
 CORS(app, supports_credentials=True)
 # ----------------------------------------------------------------
 # 缓存配置（文件系统缓存）
 FILESYSTEM = {
     'CACHE_TYPE': 'filesystem',
     'CACHE_DIR': './flask_cache',
-    'CACHE_DEFAULT_TIMEOUT': 922337203685477580,
+    'CACHE_DEFAULT_TIMEOUT': 2,
+    # 'CACHE_DEFAULT_TIMEOUT': 922337203685477580,
     'CACHE_THRESHOLD': 922337203685477580
 }
 cache = Cache(app,config=FILESYSTEM)
@@ -30,22 +32,32 @@ cache = Cache(app,config=FILESYSTEM)
 @app.route('/poem/getauthor', methods=['POST'])
 def get_author():
     """
-    test
+    得到某个朝代的作者列表
     """
     dynasty = request.get_json()['dynasty']
-    logger.info('dynasty' + dynasty)
-    if cache.get(dynasty):
-        authors =  cache.get(dynasty)
+    page = request.get_json()['page']
+    if cache.get(str(page) + dynasty):
+        total = cache.get('authors_num' + dynasty)
+        authors =  cache.get(str(page) + dynasty)
     else:
         try:
-            items = PoemTangSong.query.filter_by(dynasty = dynasty).all()
-            authors = list(set([item.author for item in items]))
+            if dynasty =='唐':
+                total = len(PoemTangAuthor.query.all())
+                items = PoemTangAuthor.query.paginate(page=page, per_page=PER_PAGE, error_out=False).items
+                authors = list(set([item.name for item in items]))
+            else:
+                total = len(PoemSongAuthor.query.all())
+                items = PoemSongAuthor.query.paginate(page=page, per_page=PER_PAGE, error_out=False).items
+                authors = list(set([item.name for item in items]))
         except Exception as e:
             authors = []
+            total = 0
             logger.error(e)
-        cache.set(dynasty, authors)
+        cache.set('authors_num' + dynasty, total)
+        cache.set(str(page) + dynasty, authors)
     data = {
         'code': 200,
+        'total': total,
         'authors': authors
     }
     return data
@@ -142,53 +154,59 @@ def get_songci():
     """
     test
     """
-    if request.method == 'GET':
-        if cache.get('authors'):
-            authors = cache.get('authors')
+    author = request.get_json()['author']
+    rhythmic = request.get_json()['rhythmic']
+    page = request.get_json()['page']
+    if page: # 获取作者翻页数据
+        if cache.get('authors_num' + 'songci'):
+            total = int(cache.get('authors_num' + 'songci'))
+        else:
+            total = len(CiAuthor.query.all())
+            cache.set('authors_num' + 'songci', total)
+        if cache.get(str(page) + 'songci'):
+            authors =  cache.get(str(page) + 'songci')
         else:
             try:
-                items = PoemSongci.query.all()
-                authors = list(set([item.author for item in items]))
+                items = CiAuthor.query.paginate(page=page, per_page=PER_PAGE, error_out=False).items
+                authors = list(set([item.name for item in items]))
             except Exception as e:
                 authors = []
                 logger.error(e)
-            cache.set('authors', authors)
+            cache.set(str(page) + 'songci', authors)
         return {
             'code': 200,
-            'authors': authors
+            'authors': authors,
+            'total': total
+        }
+    elif not rhythmic: # 获取词牌名s
+        if cache.get(author + '_ci'):
+            rhythmics = cache.get(author + '_ci')
+        else:
+            try:
+                items = PoemSongci.query.filter_by(author = author).all()
+                rhythmics = list(set([item.rhythmic for item in items]))
+            except Exception as e:
+                rhythmics = []
+                logger.error(e)
+            cache.set(author + '_ci', rhythmics)
+        return {
+            'code': 200,
+            'rhythmics': rhythmics
         }
     else:
-        author = request.get_json()['author']
-        rhythmic = request.get_json()['rhythmic']
-        if not rhythmic: # 获取词牌名
-            if cache.get(author + '_ci'):
-                rhythmics = cache.get(author + '_ci')
-            else:
-                try:
-                    items = PoemSongci.query.filter_by(author = author).all()
-                    rhythmics = list(set([item.rhythmic for item in items]))
-                except Exception as e:
-                    rhythmics = []
-                    logger.error(e)
-                cache.set(author + '_ci', rhythmics)
-            return {
-                'code': 200,
-                'rhythmics': rhythmics
-            }
+        if cache.get(author + rhythmic + '_ci'):
+            paragraphs = cache.get(author + rhythmic + '_ci')
         else:
-            if cache.get(author + rhythmic + '_ci'):
-                paragraphs = cache.get(author + rhythmic + '_ci')
-            else:
-                try:
-                    paragraphs = PoemSongci.query.filter_by(author=author, rhythmic=rhythmic).first().paragraphs.split('。')
-                except Exception as e:
-                    paragraphs = ''
-                    logger.error(e)
-                cache.set(author + rhythmic + '_ci', paragraphs)
-            return {
-                'code': 200,
-                'paragraphs': paragraphs
-            }
+            try:
+                paragraphs = PoemSongci.query.filter_by(author=author, rhythmic=rhythmic).first().paragraphs.split('。')
+            except Exception as e:
+                paragraphs = ''
+                logger.error(e)
+            cache.set(author + rhythmic + '_ci', paragraphs)
+        return {
+            'code': 200,
+            'paragraphs': paragraphs
+        }
 
 
 @app.route('/shorturl/shorten', methods=['POST'])

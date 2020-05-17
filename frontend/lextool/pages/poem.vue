@@ -2,9 +2,34 @@
     <div class="main">
         <nya-container :title="title">
             <!-- <nya-dropdown style="width:33%" label="朝代" :itemlist="itemlist" :nodatatext="nodatatext"></nya-dropdown> -->
-            <nya-dropdown v-if="showDynasty" v-model="dynasty" style="width:33%" :items="dynastys" label="朝代" v-on:change="getwriters" />
-            <nya-dropdown  v-if="showWriters" v-model="writer" style="width:33%" :items="writers" label="诗人"  v-on:change="getpoems"/>
-            <nya-dropdown  v-if="showPoems" v-model="poem" style="width:33%" :items="poems" label="诗（词）名" v-on:change="getcontent"/>
+            <nya-dropdown
+                v-if="showDynasty"
+                v-model="dynasty"
+                style="width:33%" 
+                :items="dynastys" 
+                label="朝代" 
+                :pageable="false" 
+                v-on:change="getwriters" 
+            />
+            <nya-dropdown
+                v-if="showWriters"
+                v-model="writer"
+                style="width:33%"
+                :items="writers"
+                label="诗人"
+                :total="total"
+                v-on:change="getpoems"
+                v-on:pagechange="changeAuthorPage"
+            />
+            <nya-dropdown
+                v-if="showPoems"
+                v-model="poem"
+                style="width:33%"
+                :items="poems"
+                label="诗名"
+                :pageable=false
+                v-on:change="getcontent"
+            />
             <div v-if="hasPoem" class="poem">
                 <li class="poem title"><span class="prefix">《</span>{{poem}}<span class="prefix">》</span></li>
                 <li class="poem writer"><span class="prefix">{{dynasty}}·</span>{{writer}}</li>
@@ -34,11 +59,7 @@ export default {
             showPoems: false,
             getDynasty: false,
             hasPoem: false,
-            dynastys:[
-                    '唐',
-                    '宋',
-                    '元',
-            ],
+            dynastys:['唐','宋'],
             writers: [],
             poems: [],
             poem: '',
@@ -46,11 +67,32 @@ export default {
             writer:'',
             content: [''],
             loading : false,
+            defaultpage: 1,
+            total: ''
         };
     },
     computed:{
     },
     methods: {
+        changeAuthorPage(current){
+            this.$axios
+                .post(
+                    envs.apiUrl + '/poem/getauthor',
+                    {
+                        dynasty: this.dynasty,
+                        page: current,
+                    },
+                )
+                .then(re => {
+                    this.writers = re.data.authors.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'})).slice(0,10);
+                    this.showWriters = true;
+                    this.loading = false;
+                })
+                .catch(err => {
+                    this.res = '生成失败';
+                    this.loading = false;
+                });
+        },
         getwriters (id){
             this.dynasty = this.dynastys[id],
             this.loading = true,
@@ -66,13 +108,14 @@ export default {
                     envs.apiUrl + '/poem/getauthor',
                     {
                         dynasty: this.dynastys[id],
+                        page: this.defaultpage,
                     },
                 )
                 .then(re => {
-                    this.writers = re.data.authors.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'}));
-                    this.showWriters = true
+                    this.writers = re.data.authors.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'})).slice(0,10);
+                    this.total = re.data.total;
+                    this.showWriters = true;
                     this.loading = false;
-                    console.log(this.writers)
                 })
                 .catch(err => {
                     this.res = '生成失败';
