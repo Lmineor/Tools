@@ -1,7 +1,6 @@
 <template>
     <div class="main">
         <nya-container :title="title">
-            <!-- <nya-dropdown style="width:33%" label="朝代" :itemlist="itemlist" :nodatatext="nodatatext"></nya-dropdown> -->
             <nya-dropdown
                 v-if="showDynasty"
                 v-model="dynasty"

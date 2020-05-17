@@ -40,7 +40,13 @@ export default {
         },
         getShortUrl() {
             if (this.url === ''){
-                window.alert("网址不能为空");
+                this.$swal({
+                    toast: true,
+                    position: 'top-end',
+                    type: 'error',
+                    title: '网址不能为空',
+                    timer: 1500,
+                });
                 return false;
             }
             this.$axios

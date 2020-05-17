@@ -48,7 +48,13 @@ export default {
         },
         getOriginUrl() {
             if (this.shorturl === ''){
-                window.alert("输入内容不能为空");
+                this.$swal({
+                    toast: true,
+                    position: 'top-end',
+                    type: 'error',
+                    title: '内容不能为空',
+                    timer: 1500,
+                });
                 return false;
             }
             this.$axios
