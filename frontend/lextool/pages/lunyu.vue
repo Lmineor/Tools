@@ -2,9 +2,9 @@
     <div class="main">
         <nya-container :title="title">
             <!-- <nya-dropdown style="width:33%" label="朝代" :itemlist="itemlist" :nodatatext="nodatatext"></nya-dropdown> -->
-            <nya-select v-model="chapter" style="width:33%" :items="chapters" label="章" v-on:change="getparagraphs" />
+            <nya-dropdown v-model="chapter" style="width:33%" :items="chapters" label="章" v-on:change="getparagraphs" />
             <div v-if="hasparagraphs" class="paragraphs">
-                <li class="chapter"><span class="prefix">《</span>{{chapters[chapter]}}<span class="prefix">》</span></li>
+                <li class="chapter"><span class="prefix">《</span>{{chapter}}<span class="prefix">》</span></li>
                 <li v-for="item in paragraphs" :key="item.index" class="paragraph">
                     {{ item }}
                 </li>
@@ -52,14 +52,15 @@ export default {
                     this.loading = false;
                 });
         },
-        getparagraphs (){
+        getparagraphs (id){
+            this.chapter = this.chapters[id],
             this.loading = true,
             this.hasparagraphs = false,
             this.$axios
                 .post(
                     envs.apiUrl + '/poem/lunyu',
                     {
-                        chapter: this.chapters[this.chapter],
+                        chapter: this.chapter,
                     },
                 )
                 .then(re => {
@@ -68,7 +69,7 @@ export default {
                     this.loading = false;
                 })
                 .catch(err => {
-                    this.chapters = [];
+                    this.paragraphs = [];
                     this.loading = false;
                 });
         },

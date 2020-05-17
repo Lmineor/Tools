@@ -1,74 +1,72 @@
 <template>
-    <div class="nya-dropdown" v-show-extend="show">
+    <!-- 参考：https://blog.csdn.net/qq_41619796/article/details/101075443 -->
+    <div class="nya-dropdown" :class="{ 'fullwidth': fullwidth }">
         <label v-if="label" :for="id">
             {{ label }}
         </label>
-        <div class="search-module clearfix" v-show="itemlist.length">
-            <input class="search-text"
-            @keyup='search($event)' />
-            <i class="eva eva-arrow-ios-downward-outline"></i>
-        </div>
-        <ul class="list-module" v-show="length">
-            <li v-for ="(item,index) in datalist" @click="appClick(item)" :key="index">
-                <span class="list-item-text">{{item.name}}</span>
-            </li>
-        </ul>
-            <div class="tip__nodata" v-show="!length">{{nodatatext}}</div>
+        <Select 
+            :clearable="clearable"
+            :multiple='multiple'
+            :filterable='filterable'
+            :size='size'
+            :placeholder='placeholder'
+            @on-change='changeFun'
+        >
+            <Option v-for="(item, index) in items" :key="index" :value="index">{{ item }}</Option>
+        </Select>
     </div>
 </template>
  
 <script>
-    export default {
-        data(){
-            return {
-                datalist:[]
-            }
+export default {
+    inheritAttrs: false,
+    props: {
+        clearable: {//是否可以清空选项，只在单选时有效
+            type: Boolean,
+            default: true
+        },  
+        multiple: { //是否支持多选
+            type: Boolean,
+            default: false
+        }, 
+        filterable: { //是否支持搜索,多选搜索时，可以使用键盘Delete快捷删除最后一个已选项
+            type: Boolean,
+            default: true
         },
-        props:{
-            'show':{//用于外部控制组件的显示/隐藏
-                type:Boolean,
-                default:true
+        size: String, //选择框大小，可选值为large、small、default或者不填
+        placeholder: String, //选择框默认文字
+        items: {
+            default: () => {
+                return [];
             },
-            'itemlist':Array,
-            label:'',
-            // 'placeholder':String,
-            'nodatatext':String
+            type: [Array, Object]
         },
-        watch:{
-            itemlist:function(val){
-                this.datalist = val.concat();
-            }
+        label: {
+            default: '',
+            type: String
         },
-        directives:{
-            'show-extend':function(el,binding,vnode){//bind和 update钩子
-                let value = binding.value,searchInput = null;
-                if(value){
-                    el.style.display='block';
-                }else{//隐藏后，恢复初始状态
-                    el.style.display='none';
-                    searchInput = el.querySelector(".search-text");
-                    searchInput.value = '';
-                    vnode.context.datalist = vnode.context.itemlist;//还原渲染数据
-                    }
-            }
-        },
-        methods:{
-            appClick:function(data){
-                this.$emit('item-click',data);
-            },
-            search:function(e){
-                let vm = this,searchvalue = e.currentTarget.value;
-                vm.datalist = vm.itemlist.filter(function(item,index,arr){
-                    return item.name.indexOf(searchvalue) != -1;
-                });
-            }
-        },
-        computed:{
-            length:function(){
-                return this.datalist.length;
-            }
+        fullwidth: {
+            default: false,
+            type: Boolean
         }
+    },
+    methods:{
+        changeFun(data){//下拉框值发生改变时调用
+            this.$emit('change',data);//data有value和label
+        },
+    },
+    data(){
+        return {
+            id: null
+        };
+    },
+    mounted() {
+        // changeGrade(grade){
+        //     this.gradeId = grade
+        // },
+        this.id = this.$shortid.generate();
     }
+}
 </script>
  
 <style lang="scss">
@@ -78,9 +76,7 @@
     &.fullwidth {
         width: 100%;
     }
-    &._self-show {
-        display: block!important;
-    }
+
     label {
         display: block;
         font-size: 18px;
@@ -88,54 +84,5 @@
         font-weight: bold;
     }
 
-    .search-module {
-        position: relative;
-        .search-text {
-            height: 30px;
-            width: 100%;
-            border-radius: 0.5em;
-            box-shadow: none;
-            border: 1px solid #ccc;
-            &:focus {
-                border-color: #2198f2;
-            }
-        }
-    }
-    i {
-        z-index: 1;
-        line-height: 18px;
-        pointer-events: none;
-        position: absolute;
-        right: 4px;
-        bottom: 4px;
-        display: flex;
-        align-items: center;
-        padding-right: 7px;
-        font-size: 30px;
-        height: calc(100% - 8px);
-        box-sizing: border-box;
-    }
-    .list-module {
-        max-height: 200px;
-        overflow-y: auto;
-        li {
-            padding: 0px;
-            list-style: none;
-            &._self-hide {
-                display: none;
-            }
-            // padding: 0.5em;
-            &:hover {
-                cursor:pointer;
-                color: rgb(58, 56, 56);
-                background: #c4c6c7;
-            }
-        }
-    }
-    .tip__nodata {
-        font-size: 12px;
-        margin-top: 1em;
-    }
 }
-
 </style>

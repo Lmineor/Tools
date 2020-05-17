@@ -113,6 +113,10 @@ export default {
       src: '@/plugins/vue-mavon-editor',
       ssr: false
     },
+    {
+      src: '@/plugins/iview',
+      ssr: true
+    }
   ],
   /*
   ** Nuxt.js dev-modules

@@ -2,12 +2,12 @@
     <div class="main">
         <nya-container :title="title">
             <!-- <nya-dropdown style="width:33%" label="朝代" :itemlist="itemlist" :nodatatext="nodatatext"></nya-dropdown> -->
-            <nya-select v-if="showDynasty" v-model="dynasty" style="width:33%" :items="dynastys" label="朝代" v-on:change="getwriters" />
-            <nya-select  v-if="showWriters" v-model="writer" style="width:33%" :items="writers" label="诗人"  v-on:change="getpoems"/>
-            <nya-select  v-if="showPoems" v-model="poem" style="width:33%" :items="poems" label="诗（词）名" v-on:change="getcontent"/>
+            <nya-dropdown v-if="showDynasty" v-model="dynasty" style="width:33%" :items="dynastys" label="朝代" v-on:change="getwriters" />
+            <nya-dropdown  v-if="showWriters" v-model="writer" style="width:33%" :items="writers" label="诗人"  v-on:change="getpoems"/>
+            <nya-dropdown  v-if="showPoems" v-model="poem" style="width:33%" :items="poems" label="诗（词）名" v-on:change="getcontent"/>
             <div v-if="hasPoem" class="poem">
-                <li class="poem title"><span class="prefix">《</span>{{poems[poem]}}<span class="prefix">》</span></li>
-                <li class="poem writer"><span class="prefix">{{dynastys[dynasty]}}·</span>{{writers[writer]}}</li>
+                <li class="poem title"><span class="prefix">《</span>{{poem}}<span class="prefix">》</span></li>
+                <li class="poem writer"><span class="prefix">{{dynasty}}·</span>{{writer}}</li>
                 <li v-for="item in content" :key="item.index" class="poem content">
                     {{ item }}
                 </li>
@@ -51,7 +51,8 @@ export default {
     computed:{
     },
     methods: {
-        getwriters (){
+        getwriters (id){
+            this.dynasty = this.dynastys[id],
             this.loading = true,
             this.writers = [],
             this.poems = [],
@@ -64,7 +65,7 @@ export default {
                 .post(
                     envs.apiUrl + '/poem/getauthor',
                     {
-                        dynasty: this.dynastys[this.dynasty],
+                        dynasty: this.dynastys[id],
                     },
                 )
                 .then(re => {
@@ -78,7 +79,8 @@ export default {
                     this.loading = false;
                 });
         },
-        getpoems (){
+        getpoems (id){
+            this.writer = this.writers[id],
             this.poems = [],
             this.poem = '',
             this.hasPoem = false,
@@ -87,8 +89,8 @@ export default {
                 .post(
                     envs.apiUrl + '/poem/gettitle',
                     {
-                        dynasty: this.dynastys[this.dynasty],
-                        author: this.writers[this.writer]
+                        dynasty: this.dynasty,
+                        author: this.writer
                     },
                 )
                 .then(re => {
@@ -101,14 +103,15 @@ export default {
                     this.loading = false;
                 });
         },
-        getcontent(){
+        getcontent(id){
+            this.poem = this.poems[id]
             this.$axios
                 .post(
                     envs.apiUrl + '/poem/getpoem',
                     {
-                        dynasty: this.dynastys[this.dynasty],
-                        author: this.writers[this.writer],
-                        title: this.poems[this.poem]
+                        dynasty: this.dynasty,
+                        author: this.writer,
+                        title: this.poem
                     },
                 )
                 .then(re => {
