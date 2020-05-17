@@ -127,6 +127,15 @@ export const state = () => {
                     },
                     hot:'new'//debug new recommend
                 },
+                {
+                    name: '宋词',
+                    path: '/songci',
+                    head: {
+                        keywords: ['宋词'],
+                        description: '宋词'
+                    },
+                    hot:'new'//debug new recommend
+                },
             ]
         },
         {
