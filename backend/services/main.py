@@ -333,7 +333,7 @@ def get_originurl():
         item = ShortUrl.query.filter(ShortUrl.short_url == shorturl).first()
         origin_url = item.origin_url
     except Exception as e:
-        origin_url = ''
+        origin_url = '生成失败,该短链不存在'
         logger.error(e)
     return {
         'code': 200,

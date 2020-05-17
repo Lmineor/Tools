@@ -68,7 +68,7 @@ export default {
                     this.OriginUrl = re.data.OriginUrl;
                 })
                 .catch(err => {
-                    this.OriginUrl = '生成失败,该短链不存在';
+                    this.OriginUrl = "生成失败,该短链不存在";
                     this.loading = false;
                 });
         },

@@ -61,7 +61,6 @@ export default {
                 })
                 .catch(err => {
                     this.res = '生成失败';
-                    this.loading = false;
                 });
         },
     }
