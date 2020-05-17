@@ -3,18 +3,16 @@
 import hashlib
 import re
 
-from flask import Flask
 from flask import request, redirect, Response
-from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_caching import Cache
 
-from local_config import SQLALCHEMY_DATABASE_URI, SQLALCHEMY_BINDS
+from db import *
 from logger import logger
 from gen_dwz import gen_dwz
 from sciSpider import Sci
 
-app = Flask(__name__)
+# app 在db种
 CORS(app, supports_credentials=True)
 # ----------------------------------------------------------------
 # 缓存配置（文件系统缓存）
@@ -25,60 +23,6 @@ FILESYSTEM = {
     'CACHE_THRESHOLD': 922337203685477580
 }
 cache = Cache(app,config=FILESYSTEM)
-
-
-
-# ----------------------------------------------------------------
-# 数据库配置
-app.config['SQLALCHEMY_DATABASE_URI']= SQLALCHEMY_DATABASE_URI
-app.config['SQLALCHEMY_BINDS']= SQLALCHEMY_BINDS
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=True 
-#设置这一项是每次请求结束后都会自动提交数据库中的变动
-#实例化
-db = SQLAlchemy(app)
-class ShortUrl(db.Model):
-    __tablename__ = 'ShortUrl' # 未设置__bind_key__,则采用默认的数据库引擎
-    id = db.Column(db.Integer, primary_key=True)
-    origin_url = db.Column(db.String(80), unique=True)
-    short_url = db.Column(db.String(30), unique=True)
-
-
-class PoemSongAuthor(db.Model):
-    __bind_key__ = 'poem' # 已设置__bind_key__,则采用设置的数据库引擎
-    __tablename__ = 'songshiauthor'
-
-    id = db.Column(db.Integer, primary_key=True)
-    descb = db.Column(db.Text)
-    name = db.Column(db.String(30))
-
-
-class PoemTangAuthor(db.Model):
-    __bind_key__ = 'poem' # 已设置__bind_key__,则采用设置的数据库引擎
-    __tablename__ = 'tangshiauthor'
-
-    id = db.Column(db.Integer, primary_key=True)
-    descb = db.Column(db.Text)
-    name = db.Column(db.String(30))
-
-
-class PoemTangSong(db.Model):
-    __bind_key__ = 'poem' # 已设置__bind_key__,则采用设置的数据库引擎
-    __tablename__ = 'tangsongshi'
-
-    id = db.Column(db.Integer, primary_key=True)
-    paragraphs = db.Column(db.Text)
-    title = db.Column(db.String(30))
-    author = db.Column(db.String(30))
-    dynasty = db.Column(db.String(10))
-
-
-class PoemLunyu(db.Model):
-    __bind_key__ = 'poem' # 已设置__bind_key__,则采用设置的数据库引擎
-    __tablename__ = 'lunyu'
-
-    id = db.Column(db.Integer, primary_key=True)
-    paragraphs = db.Column(db.Text)
-    chapter = db.Column(db.String(50))
 
 
 # ----------------------------------------------------------------
@@ -191,6 +135,60 @@ def get_lunyu():
             'code': 200,
             'paragraphs': paragraphs.split('|')
         }
+
+
+@app.route('/poem/songci', methods=['POST', 'GET'])
+def get_songci():
+    """
+    test
+    """
+    if request.method == 'GET':
+        if cache.get('authors'):
+            authors = cache.get('authors')
+        else:
+            try:
+                items = PoemSongci.query.all()
+                authors = list(set([item.author for item in items]))
+            except Exception as e:
+                authors = []
+                logger.error(e)
+            cache.set('authors', authors)
+        return {
+            'code': 200,
+            'authors': authors
+        }
+    else:
+        author = request.get_json()['author']
+        rhythmic = request.get_json()['rhythmic']
+        if not rhythmic: # 获取词牌名
+            if cache.get(author + '_ci'):
+                rhythmics = cache.get(author + '_ci')
+            else:
+                try:
+                    items = PoemSongci.query.filter_by(author = author).all()
+                    rhythmics = list(set([item.rhythmic for item in items]))
+                except Exception as e:
+                    rhythmics = []
+                    logger.error(e)
+                cache.set(author + '_ci', rhythmics)
+            return {
+                'code': 200,
+                'rhythmics': rhythmics
+            }
+        else:
+            if cache.get(author + rhythmic + '_ci'):
+                paragraphs = cache.get(author + rhythmic + '_ci')
+            else:
+                try:
+                    paragraphs = PoemSongci.query.filter_by(author=author, rhythmic=rhythmic).first().paragraphs.split('。')
+                except Exception as e:
+                    paragraphs = ''
+                    logger.error(e)
+                cache.set(author + rhythmic + '_ci', paragraphs)
+            return {
+                'code': 200,
+                'paragraphs': paragraphs
+            }
 
 
 @app.route('/shorturl/shorten', methods=['POST'])
