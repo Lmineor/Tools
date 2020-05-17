@@ -20,8 +20,8 @@ CORS(app, supports_credentials=True)
 FILESYSTEM = {
     'CACHE_TYPE': 'filesystem',
     'CACHE_DIR': './flask_cache',
-    'CACHE_DEFAULT_TIMEOUT': 2,
-    # 'CACHE_DEFAULT_TIMEOUT': 922337203685477580,
+    # 'CACHE_DEFAULT_TIMEOUT': 2,
+    'CACHE_DEFAULT_TIMEOUT': 922337203685477580,
     'CACHE_THRESHOLD': 922337203685477580
 }
 cache = Cache(app,config=FILESYSTEM)
