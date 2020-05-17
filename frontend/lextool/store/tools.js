@@ -136,6 +136,15 @@ export const state = () => {
                     },
                     hot:'new'//debug new recommend
                 },
+                {
+                    name: '诗经',
+                    path: '/shijing',
+                    head: {
+                        keywords: ['诗经', '风'],
+                        description: '诗经'
+                    },
+                    hot:'new'//debug new recommend
+                },
             ]
         },
         {

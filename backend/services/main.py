@@ -209,6 +209,61 @@ def get_songci():
         }
 
 
+@app.route('/poem/shijing', methods=['POST'])
+def get_shijing():
+    """
+    test
+    """
+    title = request.get_json()['title']
+    page = request.get_json()['page']
+    if page: # 获取诗名翻页数据
+        if cache.get('title_num' + 'shijing'):
+            total = int(cache.get('title_num' + 'shijing'))
+        else:
+            total = len(ShiJing.query.all())
+            cache.set('title_num' + 'shijing', total)
+        if cache.get(str(page) + 'shijing'):
+            titles =  cache.get(str(page) + 'shijing')
+        else:
+            try:
+                items = ShiJing.query.paginate(page=page, per_page=PER_PAGE, error_out=False).items
+                titles = list(set([item.title for item in items]))
+            except Exception as e:
+                titles = []
+                logger.error(e)
+            cache.set(str(page) + 'shijing', titles)
+        return {
+            'code': 200,
+            'titles': titles,
+            'total': total
+        }
+    else: # 获取内容
+        logger.info(title)
+        if cache.get(title + 'shijing'):
+            content = cache.get(title + 'shijing')
+            chaper = cache.get(title + 'chaper')
+            section = cache.get(title + 'section')
+        else:
+            try:
+                query = ShiJing.query.filter_by(title = title).first()
+                content = query.content.split('。')
+                chapter = query.chapter
+                section = query.section
+            except Exception as e:
+                content = []
+                chaper = section = ''
+                logger.error(e)
+            cache.set(title + 'shijing', content)
+            cache.set(title + 'chaper', chapter)
+            cache.set(title + 'section', section)
+        return {
+            'code': 200,
+            'content': content,
+            'chapter': chapter,
+            'section': section,
+        }
+
+
 @app.route('/shorturl/shorten', methods=['POST'])
 def main():
     url = request.get_json()['url']

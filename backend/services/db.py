@@ -78,3 +78,14 @@ class CiAuthor(db.Model):
     long_desc = db.Column(db.Text)
     short_desc = db.Column(db.Text)
     name = db.Column(db.String(20))
+
+
+class ShiJing(db.Model):
+    __bind_key__ = 'poem' # 已设置__bind_key__,则采用设置的数据库引擎
+    __tablename__ = 'shijing'
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(30))
+    chapter = db.Column(db.String(30))
+    section = db.Column(db.String(30))
+    content = db.Column(db.String(20))
