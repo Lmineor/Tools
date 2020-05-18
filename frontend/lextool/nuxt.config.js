@@ -113,6 +113,14 @@ export default {
       src: '@/plugins/vue-mavon-editor',
       ssr: false
     },
+    {
+      src: '@/plugins/iview',
+      ssr: true
+    },
+    {
+      src: './plugins/vue-sweetalert',
+      ssr: false
+    },
   ],
   /*
   ** Nuxt.js dev-modules
@@ -137,7 +145,7 @@ export default {
           'vue-sweetalert2/nuxt',
           {
               confirmButtonColor: '#249ffd',
-              animation: false,
+              // animation: false,
               customClass: {
                   popup: 'sweetalert2'
               }

@@ -32,7 +32,9 @@ import envs from '../env'
 export default {
     name: 'OriginUrl',
     head() {
-        return this.$store.state.currentTool.head;
+        return {
+            title: '短链还原'
+        };
     },
     data() {
         return {
@@ -46,7 +48,13 @@ export default {
         },
         getOriginUrl() {
             if (this.shorturl === ''){
-                window.alert("输入内容不能为空");
+                this.$swal({
+                    toast: true,
+                    position: 'top-end',
+                    type: 'error',
+                    title: '内容不能为空',
+                    timer: 1500,
+                });
                 return false;
             }
             this.$axios
@@ -60,7 +68,7 @@ export default {
                     this.OriginUrl = re.data.OriginUrl;
                 })
                 .catch(err => {
-                    this.OriginUrl = '生成失败,该短链不存在';
+                    this.OriginUrl = "生成失败,该短链不存在";
                     this.loading = false;
                 });
         },

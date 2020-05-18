@@ -3,74 +3,28 @@
 import hashlib
 import re
 
-from flask import Flask
 from flask import request, redirect, Response
-from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_caching import Cache
 
-from local_config import SQLALCHEMY_DATABASE_URI, SQLALCHEMY_BINDS
+from db import *
 from logger import logger
 from gen_dwz import gen_dwz
+from sciSpider import Sci
+from local_config import PER_PAGE
 
-
-logger = logger(log_filename="app.log")
-app = Flask(__name__)
+# app 在db中
 CORS(app, supports_credentials=True)
 # ----------------------------------------------------------------
 # 缓存配置（文件系统缓存）
 FILESYSTEM = {
     'CACHE_TYPE': 'filesystem',
     'CACHE_DIR': './flask_cache',
+    # 'CACHE_DEFAULT_TIMEOUT': 2,
     'CACHE_DEFAULT_TIMEOUT': 922337203685477580,
     'CACHE_THRESHOLD': 922337203685477580
 }
 cache = Cache(app,config=FILESYSTEM)
-
-
-
-# ----------------------------------------------------------------
-# 数据库配置
-app.config['SQLALCHEMY_DATABASE_URI']= SQLALCHEMY_DATABASE_URI
-app.config['SQLALCHEMY_BINDS']= SQLALCHEMY_BINDS
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=True 
-#设置这一项是每次请求结束后都会自动提交数据库中的变动
-#实例化
-db = SQLAlchemy(app)
-class ShortUrl(db.Model):
-    __tablename__ = 'ShortUrl' # 未设置__bind_key__,则采用默认的数据库引擎
-    id = db.Column(db.Integer, primary_key=True)
-    origin_url = db.Column(db.String(80), unique=True)
-    short_url = db.Column(db.String(30), unique=True)
-
-
-class PoemSongAuthor(db.Model):
-    __bind_key__ = 'poem' # 已设置__bind_key__,则采用设置的数据库引擎
-    __tablename__ = 'songshiauthor'
-
-    id = db.Column(db.Integer, primary_key=True)
-    descb = db.Column(db.Text)
-    name = db.Column(db.String(30))
-
-
-class PoemTangAuthor(db.Model):
-    __bind_key__ = 'poem' # 已设置__bind_key__,则采用设置的数据库引擎
-    __tablename__ = 'tangshiauthor'
-
-    id = db.Column(db.Integer, primary_key=True)
-    descb = db.Column(db.Text)
-    name = db.Column(db.String(30))
-
-
-class PoemTangSong(db.Model):
-    __bind_key__ = 'poem' # 已设置__bind_key__,则采用设置的数据库引擎
-    __tablename__ = 'tangsongshi'
-
-    id = db.Column(db.Integer, primary_key=True)
-    paragraphs = db.Column(db.Text)
-    title = db.Column(db.String(30))
-    author = db.Column(db.String(30))
-    dynasty = db.Column(db.String(10))
 
 
 # ----------------------------------------------------------------
@@ -109,22 +63,32 @@ def user_register():
 @app.route('/poem/getauthor', methods=['POST'])
 def get_author():
     """
-    test
+    得到某个朝代的作者列表
     """
     dynasty = request.get_json()['dynasty']
-    logger.info('dynasty' + dynasty)
-    if cache.get(dynasty):
-        authors =  cache.get(dynasty)
+    page = request.get_json()['page']
+    if cache.get(str(page) + dynasty):
+        total = cache.get('authors_num' + dynasty)
+        authors =  cache.get(str(page) + dynasty)
     else:
         try:
-            items = PoemTangSong.query.filter_by(dynasty = dynasty).all()
-            authors = list(set([item.author for item in items]))
+            if dynasty =='唐':
+                total = len(PoemTangAuthor.query.all())
+                items = PoemTangAuthor.query.paginate(page=page, per_page=PER_PAGE, error_out=False).items
+                authors = list(set([item.name for item in items]))
+            else:
+                total = len(PoemSongAuthor.query.all())
+                items = PoemSongAuthor.query.paginate(page=page, per_page=PER_PAGE, error_out=False).items
+                authors = list(set([item.name for item in items]))
         except Exception as e:
             authors = []
+            total = 0
             logger.error(e)
-        cache.set(dynasty, authors)
+        cache.set('authors_num' + dynasty, total)
+        cache.set(str(page) + dynasty, authors)
     data = {
         'code': 200,
+        'total': total,
         'authors': authors
     }
     return data
@@ -177,6 +141,159 @@ def get_poem():
         'poem': poem
     }
 
+@app.route('/poem/lunyu', methods=['POST', 'GET'])
+def get_lunyu():
+    """
+    test
+    """
+    if request.method == 'GET':
+        if cache.get('chapters'):
+            chapters = cache.get('chapters')
+        else:
+            try:
+                items = PoemLunyu.query.all()
+                print(items[0])
+                chapters = list(set([item.chapter for item in items]))
+            except Exception as e:
+                chapters = []
+                logger.error(e)
+            cache.set('chapters', chapters)
+        return {
+            'code': 200,
+            'chapters': chapters
+        }
+    else:
+        chapter = request.get_json()['chapter']
+        logger.info('chapter: ' + chapter)
+        if cache.get('chapter'):
+            paragraphs = cache.get('chapter')
+        else:
+            try:
+                paragraphs = PoemLunyu.query.filter_by(chapter = chapter).first().paragraphs
+            except Exception as e:
+                paragraphs = ''
+                logger.error(e)
+            cache.set(chapter, paragraphs)
+        return {
+            'code': 200,
+            'paragraphs': paragraphs.split('|')
+        }
+
+
+@app.route('/poem/songci', methods=['POST', 'GET'])
+def get_songci():
+    """
+    test
+    """
+    author = request.get_json()['author']
+    rhythmic = request.get_json()['rhythmic']
+    page = request.get_json()['page']
+    if page: # 获取作者翻页数据
+        if cache.get('authors_num' + 'songci'):
+            total = int(cache.get('authors_num' + 'songci'))
+        else:
+            total = len(CiAuthor.query.all())
+            cache.set('authors_num' + 'songci', total)
+        if cache.get(str(page) + 'songci'):
+            authors =  cache.get(str(page) + 'songci')
+        else:
+            try:
+                items = CiAuthor.query.paginate(page=page, per_page=PER_PAGE, error_out=False).items
+                authors = list(set([item.name for item in items]))
+            except Exception as e:
+                authors = []
+                logger.error(e)
+            cache.set(str(page) + 'songci', authors)
+        return {
+            'code': 200,
+            'authors': authors,
+            'total': total
+        }
+    elif not rhythmic: # 获取词牌名s
+        if cache.get(author + '_ci'):
+            rhythmics = cache.get(author + '_ci')
+        else:
+            try:
+                items = PoemSongci.query.filter_by(author = author).all()
+                rhythmics = list(set([item.rhythmic for item in items]))
+            except Exception as e:
+                rhythmics = []
+                logger.error(e)
+            cache.set(author + '_ci', rhythmics)
+        return {
+            'code': 200,
+            'rhythmics': rhythmics
+        }
+    else:
+        if cache.get(author + rhythmic + '_ci'):
+            paragraphs = cache.get(author + rhythmic + '_ci')
+        else:
+            try:
+                paragraphs = PoemSongci.query.filter_by(author=author, rhythmic=rhythmic).first().paragraphs.split('。')
+            except Exception as e:
+                paragraphs = ''
+                logger.error(e)
+            cache.set(author + rhythmic + '_ci', paragraphs)
+        return {
+            'code': 200,
+            'paragraphs': paragraphs
+        }
+
+
+@app.route('/poem/shijing', methods=['POST'])
+def get_shijing():
+    """
+    test
+    """
+    title = request.get_json()['title']
+    page = request.get_json()['page']
+    if page: # 获取诗名翻页数据
+        if cache.get('title_num' + 'shijing'):
+            total = int(cache.get('title_num' + 'shijing'))
+        else:
+            total = len(ShiJing.query.all())
+            cache.set('title_num' + 'shijing', total)
+        if cache.get(str(page) + 'shijing'):
+            titles =  cache.get(str(page) + 'shijing')
+        else:
+            try:
+                items = ShiJing.query.paginate(page=page, per_page=PER_PAGE, error_out=False).items
+                titles = list(set([item.title for item in items]))
+            except Exception as e:
+                titles = []
+                logger.error(e)
+            cache.set(str(page) + 'shijing', titles)
+        return {
+            'code': 200,
+            'titles': titles,
+            'total': total
+        }
+    else: # 获取内容
+        logger.info(title)
+        if cache.get(title + 'shijing'):
+            content = cache.get(title + 'shijing')
+            chaper = cache.get(title + 'chaper')
+            section = cache.get(title + 'section')
+        else:
+            try:
+                query = ShiJing.query.filter_by(title = title).first()
+                content = query.content.split('。')
+                chapter = query.chapter
+                section = query.section
+            except Exception as e:
+                content = []
+                chaper = section = ''
+                logger.error(e)
+            cache.set(title + 'shijing', content)
+            cache.set(title + 'chaper', chapter)
+            cache.set(title + 'section', section)
+        return {
+            'code': 200,
+            'content': content,
+            'chapter': chapter,
+            'section': section,
+        }
+
 
 @app.route('/shorturl/shorten', methods=['POST'])
 def main():
@@ -212,7 +329,7 @@ def main():
         'code': 200,
         'url': su
     }
-    return Response(data)
+    return data
 
 
 @app.route('/s/<code>', methods=['GET'])
@@ -247,12 +364,23 @@ def get_originurl():
         item = ShortUrl.query.filter(ShortUrl.short_url == shorturl).first()
         origin_url = item.origin_url
     except Exception as e:
-        origin_url = ''
+        origin_url = '生成失败,该短链不存在'
         logger.error(e)
     return {
         'code': 200,
         'OriginUrl': origin_url
     }
+
+
+@app.route('/sci', methods=['GET'])
+def get_sci():
+    sci_url = Sci()
+    urls = sci_url.raw_url()
+    data = {
+        'code': 200,
+        'urls': urls
+    }
+    return data
 
 
 def __pre_get(url):

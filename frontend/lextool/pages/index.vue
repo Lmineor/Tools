@@ -151,6 +151,16 @@ export default {
             return arr;
         }
     },
+    mounted(){
+        this.$swal({
+            toast: true,
+            position: 'top-end',
+            type: 'success',
+            title: '欢迎光临本站！',
+            timer: 1500,
+            showConfirmButton:false,
+        });
+    },
     methods: {
         wantpay(){
             this.hidepay = !this.hidepay;

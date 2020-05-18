@@ -87,7 +87,7 @@ export const state = () => {
             list: [
                 {
                     name: 'Sci-Hub可用网址',
-                    path: 'http://www.howsci.com/sci-hub-alternative.html',
+                    path: '/sci',
                     head: {
                         keywords: ['嗑盐', '嗑盐'],
                         description: 'Sci-Hub可用网址'
@@ -117,6 +117,33 @@ export const state = () => {
                         description: '唐诗宋词元曲'
                     },
                     hot:'debug'//debug new recommend
+                },
+                {
+                    name: '论语',
+                    path: '/lunyu',
+                    head: {
+                        keywords: ['论语', '子曰'],
+                        description: '论语'
+                    },
+                    hot:'new'//debug new recommend
+                },
+                {
+                    name: '宋词',
+                    path: '/songci',
+                    head: {
+                        keywords: ['宋词'],
+                        description: '宋词'
+                    },
+                    hot:'new'//debug new recommend
+                },
+                {
+                    name: '诗经',
+                    path: '/shijing',
+                    head: {
+                        keywords: ['诗经', '风'],
+                        description: '诗经'
+                    },
+                    hot:'new'//debug new recommend
                 },
             ]
         },

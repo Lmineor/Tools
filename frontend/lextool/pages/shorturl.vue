@@ -26,7 +26,9 @@ export default {
     middleware: 'auth', // 需要登录
     name: 'ShortUrl',
     head() {
-        return this.$store.state.currentTool.head;
+        return{
+            title: '短链生成'
+        }
     },
     data() {
         return {
@@ -40,7 +42,13 @@ export default {
         },
         getShortUrl() {
             if (this.url === ''){
-                window.alert("网址不能为空");
+                this.$swal({
+                    toast: true,
+                    position: 'top-end',
+                    type: 'error',
+                    title: '网址不能为空',
+                    timer: 1500,
+                });
                 return false;
             }
             this.$axios
@@ -55,7 +63,6 @@ export default {
                 })
                 .catch(err => {
                     this.res = '生成失败';
-                    this.loading = false;
                 });
         },
     }
