@@ -203,6 +203,6 @@ export default {
     // },
     router: {
       prefetchLinks: false,
-      middleware: ['getCurrentTool', 'baidupush', 'auth']
+      middleware: ['getCurrentTool', 'baidupush']
     }
 };

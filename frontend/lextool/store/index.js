@@ -34,18 +34,10 @@ export const state = () => ({
     isMobile: {},
     env: env,
     syncTime: 0,
-    auth: '',
-    userInfo: ''
 });
 
 const disabledMouseWheel = e => e.stopPropagation();
 export const mutations = {
-    SET_USER_IFO(state, userInfo) {
-        state.userInfo = userInfo;
-    },
-    SET_AUTH(state, auth) {
-        state.auth = auth;
-    },
     SET_STORE(state, n) {
         if (_.isArray(n.value)) {
             n.value = Array.from(n.value);
