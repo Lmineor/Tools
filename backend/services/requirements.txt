@@ -8,3 +8,4 @@ beautifulsoup4 == 4.8.2
 requests == 2.20.0
 flask-security == 3.0.0
 email-validator == 1.1.0
+flask-httpauth == 4.0.0

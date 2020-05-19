@@ -8,10 +8,12 @@ from flask import redirect
 from flask import Response
 from flask_cors import CORS
 from flask_caching import Cache
-from flask import jsonify
+from flask import jsonify, g
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash,check_password_hash # 转换密码用到的库
 from flask_security import RoleMixin, UserMixin # 登录和角色需要继承的对象
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, SignatureExpired, BadSignature
+from flask_httpauth import HTTPBasicAuth
 
 from local_config import SQLALCHEMY_DATABASE_URI, SQLALCHEMY_BINDS, SECRET_KEY
 from logger import logger
@@ -20,7 +22,7 @@ from sciSpider import Sci
 from local_config import PER_PAGE
 
 app = Flask(__name__)
-
+auth = HTTPBasicAuth()
 db = SQLAlchemy(app)
 # ----------------------------------------------------------------
 # 数据库配置
@@ -72,7 +74,7 @@ class User(db.Model,UserMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer(),primary_key=True)
     username = db.Column(db.String(80), nullable=False)
-    email = db.Column(db.String(100),unique=True, nullable=False)
+    email = db.Column(db.String(100),unique=True, nullable=False, index = True)
     password_hash = db.Column(db.String(128))
     #多对多关联
     roles = db.relationship('Role',secondary='role_user',backref=db.backref('users',lazy='dynamic'))
@@ -94,6 +96,29 @@ class User(db.Model,UserMixin):
     def check_password_hash(self, password):
         return check_password_hash(self.password_hash,password)
 
+    # 获取token，有效时间1天
+    def generate_auth_token(self, expiration = 60*60*24):
+        s = Serializer(app.config['SECRET_KEY'], expires_in = expiration)
+        return s.dumps({ 'id': self.id })
+
+    # 解析token，确认登录的用户身份
+    @staticmethod
+    def verify_auth_token(token):
+        print(token + 'is')
+        logger.info(token)
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            app.logger.debug('hhh')  # 加这条
+            data = s.loads(token)
+            logger.info(data)
+        except SignatureExpired:
+            app.logger.error(e)  # 加这条
+            return None # valid token, but expired
+        except BadSignature as e:
+            app.logger.error(e)  # 加这条
+            return None # invalid token
+        user = User.query.get(data['id'])
+        return user
 
 class ShortUrl(db.Model):
     __tablename__ = 'ShortUrl' # 未设置__bind_key__,则采用默认的数据库引擎
@@ -172,19 +197,10 @@ class ShiJing(db.Model):
 
 # ----------------------------------------------------------------
 # 路由
-@app.route('/login', methods=['POST'])
-def login():
-    email = request.get_json()['email']
-    password = request.get_json()['password']
-    verifyuser = verify_user(email, password)
-    if verifyuser[0] == True:
-        username = verifyuser[1]
-        session['username'] = username
-        session.permanent = True
-        return jsonify({'code': 200, 'username': username, 'description': 'successful'})
-    else:
-        return jsonify({'code': 201,  'username': '', 'description': 'failed'})
-
+@app.route("/testlogin", methods=['POST', 'GET'])
+@auth.login_required
+def index():    
+    return jsonify('Hello, %s' % g.user.username)
 
 @app.route('/logout', methods=['DELETE'])
 def logout():
@@ -196,7 +212,7 @@ def logout():
 
 @app.route('/token', methods=['POST', 'GET'])
 def testlogin():
-    username = session.get('username')
+    token = request.get_json()['token']
     if username:
         return jsonify({'info': username, 'code': 200})
     else:
@@ -221,6 +237,47 @@ def user_register():
         'code': 200
     }
     return jsonify(res)
+
+
+@auth.verify_password
+def verify_password(email_or_token, password):
+    if request.path == "/login":
+        # email_or_token = request.get_json()['email']
+        # password = request.get_json()['password']
+        user = User.query.filter_by(email=email_or_token).first()
+        if not user or not user.check_password_hash(password):
+            return False
+    else:
+        user = User.verify_auth_token(email_or_token)
+        if not user:
+            return False
+    g.user = user
+    return True
+
+
+@app.route('/login', methods=['GET'])
+@auth.login_required
+def get_auth_token():
+    token = g.user.generate_auth_token()
+    username = g.user.username
+    print(username)
+    return jsonify({'token': token.decode('ascii'), 'username': username})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # from poemPage import poem

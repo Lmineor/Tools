@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import env from '../env';
 import Vuex from 'vuex'
-const cookieparser = process.server ? require('cookie-parser') : undefined
+const cookieparser = process.server ? require('cookieparser') : undefined
 
 export const state = () => ({
     dark: false,
@@ -34,10 +34,18 @@ export const state = () => ({
     isMobile: {},
     env: env,
     syncTime: 0,
+    auth: null,
+    user:null
 });
 
 const disabledMouseWheel = e => e.stopPropagation();
 export const mutations = {
+    SET_AUTH(state, auth) {
+        state.auth = auth;
+    },
+    SET_USER_IFO(state, user) {
+        state.user = user;
+    },
     SET_STORE(state, n) {
         if (_.isArray(n.value)) {
             n.value = Array.from(n.value);
@@ -96,18 +104,4 @@ export const actions = {
           commit('SET_AUTH', auth)
         }
     },
-    /**
-       * 获取用户信息
-       * @param state
-       * @param commit
-       * @returns {Promise<void>}
-       */
-      async getUserInfo({state, commit}) {
-        if (state.userInfo) {
-          return
-        }
-        const {data} = await env.axios
-        // const {data} = await Service.userInfo.request(state.auth)
-        commit('SET_USER_IFO', data)
-      },
 }

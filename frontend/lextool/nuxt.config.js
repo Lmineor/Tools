@@ -149,6 +149,10 @@ export default {
               customClass: {
                   popup: 'sweetalert2'
               }
+          },
+          'nuxt-vuex-localstorage', {
+            localStorage: [],  //  If not entered, “localStorage” is the default value
+            sessionStorage: []  //  If not entered, “sessionStorage” is the default value
           }
       ]
   ],
@@ -203,6 +207,6 @@ export default {
     // },
     router: {
       prefetchLinks: false,
-      middleware: ['getCurrentTool', 'baidupush']
+      middleware: ['getCurrentTool', 'baidupush', 'authenticated']
     }
 };

@@ -2,6 +2,14 @@
   <div class="login">
     <nya-container :title=title>
       <nya-input
+        v-model="username"
+        label="用户名"
+        placeholder="用户名"
+        autocomplete="off"
+        autofocus
+        fullwidth
+      />
+      <nya-input
         v-model="email"
         label="邮箱"
         placeholder="邮箱"
@@ -37,6 +45,7 @@ export default {
   data () {
     return {
       title: '用户登录',
+      username: '',
       email: '',
       password: '',
       isFocus: false
@@ -54,31 +63,26 @@ export default {
                 });
         return
       }
-       this.$axios.defaults.auth = {
-                username: this.email,
-                password: this.password,
-            }
       this.$axios
-        .get(envs.apiUrl + '/login')
-         .then(re => {
-          let token = re.data.token;
-          let username = re.data.username;
-          this.$store.commit("SET_AUTH", token);
-          this.$store.commit("SET_USER_IFO", username);
-          Cookie.set("auth", token);
-          Cookie.set("user", username);
-          this.$router.push("/") // 跳转到首页
+        .post(
+            envs.apiUrl + '/register',
+            {
+                username: this.username,
+                email: this.email,
+                password: this.password
+            },
+        )
+        .then(re => {
+          this.$router.push("/login") // 跳转到首页
         })
         .catch(err => {
-          console.log(err);
-          this.$swal({
-                  toast: true,
-                  position: 'top-end',
-                  type: 'error',
-                  title: '用户名或密码错误',
-                  // title: err,
-                  timer: 1500,
-              });
+            this.$swal({
+                    toast: true,
+                    position: 'top-end',
+                    type: 'error',
+                    title: 'error',
+                    timer: 1500,
+                });
         });
     },
     register () {
