@@ -1,5 +1,5 @@
 <template>
-  <div class="login">
+  <div class="register">
     <nya-container :title=title>
       <nya-input
         v-model="username"
@@ -26,7 +26,6 @@
         type="password"
         @keyup.enter="login"
       />
-      <div class="nya-btn" id = "login" @click="login">登 录</div>
       <div class="nya-btn" id="register" @click="register">注册</div>
     </nya-container>
     
@@ -41,10 +40,10 @@ import {validUsername} from '@/utils/validate'
 
 
 export default {
-  name: 'login',
+  name: 'register',
   data () {
     return {
-      title: '用户登录',
+      title: '注册',
       username: '',
       email: '',
       password: '',
@@ -52,48 +51,23 @@ export default {
     }
   },
   methods: {
-    login () {
-      if (this.email === '' || this.password === '') {
-        this.$swal({
-                    toast: true,
-                    position: 'top-end',
-                    type: 'error',
-                    title: '用户名或密码不能为空',
-                    timer: 1500,
-                });
-        return
-      }
-      this.$axios
-        .post(
-            envs.apiUrl + '/register',
-            {
-                username: this.username,
-                email: this.email,
-                password: this.password
-            },
-        )
-        .then(re => {
-          this.$router.push("/login") // 跳转到首页
-        })
-        .catch(err => {
-            this.$swal({
-                    toast: true,
-                    position: 'top-end',
-                    type: 'error',
-                    title: 'error',
-                    timer: 1500,
-                });
-        });
-    },
     register () {
       if (this.email === '' || this.password === '') {
-        window.alert("用户名或密码不能为空");
+        this.$swal({
+                  toast: true,
+                  position: 'top-end',
+                  type: 'error',
+                  title: 'error',
+                  // title: err,
+                  timer: 1500,
+              });
         return
       }
       this.$axios
         .post(
-            envs.apiUrl + '/register',
+            envs.apiUrl + '/auth/register',
             {
+                username: this.username,
                 email: this.email,
                 password: this.password
             },
@@ -108,19 +82,12 @@ export default {
         });
     }
   },
-  // mounted() {
-  //   if (this.email === '') {
-  //     this.$refs.email.focus()
-  //   } else if (this.password === '') {
-  //     this.$refs.password.focus()
-  //   }
-  // },
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style  lang="scss">
-  .login {
+  .register {
     width: 100%;
     max-width: 400px;
     margin: 100px auto 0;
@@ -131,11 +98,8 @@ export default {
       margin-top:15px;
       width: 100px;
     }
-    #login{
-      margin-left: 0;
-    }
     #register{
-      float: right;
+      width: 100%;
     }
   }
 </style>

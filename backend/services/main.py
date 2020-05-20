@@ -70,12 +70,13 @@ class Role(db.Model,RoleMixin):
         return "<Role_id:{0}>".format(self.id)
 
 
-class User(db.Model,UserMixin):
+class User(db.Model, UserMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer(),primary_key=True)
     username = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(100),unique=True, nullable=False, index = True)
     password_hash = db.Column(db.String(128))
+    memo = db.Column(db.Text)
     #多对多关联
     roles = db.relationship('Role',secondary='role_user',backref=db.backref('users',lazy='dynamic'))
 
@@ -197,12 +198,25 @@ class ShiJing(db.Model):
 
 # ----------------------------------------------------------------
 # 路由
-@app.route("/testlogin", methods=['POST', 'GET'])
+@app.route("/api/auth/usermemo", methods=['POST', 'GET'])
 @auth.login_required
-def index():    
-    return jsonify('Hello, %s' % g.user.username)
+def usermemo():
+    memo = g.user.memo
+    return jsonify({'memo': memo})
 
-@app.route('/logout', methods=['DELETE'])
+
+@app.route("/api/auth/saveusermemo", methods=['POST', 'GET'])
+@auth.login_required
+def saveusermemo():
+    id = g.user.id
+    memo = request.get_json()['memo']
+    currentuser = User.query.get(id)
+    currentuser.memo = memo
+    db.session.add(currentuser)
+    db.session.commit()
+    return jsonify({'memo': memo})
+
+@app.route('/api/auth/logout', methods=['DELETE'])
 def logout():
     if 'username' in session:
         session.pop('username')
@@ -210,17 +224,8 @@ def logout():
     else:
         return jsonify({'code': 201, 'description': 'No user was found.'})
 
-@app.route('/token', methods=['POST', 'GET'])
-def testlogin():
-    token = request.get_json()['token']
-    if username:
-        return jsonify({'info': username, 'code': 200})
-    else:
-        return jsonify({'info': 'error', 'code': 400})
 
-
-
-@app.route('/register', methods=['POST'])
+@app.route('/auth/register', methods=['POST'])
 def user_register():
     """
     test
@@ -241,7 +246,7 @@ def user_register():
 
 @auth.verify_password
 def verify_password(email_or_token, password):
-    if request.path == "/login":
+    if request.path == "/auth/login":
         # email_or_token = request.get_json()['email']
         # password = request.get_json()['password']
         user = User.query.filter_by(email=email_or_token).first()
@@ -255,7 +260,7 @@ def verify_password(email_or_token, password):
     return True
 
 
-@app.route('/login', methods=['GET'])
+@app.route('/auth/login', methods=['GET'])
 @auth.login_required
 def get_auth_token():
     token = g.user.generate_auth_token()

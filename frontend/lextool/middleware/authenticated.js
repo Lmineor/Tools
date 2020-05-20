@@ -8,11 +8,12 @@ export default function ({store, route, redirect, req}) {
   if (auth) {
     store.commit('SET_AUTH', auth)
     // return store.dispatch('getUserInfo')
-    return redirect('/')
   }
   const routePath = route.path
   const extraPath = ['/']
-  if ((!store.state.token) && extraPath.indexOf(routePath) === -1) {
+  // if ((!store.state.token) && extraPath.indexOf(routePath) === -1) {
+  console.log(!auth)
+  if (!auth) {
     return redirect('/login')
   }
 }

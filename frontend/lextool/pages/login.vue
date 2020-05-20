@@ -59,7 +59,7 @@ export default {
                 password: this.password,
             }
       this.$axios
-        .get(envs.apiUrl + '/login')
+        .get(envs.apiUrl + '/auth/login')
          .then(re => {
           let token = re.data.token;
           let username = re.data.username;
@@ -67,6 +67,13 @@ export default {
           this.$store.commit("SET_USER_IFO", username);
           Cookie.set("auth", token);
           Cookie.set("user", username);
+          this.$swal({
+                    toast: true,
+                    position: 'top-end',
+                    type: 'success',
+                    title: '登录成功',
+                    timer: 2000,
+                });
           this.$router.push("/") // 跳转到首页
         })
         .catch(err => {
@@ -82,26 +89,7 @@ export default {
         });
     },
     register () {
-      if (this.email === '' || this.password === '') {
-        window.alert("用户名或密码不能为空");
-        return
-      }
-      this.$axios
-        .post(
-            envs.apiUrl + '/register',
-            {
-                email: this.email,
-                password: this.password
-            },
-        )
-        .then(re => {
-          
-          window.alert("注册成功");
-          this.$router.push("/login") // 跳转到login页
-        })
-        .catch(err => {
-            window.alert("用户名或密码错误");
-        });
+      this.$router.push("/register") // 跳转到首页
     }
   },
   // mounted() {
