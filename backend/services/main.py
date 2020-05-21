@@ -61,6 +61,7 @@ roles_users = db.Table(
 
 #角色表
 class Role(db.Model,RoleMixin):
+    __bind_key__ = 'user' # 已设置__bind_key__,则采用设置的数据库引擎
     __tablename__ = 'role'
     id = db.Column(db.Integer(),primary_key=True)
     name = db.Column(db.String(80),unique=True)
@@ -71,6 +72,7 @@ class Role(db.Model,RoleMixin):
 
 
 class User(db.Model, UserMixin):
+    __bind_key__ = 'user' # 已设置__bind_key__,则采用设置的数据库引擎
     __tablename__ = 'user'
     id = db.Column(db.Integer(),primary_key=True)
     username = db.Column(db.String(80), nullable=False)
@@ -105,18 +107,12 @@ class User(db.Model, UserMixin):
     # 解析token，确认登录的用户身份
     @staticmethod
     def verify_auth_token(token):
-        print(token + 'is')
-        logger.info(token)
         s = Serializer(app.config['SECRET_KEY'])
         try:
-            app.logger.debug('hhh')  # 加这条
             data = s.loads(token)
-            logger.info(data)
         except SignatureExpired:
-            app.logger.error(e)  # 加这条
             return None # valid token, but expired
         except BadSignature as e:
-            app.logger.error(e)  # 加这条
             return None # invalid token
         user = User.query.get(data['id'])
         return user
@@ -233,8 +229,6 @@ def user_register():
     username = request.get_json()['username']
     email = request.get_json()['email']
     password = request.get_json()['password']
-    logger.info('email' + email)
-    logger.info('password' + password)
     user = User(username=username,email=email,password=password)
     db.session.add(user)
     db.session.commit()
@@ -265,7 +259,6 @@ def verify_password(email_or_token, password):
 def get_auth_token():
     token = g.user.generate_auth_token()
     username = g.user.username
-    print(username)
     return jsonify({'token': token.decode('ascii'), 'username': username})
 
 
@@ -380,7 +373,6 @@ def get_lunyu():
         else:
             try:
                 items = PoemLunyu.query.all()
-                print(items[0])
                 chapters = list(set([item.chapter for item in items]))
             except Exception as e:
                 chapters = []
@@ -548,7 +540,6 @@ def main():
         db.session.flush()
         db.session.commit()
     except Exception as e:
-        logger.error(url + ' 重复')
         logger.error(e)
     if not su:
         item = ShortUrl.query.filter(ShortUrl.origin_url == url).first()
@@ -586,7 +577,6 @@ def get_originurl():
     短链还原部分
     """
     shorturl = request.get_json()['shorturl']
-    logger.info('输入的shorturl为：' + shorturl)
     if not shorturl:
         return None;
     try:

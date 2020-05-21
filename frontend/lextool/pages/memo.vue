@@ -26,12 +26,12 @@ import {validUsername} from '@/utils/validate'
 
 export default {
   middleware: 'authenticated', // 需要登录
-  name: 'login',
+  name: 'memo',
   data () {
     return {
       rows: 23,
       memo: '造吧',
-      title: '用户登录',
+      title: '便签',
       email: '',
       password: '',
       isFocus: false,
@@ -52,12 +52,14 @@ export default {
           title: '你好: ' + this.user,
           timer: 1500,
         });
+      this.$axios.defaults.auth = {
+                username: Cookie.get('auth'),
+                password: ''
+      }
       this.$axios
-        .post(
-            envs.apiUrl + '/api/auth/memo',
-            {
-                username: this.user,
-            },
+        .get(
+            envs.apiUrl + '/api/auth/usermemo',
+            {withCredentials: true}
         )
         .then(re => {
             this.memo = re.data.memo;
@@ -74,13 +76,16 @@ export default {
         });
     },
     savememo() {
-      Cookie.get()
+      this.$axios.defaults.auth = {
+          username: Cookie.get('auth'),
+          password: ''
+      }
       this.$axios
         .post(
             envs.apiUrl + '/api/auth/saveusermemo',
             {
                 username: this.user,
-                memo: this.methods,
+                memo: this.memo,
             },
         )
         .then(re => {
