@@ -1,4 +1,4 @@
-<p align="center"><img src="./frontend/lextool/static/ico.png"
+<p align="center"><img src="https://yanxuan.nosdn.127.net/fdfb4adc70a5d5295cfd503464deb7c5.png"
         alt="Logo" width="128" height="128" style="max-width: 100%;"></p>
 <h1 align="center">LexTools</h1>
 <p align="center">工具集合</p>
