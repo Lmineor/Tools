@@ -92,13 +92,7 @@ export default {
       this.$router.push("/register") // 跳转到首页
     }
   },
-  // mounted() {
-  //   if (this.email === '') {
-  //     this.$refs.email.focus()
-  //   } else if (this.password === '') {
-  //     this.$refs.password.focus()
-  //   }
-  // },
+
 }
 </script>
 

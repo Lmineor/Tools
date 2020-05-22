@@ -54,13 +54,12 @@ export default {
     register () {
       if (this.email === '' || this.password === '') {
         this.$swal({
-                  toast: true,
-                  position: 'top-end',
-                  type: 'error',
-                  title: 'error',
-                  // title: err,
-                  timer: 1500,
-              });
+          toast: true,
+          position: 'top-end',
+          type: 'error',
+          title: '邮箱或密码不能为空',
+          timer: 1500,
+        });
         return
       }
       this.$axios
@@ -73,12 +72,23 @@ export default {
             },
         )
         .then(re => {
-          
-          window.alert("注册成功");
-          this.$router.push("/login") // 跳转到login页
+          this.$swal({
+            toast: true,
+            position: 'top-end',
+            type: 'error',
+            title: '注册成功',
+            timer: 1500,
+          });
+          this.$router.push("/auth/login") // 跳转到login页
         })
         .catch(err => {
-            window.alert("用户名或密码错误");
+            this.$swal({
+            toast: true,
+            position: 'top-end',
+            type: 'error',
+            title: '注册失败',
+            timer: 1500,
+          });
         });
     }
   },
