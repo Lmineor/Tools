@@ -21,7 +21,9 @@
 
 <script>
 import envs from '../env'
+
 export default {
+    middleware: 'authenticated', // 需要登录
     name: 'ShortUrl',
     head() {
         return{

@@ -1,5 +1,7 @@
 import _ from 'lodash';
 import env from '../env';
+import Vuex from 'vuex'
+const cookieparser = process.server ? require('cookieparser') : undefined
 
 export const state = () => ({
     dark: false,
@@ -31,11 +33,19 @@ export const state = () => ({
     welcome: true,
     isMobile: {},
     env: env,
-    syncTime: 0
+    syncTime: 0,
+    auth: null,
+    user:null
 });
 
 const disabledMouseWheel = e => e.stopPropagation();
 export const mutations = {
+    SET_AUTH(state, auth) {
+        state.auth = auth;
+    },
+    SET_USER_IFO(state, user) {
+        state.user = user;
+    },
     SET_STORE(state, n) {
         if (_.isArray(n.value)) {
             n.value = Array.from(n.value);
@@ -72,3 +82,26 @@ export const mutations = {
         state.disabledMouseWheel = type;
     }
 };
+
+
+
+// const cookieParser = require('cookie-parser');
+// app.use(cookieParser('123456')); //使用cookie中间件，传入签名123456进行加密
+// res.cookies('key','value',option) //设置cookie,需要设置signed签名
+export const actions = {
+    // nuxtServerInit is called by Nuxt.js before server-rendering every page
+    nuxtServerInit({ commit }, { req }) {
+        console.log('nuxt init')
+        console.log(req.headers.cookie)
+        let auth = null
+        if (req.headers.cookie) {
+          const parsed = cookieparser.parse(req.headers.cookie)
+          try {
+            auth = JSON.parse(parsed.auth)
+          } catch (err) {
+            // No valid cookie found
+          }
+          commit('SET_AUTH', auth)
+        }
+    },
+}

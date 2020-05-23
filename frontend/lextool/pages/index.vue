@@ -1,7 +1,7 @@
 <template>
     <div class="home">
         <Welcome />
-        <Search v-model="searchText" @enter="enterFirst">
+        <!-- <Search v-model="searchText" @enter="enterFirst">
             <template slot-scope="data">
                 <nuxt-link
                     v-for="(tool, index) in data.data"
@@ -14,7 +14,7 @@
                     {{ tool.name }}
                 </nuxt-link>
             </template>
-        </Search>
+        </Search> -->
         
         <Favorites v-show="!searchText" />
 

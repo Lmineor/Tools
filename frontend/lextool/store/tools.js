@@ -77,7 +77,16 @@ export const state = () => {
                         keywords: ['Markdown'],
                         description: 'Markdown'
                     },
-                    hot:''//debug new recommend
+                    hot:'', //debug new recommend
+                },
+                {
+                    name: '便签',
+                    path: '/memo',
+                    head: {
+                        keywords: ['memo'],
+                        description: 'memo'
+                    },
+                    hot:'new', //debug new recommend
                 },
             ]
         },

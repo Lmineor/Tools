@@ -1,19 +1,43 @@
 #encoding:utf-8
+import datetime
 
-import hashlib
-import re
-
-from flask import request, redirect, Response
+from flask import Flask
+from flask import session
+from flask import request
+from flask import redirect
+from flask import Response
 from flask_cors import CORS
 from flask_caching import Cache
+from flask import jsonify, g
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash,check_password_hash # 转换密码用到的库
+from flask_security import RoleMixin, UserMixin # 登录和角色需要继承的对象
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, SignatureExpired, BadSignature
+from flask_httpauth import HTTPBasicAuth
 
-from db import *
+from local_config import SQLALCHEMY_DATABASE_URI, SQLALCHEMY_BINDS, SECRET_KEY
 from logger import logger
 from gen_dwz import gen_dwz
 from sciSpider import Sci
 from local_config import PER_PAGE
 
-# app 在db中
+app = Flask(__name__)
+auth = HTTPBasicAuth()
+db = SQLAlchemy(app)
+# ----------------------------------------------------------------
+# 数据库配置
+app.config['SQLALCHEMY_DATABASE_URI']= SQLALCHEMY_DATABASE_URI
+app.config['SQLALCHEMY_BINDS']= SQLALCHEMY_BINDS
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=True 
+#设置这一项是每次请求结束后都会自动提交数据库中的变动
+
+# 登录模块配置
+app.config['SECRET_KEY'] = SECRET_KEY
+app.permanent_session_lifetime = datetime.timedelta(seconds=30*60)
+# session.permanent = True
+
+
+# 跨域配置
 CORS(app, supports_credentials=True)
 # ----------------------------------------------------------------
 # 缓存配置（文件系统缓存）
@@ -27,8 +51,223 @@ FILESYSTEM = {
 cache = Cache(app,config=FILESYSTEM)
 
 
+#角色<-->用户，关联表
+roles_users = db.Table(
+    'role_user',
+    db.Column('user_id',db.Integer(),db.ForeignKey('user.id')),
+    db.Column('role_id',db.Integer(),db.ForeignKey('role.id'))
+)
+
+
+#角色表
+class Role(db.Model,RoleMixin):
+    __tablename__ = 'role'
+    id = db.Column(db.Integer(),primary_key=True)
+    name = db.Column(db.String(80),unique=True)
+    description = db.Column(db.String(255))
+
+    def __repr__(self):
+        return "<Role_id:{0}>".format(self.id)
+
+
+class User(db.Model, UserMixin):
+    __tablename__ = 'user'
+    id = db.Column(db.Integer(),primary_key=True)
+    username = db.Column(db.String(80), nullable=False)
+    email = db.Column(db.String(100),unique=True, nullable=False, index = True)
+    password_hash = db.Column(db.String(128))
+    memo = db.Column(db.Text)
+    #多对多关联
+    roles = db.relationship('Role',secondary='role_user',backref=db.backref('users',lazy='dynamic'))
+
+
+    def __repr__(self):
+        return "<User_id:{0}>".format(self.id)
+
+    @property
+    def password(self):
+        raise AttributeError("密码不允许读取")
+
+    #转换密码为hash存入数据库
+    @password.setter
+    def password(self,password):
+        self.password_hash = generate_password_hash(password)
+
+    #检查密码
+    def check_password_hash(self, password):
+        return check_password_hash(self.password_hash,password)
+
+    # 获取token，有效时间1天
+    def generate_auth_token(self, expiration = 60*60*24):
+        s = Serializer(app.config['SECRET_KEY'], expires_in = expiration)
+        return s.dumps({ 'id': self.id })
+
+    # 解析token，确认登录的用户身份
+    @staticmethod
+    def verify_auth_token(token):
+        print(token + 'is')
+        logger.info(token)
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            app.logger.debug('hhh')  # 加这条
+            data = s.loads(token)
+            logger.info(data)
+        except SignatureExpired:
+            app.logger.error(e)  # 加这条
+            return None # valid token, but expired
+        except BadSignature as e:
+            app.logger.error(e)  # 加这条
+            return None # invalid token
+        user = User.query.get(data['id'])
+        return user
+
+class ShortUrl(db.Model):
+    __tablename__ = 'ShortUrl' # 未设置__bind_key__,则采用默认的数据库引擎
+    id = db.Column(db.Integer, primary_key=True)
+    origin_url = db.Column(db.String(80), unique=True)
+    short_url = db.Column(db.String(30), unique=True)
+
+
+class PoemSongAuthor(db.Model):
+    __bind_key__ = 'poem' # 已设置__bind_key__,则采用设置的数据库引擎
+    __tablename__ = 'songshiauthor'
+
+    id = db.Column(db.Integer, primary_key=True)
+    descb = db.Column(db.Text)
+    name = db.Column(db.String(30))
+
+
+class PoemTangAuthor(db.Model):
+    __bind_key__ = 'poem' # 已设置__bind_key__,则采用设置的数据库引擎
+    __tablename__ = 'tangshiauthor'
+
+    id = db.Column(db.Integer, primary_key=True)
+    descb = db.Column(db.Text)
+    name = db.Column(db.String(30))
+
+
+class PoemTangSong(db.Model):
+    __bind_key__ = 'poem' # 已设置__bind_key__,则采用设置的数据库引擎
+    __tablename__ = 'tangsongshi'
+
+    id = db.Column(db.Integer, primary_key=True)
+    paragraphs = db.Column(db.Text)
+    title = db.Column(db.String(30))
+    author = db.Column(db.String(30))
+    dynasty = db.Column(db.String(10))
+
+
+class PoemLunyu(db.Model):
+    __bind_key__ = 'poem' # 已设置__bind_key__,则采用设置的数据库引擎
+    __tablename__ = 'lunyu'
+
+    id = db.Column(db.Integer, primary_key=True)
+    paragraphs = db.Column(db.Text)
+    chapter = db.Column(db.String(50))
+
+
+class PoemSongci(db.Model):
+    __bind_key__ = 'poem' # 已设置__bind_key__,则采用设置的数据库引擎
+    __tablename__ = 'songci'
+
+    id = db.Column(db.Integer, primary_key=True)
+    paragraphs = db.Column(db.Text)
+    rhythmic = db.Column(db.String(40))
+    author = db.Column(db.String(20))
+
+
+class CiAuthor(db.Model):
+    __bind_key__ = 'poem' # 已设置__bind_key__,则采用设置的数据库引擎
+    __tablename__ = 'ciauthor'
+
+    id = db.Column(db.Integer, primary_key=True)
+    long_desc = db.Column(db.Text)
+    short_desc = db.Column(db.Text)
+    name = db.Column(db.String(20))
+
+
+class ShiJing(db.Model):
+    __bind_key__ = 'poem' # 已设置__bind_key__,则采用设置的数据库引擎
+    __tablename__ = 'shijing'
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(30))
+    chapter = db.Column(db.String(30))
+    section = db.Column(db.String(30))
+    content = db.Column(db.String(20))
+
 # ----------------------------------------------------------------
 # 路由
+@app.route("/auth/usermemo", methods=['POST', 'GET'])
+@auth.login_required
+def usermemo():
+    memo = g.user.memo
+    return jsonify({'memo': memo})
+
+
+@app.route("/auth/saveusermemo", methods=['POST', 'GET'])
+@auth.login_required
+def saveusermemo():
+    id = g.user.id
+    memo = request.get_json()['memo']
+    currentuser = User.query.get(id)
+    currentuser.memo = memo
+    db.session.add(currentuser)
+    db.session.commit()
+    return jsonify({'memo': memo})
+
+@app.route('/auth/logout', methods=['DELETE'])
+def logout():
+    if 'username' in session:
+        session.pop('username')
+        return jsonify({'code': 200,'description': 'Logout successful.'})
+    else:
+        return jsonify({'code': 201, 'description': 'No user was found.'})
+
+
+@app.route('/auth/register', methods=['POST'])
+def user_register():
+    """
+    test
+    """
+    username = request.get_json()['username']
+    email = request.get_json()['email']
+    password = request.get_json()['password']
+    logger.info('email' + email)
+    logger.info('password' + password)
+    user = User(username=username,email=email,password=password)
+    db.session.add(user)
+    db.session.commit()
+    res = {
+        'code': 200
+    }
+    return jsonify(res)
+
+
+@auth.verify_password
+def verify_password(email_or_token, password):
+    if request.path == "/auth/login":
+        # email_or_token = request.get_json()['email']
+        # password = request.get_json()['password']
+        user = User.query.filter_by(email=email_or_token).first()
+        if not user or not user.check_password_hash(password):
+            return False
+    else:
+        user = User.verify_auth_token(email_or_token)
+        if not user:
+            return False
+    g.user = user
+    return True
+
+
+@app.route('/auth/login', methods=['GET'])
+@auth.login_required
+def get_auth_token():
+    token = g.user.generate_auth_token()
+    username = g.user.username
+    return jsonify({'token': token.decode('ascii'), 'username': username})
+
+
 @app.route('/poem/getauthor', methods=['POST'])
 def get_author():
     """
@@ -60,7 +299,7 @@ def get_author():
         'total': total,
         'authors': authors
     }
-    return data
+    return jsonify(data)
 
 
 @app.route('/poem/gettitle', methods=['POST'])
@@ -81,10 +320,10 @@ def get_title():
             titles = []
             logger.error(e)
         cache.set(author + dynasty, titles)
-    return {
+    return jsonify({
         'code': 200,
         'titles': titles
-    }
+    })
 
 
 @app.route('/poem/getpoem', methods=['POST'])
@@ -105,10 +344,10 @@ def get_poem():
             poem = ''
             logger.error(e)
         cache.set(author + dynasty + title, poem)
-    return {
+    return jsonify({
         'code': 200,
         'poem': poem
-    }
+    })
 
 @app.route('/poem/lunyu', methods=['POST', 'GET'])
 def get_lunyu():
@@ -127,10 +366,10 @@ def get_lunyu():
                 chapters = []
                 logger.error(e)
             cache.set('chapters', chapters)
-        return {
+        return jsonify({
             'code': 200,
             'chapters': chapters
-        }
+        })
     else:
         chapter = request.get_json()['chapter']
         logger.info('chapter: ' + chapter)
@@ -143,10 +382,10 @@ def get_lunyu():
                 paragraphs = ''
                 logger.error(e)
             cache.set(chapter, paragraphs)
-        return {
+        return jsonify({
             'code': 200,
             'paragraphs': paragraphs.split('|')
-        }
+        })
 
 
 @app.route('/poem/songci', methods=['POST', 'GET'])
@@ -173,11 +412,11 @@ def get_songci():
                 authors = []
                 logger.error(e)
             cache.set(str(page) + 'songci', authors)
-        return {
+        return jsonify({
             'code': 200,
             'authors': authors,
             'total': total
-        }
+        })
     elif not rhythmic: # 获取词牌名s
         if cache.get(author + '_ci'):
             rhythmics = cache.get(author + '_ci')
@@ -189,10 +428,10 @@ def get_songci():
                 rhythmics = []
                 logger.error(e)
             cache.set(author + '_ci', rhythmics)
-        return {
+        return jsonify({
             'code': 200,
             'rhythmics': rhythmics
-        }
+        })
     else:
         if cache.get(author + rhythmic + '_ci'):
             paragraphs = cache.get(author + rhythmic + '_ci')
@@ -203,10 +442,10 @@ def get_songci():
                 paragraphs = ''
                 logger.error(e)
             cache.set(author + rhythmic + '_ci', paragraphs)
-        return {
+        return jsonify({
             'code': 200,
             'paragraphs': paragraphs
-        }
+        })
 
 
 @app.route('/poem/shijing', methods=['POST'])
@@ -232,11 +471,11 @@ def get_shijing():
                 titles = []
                 logger.error(e)
             cache.set(str(page) + 'shijing', titles)
-        return {
+        return jsonify({
             'code': 200,
             'titles': titles,
             'total': total
-        }
+        })
     else: # 获取内容
         logger.info(title)
         if cache.get(title + 'shijing'):
@@ -256,12 +495,13 @@ def get_shijing():
             cache.set(title + 'shijing', content)
             cache.set(title + 'chaper', chapter)
             cache.set(title + 'section', section)
-        return {
+        return jsonify({
             'code': 200,
             'content': content,
             'chapter': chapter,
             'section': section,
-        }
+        })
+
 
 
 @app.route('/shorturl/shorten', methods=['POST'])
@@ -298,7 +538,7 @@ def main():
         'code': 200,
         'url': su
     }
-    return data
+    return jsonify(data)
 
 
 @app.route('/s/<code>', methods=['GET'])
@@ -335,10 +575,10 @@ def get_originurl():
     except Exception as e:
         origin_url = '生成失败,该短链不存在'
         logger.error(e)
-    return {
+    return jsonify({
         'code': 200,
         'OriginUrl': origin_url
-    }
+    })
 
 
 @app.route('/sci', methods=['GET'])
@@ -349,7 +589,7 @@ def get_sci():
         'code': 200,
         'urls': urls
     }
-    return data
+    return jsonify(data)
 
 
 def __pre_get(url):
@@ -361,6 +601,15 @@ def __pre_get(url):
     except Exception as e:
         logger.error(e)
     return su
+
+
+def verify_user(email, password):
+    #创建的时候还是使用password字段存入
+    user = User.query.filter_by(email=email).first()
+    if not user or not user.check_password_hash(password):
+        return False, ''
+    else:
+        return True, user.username
 
 
 if __name__ == '__main__':

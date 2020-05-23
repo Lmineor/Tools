@@ -2,6 +2,7 @@
     <div class="panel" icon="person-outline">
         <div class="login-text">
             <a href="https://github.com/Prolht/Tools" target="_blank" rel="noopener noreferrer">Powered by Lex吐司</a>
+            <a>{{$store.state.authUser}}</a>
         </div>
     </div>
 </template>
