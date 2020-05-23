@@ -62,15 +62,17 @@ roles_users = db.Table(
 #角色表
 class Role(db.Model,RoleMixin):
     __tablename__ = 'role'
+    __bind_key__ = 'user' # 已设置__bind_key__,则采用设置的数据库引擎
     id = db.Column(db.Integer(),primary_key=True)
     name = db.Column(db.String(80),unique=True)
     description = db.Column(db.String(255))
 
     def __repr__(self):
-        return "<Role_id:{0}>".format(self.id)
+        return "<Role_userid:{0}>".format(self.id)
 
 
 class User(db.Model, UserMixin):
+    __bind_key__ = 'user' # 已设置__bind_key__,则采用设置的数据库引擎
     __tablename__ = 'user'
     id = db.Column(db.Integer(),primary_key=True)
     username = db.Column(db.String(80), nullable=False)
