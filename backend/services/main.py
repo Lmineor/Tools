@@ -63,9 +63,8 @@ roles_users = db.Table(
 class Role(db.Model,RoleMixin):
     __bind_key__ = 'user' # 已设置__bind_key__,则采用设置的数据库引擎
     __tablename__ = 'role'
-    __bind_key__ = 'user' # 已设置__bind_key__,则采用设置的数据库引擎
     id = db.Column(db.Integer(),primary_key=True)
-    name = db.Column(db.String(80),unique=True)
+    email = db.Column(db.String(100),unique=True)
     description = db.Column(db.String(255))
 
     def __repr__(self):
@@ -79,7 +78,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(100),unique=True, nullable=False, index = True)
     password_hash = db.Column(db.String(128))
-    memo = db.Column(db.Text)
+    memo = db.Column(db.Text, nullable=True)
     #多对多关联
     roles = db.relationship('Role',secondary='role_user',backref=db.backref('users',lazy='dynamic'))
 
