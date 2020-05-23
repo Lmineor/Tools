@@ -36,7 +36,7 @@
 
 const Cookie = process.client ? require("js-cookie") : undefined;
 import envs from '../env'
-import {validUsername} from '@/utils/validate'
+import {validEmail} from '@/utils/validate'
 
 
 export default {
