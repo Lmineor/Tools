@@ -29,7 +29,7 @@
 
 const Cookie = process.client ? require("js-cookie") : undefined;
 import envs from '../env'
-import {validUsername} from '@/utils/validate'
+import {validEmail} from '@/utils/validate'
 
 
 export default {
@@ -44,14 +44,24 @@ export default {
   },
   methods: {
     login () {
-      if (this.email === '' || this.password === '') {
+      if ( this.email === '' || this.password === '') {
         this.$swal({
-                    toast: true,
-                    position: 'top-end',
-                    type: 'error',
-                    title: '用户名或密码不能为空',
-                    timer: 1500,
-                });
+            toast: true,
+            position: 'top-end',
+            type: 'error',
+            title: '邮箱或密码不能为空',
+            timer: 1500,
+        });
+        return
+      }
+      if ( !validEmail(this.email)) {
+        this.$swal({
+            toast: true,
+            position: 'top-end',
+            type: 'error',
+            title: '邮箱格式不正确',
+            timer: 1500,
+        });
         return
       }
        this.$axios.defaults.auth = {
@@ -79,13 +89,13 @@ export default {
         .catch(err => {
           console.log(err);
           this.$swal({
-                  toast: true,
-                  position: 'top-end',
-                  type: 'error',
-                  title: '用户名或密码错误',
-                  // title: err,
-                  timer: 1500,
-              });
+              toast: true,
+              position: 'top-end',
+              type: 'error',
+              title: '用户名或密码错误',
+              // title: err,
+              timer: 1500,
+          });
         });
     },
     register () {

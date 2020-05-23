@@ -52,15 +52,25 @@ export default {
   },
   methods: {
     register () {
-      if (this.email === '' || this.password === '') {
+      if (this.username === '' || this.email === '' || this.password === '') {
         this.$swal({
-          toast: true,
-          position: 'top-end',
-          type: 'error',
-          title: '邮箱或密码不能为空',
-          timer: 1500,
+            toast: true,
+            position: 'top-end',
+            type: 'error',
+            title: '用户名、邮箱、密码都不能为空',
+            // title: err,
+            timer: 1500,
         });
         return
+      }
+      if ( !validEmail(this.email)) {
+        this.$swal({
+            toast: true,
+            position: 'top-end',
+            type: 'error',
+            title: '邮箱格式不正确',
+            timer: 1500,
+        });
       }
       this.$axios
         .post(

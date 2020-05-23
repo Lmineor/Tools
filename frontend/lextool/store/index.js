@@ -91,8 +91,6 @@ export const mutations = {
 export const actions = {
     // nuxtServerInit is called by Nuxt.js before server-rendering every page
     nuxtServerInit({ commit }, { req }) {
-        console.log('nuxt init')
-        console.log(req.headers.cookie)
         let auth = null
         if (req.headers.cookie) {
           const parsed = cookieparser.parse(req.headers.cookie)

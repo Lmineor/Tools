@@ -15,6 +15,7 @@ Usage:
     log.debug("Hello World")
 """
 import os
+import time
 import logging
 import logging.handlers
 
@@ -128,9 +129,11 @@ def _get_logger(log_to_file=False, log_filename="", log_level="DEBUG"):
         except Exception as e:
             pass
         if log_filename:
+            log_filename = log_filename.split('.')[0] + time.strftime('%Y%m%d', time.localtime(time.time())) + '.log'
             _tmp_path = os.path.join(_tmp_path, "logs/{}".format(log_filename))
         else:
-            _tmp_path = os.path.join(_tmp_path, "logs/{}".format("default.log"))
+            log_filename = 'default'+ time.strftime('%Y%m%d', time.localtime(time.time())) + '.log'
+            _tmp_path = os.path.join(_tmp_path, "logs/{}".format(log_filename))
         file_handler = logging.handlers.TimedRotatingFileHandler(_tmp_path, when="midnight", backupCount=30)
         file_formatter = logging.Formatter(
             fmt=FILE_LOG_FMT,
