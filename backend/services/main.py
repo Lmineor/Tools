@@ -194,14 +194,14 @@ class ShiJing(db.Model):
 
 # ----------------------------------------------------------------
 # 路由
-@app.route("/api/auth/usermemo", methods=['POST', 'GET'])
+@app.route("/auth/usermemo", methods=['POST', 'GET'])
 @auth.login_required
 def usermemo():
     memo = g.user.memo
     return jsonify({'memo': memo})
 
 
-@app.route("/api/auth/saveusermemo", methods=['POST', 'GET'])
+@app.route("/auth/saveusermemo", methods=['POST', 'GET'])
 @auth.login_required
 def saveusermemo():
     id = g.user.id
@@ -212,7 +212,7 @@ def saveusermemo():
     db.session.commit()
     return jsonify({'memo': memo})
 
-@app.route('/api/auth/logout', methods=['DELETE'])
+@app.route('/auth/logout', methods=['DELETE'])
 def logout():
     if 'username' in session:
         session.pop('username')
@@ -261,25 +261,6 @@ def get_auth_token():
     username = g.user.username
     return jsonify({'token': token.decode('ascii'), 'username': username})
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# from poemPage import poem
-# app.register_blueprint(poem, url_prefix='/poem')  
 
 @app.route('/poem/getauthor', methods=['POST'])
 def get_author():
