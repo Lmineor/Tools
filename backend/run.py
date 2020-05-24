@@ -1,4 +1,4 @@
-from backend.Tools import create_app
+from lextool import create_app
 
 app = create_app()
 

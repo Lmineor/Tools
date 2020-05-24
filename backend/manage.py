@@ -1,7 +1,7 @@
 from flask_script import Manager
 
-from .Tools import create_app
-from .Tools.models import db
+from .lextool import create_app
+from .lextool.models import db
 
 app = create_app()
 manager = Manager(app)
