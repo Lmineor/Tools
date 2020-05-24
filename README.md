@@ -1,6 +1,6 @@
-<h1 align="center">LexTools</h1>
-<p align="center">工具集合</p>
-<p align="center">
+<h1 align="left">LexTools</h1>
+<p align="left">工具合集</p>
+<p align="left">
     <a href="https://github.com/Prolht/Tools/blob/master/LICENSE">
         <img src="https://badgen.net/github/license/micromatch/micromatch" alt="MIT License" />
     </a>
@@ -19,9 +19,9 @@
 </p>
 
 
-### 工具集合
+### 工具合集
 #### 说明
-自己做的或收集的工具合集，项目更新中。。。
+自己做的或收集的工具合集，项目持续更新中。。。
 #### 技术栈
 - 前端：vue全家桶 + nuxt
 - 后端：python：Flask
@@ -38,7 +38,7 @@
 
  2、 启动
  ```py
- python main.py
+ python run.py
  ```
 
 ### 前端
@@ -76,3 +76,15 @@ pm2 restart lextool  // 再重启
 ```
 
 > 前端致敬 [MikuTools](https://tools.miku.ac/)
+
+### 广告时间：
+Github:[https://github.com/Prolht](https://github.com/Prolht) 点个star哟！
+
+个人博客：[https://www.lex666.online](https://www.lex666.online)
+
+新浪微博： [https://weibo.com/u/2415026333](https://weibo.com/u/2415026333)
+
+微信公众号：
+<img src="https://yanxuan.nosdn.127.net/6d37e093859295a57cf7a1c9be5ad3b6.jpg" alt="" width="100" height="100" align="bottom" />
+欢迎关注！
+
