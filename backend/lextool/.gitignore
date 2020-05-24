@@ -99,4 +99,5 @@ flask_cache/
 
 __pycache__
 
+# local_config
 local_config.py

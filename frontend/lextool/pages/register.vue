@@ -28,7 +28,7 @@
       />
       <div class="nya-btn" id="register" @click="register">注册</div>
     </nya-container>
-    
+
   </div>
 </template>
 
@@ -74,7 +74,7 @@ export default {
       }
       this.$axios
         .post(
-            envs.apiUrl + '/auth/register',
+            envs.apiUrl + '/user/register',
             {
                 username: this.username,
                 email: this.email,
@@ -89,7 +89,7 @@ export default {
             title: '注册成功',
             timer: 1500,
           });
-          this.$router.push("/auth/login") // 跳转到login页
+          this.$router.push("/user/login") // 跳转到login页
         })
         .catch(err => {
             this.$swal({
