@@ -119,7 +119,7 @@ export const state = () => {
             icon: 'book-outline',
             list: [
                 {
-                    name: '诗词歌赋',
+                    name: '诗词',
                     path: '/poem',
                     head: {
                         keywords: ['唐诗', '宋词'],
