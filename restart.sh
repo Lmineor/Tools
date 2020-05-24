@@ -15,7 +15,7 @@ PROJECT_PORT=5000 # backend port
 
 GIT=git@github.com:Prolht/Tools.git
 
-if [[ $PROJECT_NAME_B && $PROJECT_PORT ]]
+if [$PROJECT_PORT ]
 then
     # stop backend
     lsof -i:${PROJECT_PORT}|awk '{print$2}' |grep -v PID|xargs kill -9 # 暂停
