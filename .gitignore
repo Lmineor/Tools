@@ -94,4 +94,8 @@ sw.*
 *.user.ini
 *.html
 *.htaccess
-flask_cache/
+flask_cache
+
+local_config.py
+
+.vscode

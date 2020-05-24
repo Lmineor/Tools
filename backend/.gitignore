@@ -100,3 +100,5 @@ flask_cache/
 __pycache__
 
 local_config.py
+
+.vscode
