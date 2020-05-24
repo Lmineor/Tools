@@ -95,7 +95,5 @@ sw.*
 *.html
 *.htaccess
 flask_cache
-
 local_config.py
-
 .vscode
