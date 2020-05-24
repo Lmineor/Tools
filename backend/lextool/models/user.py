@@ -6,26 +6,6 @@ from ..config.default import DefaultConfig
 from ..models import db
 
 
-# 角色<-->用户，关联表
-roles_users = db.Table(
-    'role_user',
-    db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
-    db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
-)
-
-
-# 角色表
-class Role(db.Model, RoleMixin):
-    __bind_key__ = 'user'  # 已设置__bind_key__,则采用设置的数据库引擎
-    __tablename__ = 'role'
-    id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(80), unique=True)
-    description = db.Column(db.String(255))
-
-    def __repr__(self):
-        return "<Role_id:{0}>".format(self.id)
-
-
 class User(db.Model, UserMixin):
     __bind_key__ = 'user'
     __tablename__ = 'user'
@@ -34,8 +14,6 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(100), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(128))
     memo = db.Column(db.Text)
-    # 多对多关联
-    roles = db.relationship('Role', secondary='role_user', backref=db.backref('users', lazy='dynamic'))
 
     def __repr__(self):
         return "<User_id:{0}>".format(self.id)
