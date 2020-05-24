@@ -11,7 +11,6 @@ PROJECT_B_BASE_PATH=/www/wwwroot/Tools/backend/ # backend
 PROJECT_NAME_F=lextool # frontend name
 # PROJECT_NAME_B=$1 # backend name
 PROJECT_PORT=$1 # backend port
-PROJECT_NAME_B=services
 PROJECT_PORT=5000 # backend port
 
 GIT=git@github.com:Prolht/Tools.git
@@ -30,10 +29,10 @@ then
     # install dependence & build
     # backend
     source activate $CONDA_ENV
-    cd $PROJECT_B_BASE_PATH$PROJECT_NAME_B
+    cd $PROJECT_B_BASE_PATH
     pip install -r requirements.txt
     # start
-    nohup python main.py >> server.log 2>&1 &
+    nohup python run.py >> server.log 2>&1 &
     echo "Complete Backend"
 
     # frontend
