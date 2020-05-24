@@ -1,7 +1,6 @@
-from backend.Tools.views.poem import PoemView
-from backend.Tools.views.user import UserView
-from backend.Tools.views.shorturl import ShortUrlView
-
+from ..views.poem import PoemView
+from ..views.shorturl import ShortUrlView
+from ..views.user import UserView
 
 
 def register_blueprints(app):

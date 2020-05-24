@@ -4,10 +4,10 @@ from flask import Blueprint
 from flask import jsonify
 from flask import render_template
 
-from backend.Tools.logger import logger
-from backend.Tools.models.shorturl import ShortUrl
-from backend.Tools.models import db
-from backend.Tools.utils.gen_dwz import gen_dwz
+from ...logger import logger
+from ...models.shorturl import ShortUrl
+from ...models import db
+from ...utils.gen_dwz import gen_dwz
 
 
 shorturl = Blueprint('shorturl', __name__)

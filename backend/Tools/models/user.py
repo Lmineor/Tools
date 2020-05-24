@@ -2,9 +2,8 @@ from werkzeug.security import generate_password_hash,check_password_hash # 转�
 from flask_security import RoleMixin, UserMixin # 登录和角色需要继承的对象
 from itsdangerous import TimedJSONWebSignatureSerializer as SignatureExpired, BadSignature,  Serializer
 
-from backend.Tools.config.default import DefaultConfig
-from backend.Tools.models import db
-
+from ..config.default import DefaultConfig
+from ..models import db
 
 
 # 角色<-->用户，关联表
