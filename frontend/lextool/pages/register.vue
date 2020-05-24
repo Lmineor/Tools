@@ -89,7 +89,7 @@ export default {
             title: '注册成功',
             timer: 1500,
           });
-          this.$router.push("/user/login") // 跳转到login页
+          this.$router.push("/login") // 跳转到login页
         })
         .catch(err => {
             this.$swal({

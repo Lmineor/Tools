@@ -78,12 +78,12 @@ export default {
           Cookie.set("auth", token);
           Cookie.set("user", username);
           this.$swal({
-                    toast: true,
-                    position: 'top-end',
-                    type: 'success',
-                    title: '登录成功',
-                    timer: 2000,
-                });
+              toast: true,
+              position: 'top-end',
+              type: 'success',
+              title: '登录成功',
+              timer: 2000,
+          });
           this.$router.push("/") // 跳转到首页
         })
         .catch(err => {
@@ -99,7 +99,7 @@ export default {
         });
     },
     register () {
-      this.$router.push("/user/register")
+      this.$router.push("/register")
     }
   },
 
