@@ -98,7 +98,6 @@ class User(db.Model, UserMixin):
     #检查密码
     def check_password_hash(self, password):
         return check_password_hash(self.password_hash,password)
-
     # 获取token，有效时间1天
     def generate_auth_token(self, expiration = 60*60*24):
         s = Serializer(app.config['SECRET_KEY'], expires_in = expiration)
