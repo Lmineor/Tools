@@ -1,6 +1,7 @@
 import datetime
 
-from flask import Flask, redirect, request
+from flask import Flask
+from flask_cors import CORS
 
 from .config.default import DefaultConfig
 from .views import register_blueprints
@@ -26,6 +27,7 @@ def create_app():
     register_blueprint(app)
     register_database(app)
     cache.init_app(app, config=DefaultConfig.FILESYSTEM)
+    CORS(app, supports_credentials=True)
     return app
 
 
