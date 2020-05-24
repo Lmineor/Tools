@@ -21,7 +21,7 @@
       <div class="nya-btn" id = "login" @click="login">登 录</div>
       <div class="nya-btn" id="register" @click="register">注册</div>
     </nya-container>
-    
+
   </div>
 </template>
 
@@ -69,7 +69,7 @@ export default {
                 password: this.password,
             }
       this.$axios
-        .get(envs.apiUrl + '/auth/login')
+        .get(envs.apiUrl + '/user/login')
          .then(re => {
           let token = re.data.token;
           let username = re.data.username;
@@ -99,7 +99,7 @@ export default {
         });
     },
     register () {
-      this.$router.push("/register") // 跳转到首页
+      this.$router.push("/user/register")
     }
   },
   // mounted() {

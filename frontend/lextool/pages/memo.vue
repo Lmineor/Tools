@@ -4,7 +4,7 @@
       <!-- <nya-input
         type="textarea"
       /> -->
-      <Input 
+      <Input
         v-model="memo"
         type="textarea"
         placeholder="Enter something..."
@@ -13,7 +13,7 @@
       />
       <div class="nya-btn" @click="savememo">保存</div>
     </nya-container>
-    
+
   </div>
 </template>
 
@@ -58,7 +58,7 @@ export default {
       }
       this.$axios
         .get(
-            envs.apiUrl + '/api/auth/usermemo',
+            envs.apiUrl + '/user/usermemo',
             {withCredentials: true}
         )
         .then(re => {
@@ -82,7 +82,7 @@ export default {
       }
       this.$axios
         .post(
-            envs.apiUrl + '/api/auth/saveusermemo',
+            envs.apiUrl + '/user/saveusermemo',
             {
                 username: this.user,
                 memo: this.memo,

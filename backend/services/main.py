@@ -497,6 +497,27 @@ def get_shijing():
 
 
 
+
+@app.route('/shorturl/OriginUrl', methods=['POST'])
+def get_originurl():
+    """
+    短链还原部分
+    """
+    shorturl = request.get_json()['shorturl']
+    if not shorturl:
+        return None;
+    try:
+        item = ShortUrl.query.filter(ShortUrl.short_url == shorturl).first()
+        origin_url = item.origin_url
+    except Exception as e:
+        origin_url = '生成失败,该短链不存在'
+        logger.error(e)
+    return jsonify({
+        'code': 200,
+        'OriginUrl': origin_url
+    })
+
+
 @app.route('/shorturl/shorten', methods=['POST'])
 def main():
     url = request.get_json()['url']
@@ -532,6 +553,16 @@ def main():
     }
     return jsonify(data)
 
+def __pre_get(url):
+    su = ''
+    try:
+        item = ShortUrl.query.filter(ShortUrl.origin_url == url).first()
+        if item:
+            su = item.short_url
+    except Exception as e:
+        logger.error(e)
+    return su
+
 
 @app.route('/s/<code>', methods=['GET'])
 def redir(code):
@@ -552,24 +583,6 @@ def redir(code):
         return redirect(origin_url)
 
 
-@app.route('/shorturl/OriginUrl', methods=['POST'])
-def get_originurl():
-    """
-    短链还原部分
-    """
-    shorturl = request.get_json()['shorturl']
-    if not shorturl:
-        return None;
-    try:
-        item = ShortUrl.query.filter(ShortUrl.short_url == shorturl).first()
-        origin_url = item.origin_url
-    except Exception as e:
-        origin_url = '生成失败,该短链不存在'
-        logger.error(e)
-    return jsonify({
-        'code': 200,
-        'OriginUrl': origin_url
-    })
 
 
 @app.route('/sci', methods=['GET'])
@@ -583,15 +596,7 @@ def get_sci():
     return jsonify(data)
 
 
-def __pre_get(url):
-    su = ''
-    try:
-        item = ShortUrl.query.filter(ShortUrl.origin_url == url).first()
-        if item:
-            su = item.short_url
-    except Exception as e:
-        logger.error(e)
-    return su
+
 
 
 def verify_user(email, password):

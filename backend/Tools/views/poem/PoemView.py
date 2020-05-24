@@ -1,10 +1,14 @@
-# 和诗词歌赋相关的接口
-
 from flask import Blueprint
-from flask import request
+from flask import jsonify, request
+
+from backend.Tools.models.poem import *
+from backend.Tools.logger import logger
+from backend.Tools.config.default import DefaultConfig
+from backend.Tools.cache import cache
 
 
 poem = Blueprint('poem', __name__)
+
 
 @poem.route('/getauthor', methods=['POST'])
 def get_author():
@@ -15,16 +19,16 @@ def get_author():
     page = request.get_json()['page']
     if cache.get(str(page) + dynasty):
         total = cache.get('authors_num' + dynasty)
-        authors =  cache.get(str(page) + dynasty)
+        authors = cache.get(str(page) + dynasty)
     else:
         try:
-            if dynasty =='唐':
+            if dynasty == '唐':
                 total = len(PoemTangAuthor.query.all())
-                items = PoemTangAuthor.query.paginate(page=page, per_page=PER_PAGE, error_out=False).items
+                items = PoemTangAuthor.query.paginate(page=page, per_page=DefaultConfig.PER_PAGE, error_out=False).items
                 authors = list(set([item.name for item in items]))
             else:
                 total = len(PoemSongAuthor.query.all())
-                items = PoemSongAuthor.query.paginate(page=page, per_page=PER_PAGE, error_out=False).items
+                items = PoemSongAuthor.query.paginate(page=page, per_page=DefaultConfig.PER_PAGE, error_out=False).items
                 authors = list(set([item.name for item in items]))
         except Exception as e:
             authors = []
@@ -52,7 +56,7 @@ def get_title():
         titles = cache.get(author + dynasty)
     else:
         try:
-            items = PoemTangSong.query.filter_by(author = author, dynasty=dynasty).all()
+            items = PoemTangSong.query.filter_by(author=author, dynasty=dynasty).all()
             titles = list(set([item.title for item in items]))
         except Exception as e:
             titles = []
@@ -77,7 +81,7 @@ def get_poem():
         poem = cache.get(author + dynasty + title)
     else:
         try:
-            poem = PoemTangSong.query.filter_by(author = author, dynasty=dynasty, title=title).first().paragraphs
+            poem = PoemTangSong.query.filter_by(author=author, dynasty=dynasty, title=title).first().paragraphs
         except Exception as e:
             poem = ''
             logger.error(e)
@@ -86,6 +90,7 @@ def get_poem():
         'code': 200,
         'poem': poem
     })
+
 
 @poem.route('/lunyu', methods=['POST', 'GET'])
 def get_lunyu():
@@ -98,7 +103,6 @@ def get_lunyu():
         else:
             try:
                 items = PoemLunyu.query.all()
-                print(items[0])
                 chapters = list(set([item.chapter for item in items]))
             except Exception as e:
                 chapters = []
@@ -115,7 +119,7 @@ def get_lunyu():
             paragraphs = cache.get('chapter')
         else:
             try:
-                paragraphs = PoemLunyu.query.filter_by(chapter = chapter).first().paragraphs
+                paragraphs = PoemLunyu.query.filter_by(chapter=chapter).first().paragraphs
             except Exception as e:
                 paragraphs = ''
                 logger.error(e)
@@ -134,17 +138,17 @@ def get_songci():
     author = request.get_json()['author']
     rhythmic = request.get_json()['rhythmic']
     page = request.get_json()['page']
-    if page: # 获取作者翻页数据
+    if page:  # 获取作者翻页数据
         if cache.get('authors_num' + 'songci'):
             total = int(cache.get('authors_num' + 'songci'))
         else:
             total = len(CiAuthor.query.all())
             cache.set('authors_num' + 'songci', total)
         if cache.get(str(page) + 'songci'):
-            authors =  cache.get(str(page) + 'songci')
+            authors = cache.get(str(page) + 'songci')
         else:
             try:
-                items = CiAuthor.query.paginate(page=page, per_page=PER_PAGE, error_out=False).items
+                items = CiAuthor.query.paginate(page=page, per_page=DefaultConfig.PER_PAGE, error_out=False).items
                 authors = list(set([item.name for item in items]))
             except Exception as e:
                 authors = []
@@ -155,12 +159,12 @@ def get_songci():
             'authors': authors,
             'total': total
         })
-    elif not rhythmic: # 获取词牌名s
+    elif not rhythmic:  # 获取词牌名s
         if cache.get(author + '_ci'):
             rhythmics = cache.get(author + '_ci')
         else:
             try:
-                items = PoemSongci.query.filter_by(author = author).all()
+                items = PoemSongci.query.filter_by(author=author).all()
                 rhythmics = list(set([item.rhythmic for item in items]))
             except Exception as e:
                 rhythmics = []
@@ -200,10 +204,10 @@ def get_shijing():
             total = len(ShiJing.query.all())
             cache.set('title_num' + 'shijing', total)
         if cache.get(str(page) + 'shijing'):
-            titles =  cache.get(str(page) + 'shijing')
+            titles = cache.get(str(page) + 'shijing')
         else:
             try:
-                items = ShiJing.query.paginate(page=page, per_page=PER_PAGE, error_out=False).items
+                items = ShiJing.query.paginate(page=page, per_page=DefaultConfig.PER_PAGE, error_out=False).items
                 titles = list(set([item.title for item in items]))
             except Exception as e:
                 titles = []
@@ -214,24 +218,24 @@ def get_shijing():
             'titles': titles,
             'total': total
         })
-    else: # 获取内容
+    else:  # 获取内容
         logger.info(title)
         if cache.get(title + 'shijing'):
             content = cache.get(title + 'shijing')
-            chaper = cache.get(title + 'chaper')
+            chapter = cache.get(title + 'chapter')
             section = cache.get(title + 'section')
         else:
             try:
-                query = ShiJing.query.filter_by(title = title).first()
+                query = ShiJing.query.filter_by(title=title).first()
                 content = query.content.split('。')
                 chapter = query.chapter
                 section = query.section
             except Exception as e:
                 content = []
-                chaper = section = ''
+                chapter = section = ''
                 logger.error(e)
             cache.set(title + 'shijing', content)
-            cache.set(title + 'chaper', chapter)
+            cache.set(title + 'chapter', chapter)
             cache.set(title + 'section', section)
         return jsonify({
             'code': 200,
