@@ -67,8 +67,6 @@ def user_register():
 @auth.verify_password
 def verify_password(email_or_token, password):
     if request.path == "/login":
-        # email_or_token = request.get_json()['email']
-        # password = request.get_json()['password']
         user = User.query.filter_by(email=email_or_token).first()
         if not user or not user.check_password_hash(password):
             return False

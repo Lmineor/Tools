@@ -78,7 +78,7 @@ pm2 restart lextool  // 再重启
 > 前端致敬 [MikuTools](https://tools.miku.ac/)
 
 ### 广告时间：
-Github:[https://github.com/Prolht](https://github.com/Prolht) 点个star哟！
+Github：[https://github.com/Prolht](https://github.com/Prolht) 点个star哟！
 
 个人博客：[https://www.lex666.online](https://www.lex666.online)
 

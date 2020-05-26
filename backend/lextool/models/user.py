@@ -29,7 +29,7 @@ class User(db.Model, UserMixin):
 
     # 检查密码
     def check_password_hash(self, password):
-        return check_password_hash(self.password_hash,password)
+        return check_password_hash(self.password_hash, password)
 
     # 获取token，有效时间1天
     def generate_auth_token(self, expiration=DefaultConfig.EXPIRATION):
