@@ -79,15 +79,15 @@ export const state = () => {
                     },
                     hot:'', //debug new recommend
                 },
-                // {
-                //     name: '便签',
-                //     path: '/memo',
-                //     head: {
-                //         keywords: ['memo'],
-                //         description: 'memo'
-                //     },
-                //     hot:'new', //debug new recommend
-                // },
+                {
+                    name: '便签',
+                    path: '/memo',
+                    head: {
+                        keywords: ['memo'],
+                        description: 'memo'
+                    },
+                    hot:'new', //debug new recommend
+                },
             ]
         },
         {

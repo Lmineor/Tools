@@ -7,6 +7,7 @@ from ...cache import cache
 from ...config.default import DefaultConfig
 from ...logger import logger
 
+
 poem = Blueprint('poem', __name__)
 
 

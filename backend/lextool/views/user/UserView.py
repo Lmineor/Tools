@@ -51,16 +51,20 @@ def user_register():
         db.session.add(user)
         db.session.commit()
         msg = "注册成功"
+        res = {
+            'code': 200,
+            'msg': msg
+        }
     except Exception as e:
         code = str(e.__cause__).split(',')[0][1:]
         if code == '1062':
             msg = "该邮箱已经注册过，换个邮箱试试吧！"
         else:
             msg = "未知错误，请稍后再试，或直接发邮件到luohai2233@163.com"
-    res = {
-        'code': 200,
-        'msg': msg
-    }
+        res = {
+            'code': 400,
+            'msg': msg
+        }
     return jsonify(res)
 
 

@@ -82,14 +82,24 @@ export default {
             },
         )
         .then(re => {
-          this.$swal({
-            toast: true,
-            position: 'top-end',
-            type: 'error',
-            title: '注册成功',
-            timer: 1500,
-          });
-          this.$router.push("/login") // 跳转到login页
+          if(re.data.code == 200) {
+            this.$swal({
+              toast: true,
+              position: 'top-end',
+              type: 'success',
+              title: '注册成功',
+              timer: 1500,
+            });
+            this.$router.push("/login") // 跳转到login页
+          } else{
+            this.$swal({
+              // toast: true,
+              position: 'top-end',
+              type: 'error',
+              title: re.data.msg,
+              timer: 2000,
+            });
+          }
         })
         .catch(err => {
             this.$swal({
