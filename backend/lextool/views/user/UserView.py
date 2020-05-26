@@ -70,7 +70,7 @@ def user_register():
 
 @auth.verify_password
 def verify_password(email_or_token, password):
-    if request.path == "/login":
+    if request.path == "/user/login":
         user = User.query.filter_by(email=email_or_token).first()
         if not user or not user.check_password_hash(password):
             return False
