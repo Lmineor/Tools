@@ -1,6 +1,7 @@
-from werkzeug.security import generate_password_hash,check_password_hash # 转换密码用到的库
+from werkzeug.security import generate_password_hash, check_password_hash # 转换密码用到的库
 from flask_security import RoleMixin, UserMixin # 登录和角色需要继承的对象
-from itsdangerous import TimedJSONWebSignatureSerializer as SignatureExpired, BadSignature,  Serializer
+from itsdangerous import TimedJSONWebSignatureSerializer as SignatureExpired, BadSignature
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 from ..config.default import DefaultConfig
 from ..models import db

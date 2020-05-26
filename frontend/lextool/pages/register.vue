@@ -93,7 +93,7 @@ export default {
             this.$router.push("/login") // 跳转到login页
           } else{
             this.$swal({
-              // toast: true,
+              toast: true,
               position: 'top-end',
               type: 'error',
               title: re.data.msg,
