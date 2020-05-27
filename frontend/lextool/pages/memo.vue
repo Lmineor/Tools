@@ -116,7 +116,6 @@ export default {
 <style  lang="scss">
   .memo {
     width: 100%;
-    background:url(http://www.lanrentuku.com/down/js/images/12450456760.gif) no-repeat right top;
     .textarea{
       height: 500px;
       text-overflow: ellipsis;

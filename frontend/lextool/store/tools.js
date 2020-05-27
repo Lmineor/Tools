@@ -119,10 +119,10 @@ export const state = () => {
             icon: 'book-outline',
             list: [
                 {
-                    name: '诗词',
+                    name: '诗歌',
                     path: '/poem',
                     head: {
-                        keywords: ['唐诗', '宋词'],
+                        keywords: ['唐诗', '宋诗'],
                         description: '唐诗宋词元曲'
                     },
                     hot:'debug'//debug new recommend

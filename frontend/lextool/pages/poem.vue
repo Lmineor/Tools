@@ -52,7 +52,7 @@ export default {
     },
     data() {
         return {
-            title: '诗词歌赋',
+            title: '诗歌',
             showDynasty: true,
             showWriters: false,
             showPoems: false,
