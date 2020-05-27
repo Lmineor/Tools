@@ -19,6 +19,8 @@ import time
 import logging
 import logging.handlers
 
+from .config.default import DefaultConfig
+
 __all__ = ["logger"]
 
 
@@ -101,7 +103,6 @@ class ColoredFormatter(logging.Formatter):
 
         return "\033[" + ";".join(color_value) + "m"
 
-
     def format(self, record):
         record.log_color = self.parse_color(record.levelname)
         message = super(ColoredFormatter, self).format(record) + "\033[0m"
@@ -123,7 +124,7 @@ def _get_logger(log_to_file=False, log_filename="", log_level="DEBUG"):
     _logger.addHandler(stdout_handler)
 
     if log_to_file or log_filename:
-        _tmp_path = os.path.dirname(os.path.abspath(__file__))
+        _tmp_path = DefaultConfig.LOGPATH
         try:
             os.makedirs(os.path.join(_tmp_path, "logs"))
         except Exception as e:

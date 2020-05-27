@@ -1,5 +1,7 @@
 # encoding:utf-8
 # default config file
+import os
+
 try:
     from .local_config import SQLALCHEMY_BINDS, SQLALCHEMY_DATABASE_URI, SECRET_KEY
 except ImportError:
@@ -37,3 +39,9 @@ class DefaultConfig(object):
     SESSION_TIME = 30*60 
     
     EXPIRATION = 60*60*24  # auth有效期1天
+    
+    LOGPATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+
+if __name__ == '__main__':
+    print(DefaultConfig.LOGPATH)
