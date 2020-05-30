@@ -4,16 +4,14 @@
 # config variables
 # Path
 CONDA_ENV=tools
-PROJECT_F_BASE_PATH=/www/wwwroot/Tools/frontend/ # frontend
-PROJECT_B_BASE_PATH=/www/wwwroot/Tools/backend/ # backend
-
-# Name
-PROJECT_NAME_F=lextool # frontend name
-# PROJECT_NAME_B=$1 # backend name
-# PROJECT_PORT=$1 # backend port
-PROJECT_PORT=5000 # backend port
-
+PROJECT_F_BASE_PATH=/www/wwwroot/Tools/frontend/    # frontend
+PROJECT_B_BASE_PATH=/www/wwwroot/Tools/backend/     # backend
+PROJECT_PORT=5000                                   # backend port
 GIT=git@github.com:Prolht/Tools.git
+
+# Frontend Name
+PROJECT_NAME_F=lextool                              # frontend name
+
 
 # stop backend
 lsof -i:${PROJECT_PORT}|awk '{print$2}' |grep -v PID|xargs kill -9 # 暂停

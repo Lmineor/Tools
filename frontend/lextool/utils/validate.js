@@ -63,6 +63,15 @@ export function isExternal(path) {
     const reg = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     return reg.test(email)
   }
+
+  /**
+   * @param {string} mobile
+   * @returns {Boolean}
+   */
+  export function validMobile(mobile) {
+    const reg = /^[1]([3-9])[0-9]{9}$/
+    return reg.test(mobile)
+  }
   
   /**
    * @param {string} str

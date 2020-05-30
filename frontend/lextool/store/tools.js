@@ -156,6 +156,16 @@ export const state = () => {
                 },
             ]
         },
+        // {
+        //     title: '为人民服务',
+        //     icon: 'briefcase-outline',
+        //     list: [
+        //         {
+        //             name: '号码归属地',
+        //             path: '/location'
+        //         }
+        //     ]
+        // },
         {
             title: '网站相关',
             icon: 'settings-2-outline',
