@@ -5,14 +5,9 @@
 r"""python log with color
 log.py
     log module
-    :author:    lightless <root@lightless.me>
-    :homepage:  None
-    :license:   GPL-3.0, see LICENSE for more details.
-    :copyright: Copyright (c) 2017 lightless. All rights reserved
 Usage:
     from log import logger
-    log = logger(log_to_file=True)
-    log.debug("Hello World")
+    logger.debug("Hello World")
 """
 import os
 import time
