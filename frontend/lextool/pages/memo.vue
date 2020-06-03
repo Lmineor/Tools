@@ -1,9 +1,6 @@
 <template>
   <div class="memo">
     <nya-container :title=title>
-      <!-- <nya-input
-        type="textarea"
-      /> -->
       <Input
         v-model="memo"
         type="textarea"
@@ -41,6 +38,9 @@ export default {
   },
   mounted (){
     this.getmemo();
+    setInterval(() => {
+        this.savememo();//保存表单信息的操作
+      },20000)
     this.loading = false;
   },
   methods: {
@@ -119,9 +119,8 @@ export default {
     .textarea{
       height: 500px;
       text-overflow: ellipsis;
-      background-color: #ffffff;
       font-size: 15px;
-      // background-image: url('../static/bianqian.jpg');
+      border-style: none; 
     }
     .nya-btn {
       position: relative;
