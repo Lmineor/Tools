@@ -1,7 +1,9 @@
 <template>
     <div class="panel" icon="person-outline">
         <div class="login-text">
-            <a href="https://github.com/Prolht/Tools" target="_blank" rel="noopener noreferrer" style="color: rgb(0,0,0);">Powered by Lex吐司</a>
+            <a href="https://github.com/Prolht/Tools" target="_blank" rel="noopener noreferrer" style="color: #003366;">
+                (❤ ω ❤)o
+            </a>o
             <!-- <a>{{$store.state.user}}</a> -->
         </div>
         <!-- <div class="login-text">

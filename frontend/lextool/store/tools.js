@@ -1,33 +1,9 @@
 export const state = () => {
     const tools = [
-        // {
-        //     title: '乱七八糟',
-        //     icon: 'heart-outline',
-        //     list: [
-        //         {
-        //             name: '甜言蜜语',
-        //             path: '/honeywords',
-        //             head: {
-        //                 keywords: ['甜言', '蜜语'],
-        //                 description: '甜言蜜语'
-        //             },
-        //             hot:'new'//debug new recommend
-        //         },
-        //     ]
-        // },
         {
             title: '热点相关',
             icon: 'options-2-outline',
             list: [
-                {
-                    name: '重启的武汉',
-                    path: 'https://www.bilibili.com/video/BV18i4y187BB',
-                    head: {
-                        keywords: ['武汉', '肺炎'],
-                        description: '武汉重启的介绍'
-                    },
-                    hot:''//debug new recommend
-                },
                 {
                     name: '新冠肺炎',
                     path: 'https://ncov.dxy.cn/ncovh5/view/pneumonia',
@@ -36,6 +12,21 @@ export const state = () => {
                         description: '武汉重启的介绍'
                     },
                     hot:''//debug new recommend
+                },
+            ]
+        },
+        {
+            title: '其他工具',
+            icon: 'heart-outline',
+            list: [
+                {
+                    name: '便签',
+                    path: '/memo',
+                    head: {
+                        keywords: ['memo'],
+                        description: 'memo'
+                    },
+                    hot:'new', //debug new recommend
                 },
             ]
         },
@@ -79,15 +70,6 @@ export const state = () => {
                     },
                     hot:'', //debug new recommend
                 },
-                {
-                    name: '便签',
-                    path: '/memo',
-                    head: {
-                        keywords: ['memo'],
-                        description: 'memo'
-                    },
-                    hot:'new', //debug new recommend
-                },
             ]
         },
         {
@@ -125,7 +107,7 @@ export const state = () => {
                         keywords: ['唐诗', '宋诗'],
                         description: '唐诗宋词元曲'
                     },
-                    hot:'debug'//debug new recommend
+                    hot:'recommend'//debug new recommend
                 },
                 {
                     name: '论语',

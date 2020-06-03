@@ -20,7 +20,7 @@
                 v-on:change="getparagraphs"
             />
             <div v-if="hasparagraphs" class="content">
-                <li class="title"><span class="prefix">《</span>{{rhythmic}}<span class="prefix">》</span></li>
+                <li class="title"><span class="prefix">『</span>{{rhythmic}}<span class="prefix">』</span></li>
                 <li class="writer"><span class="prefix">宋·</span>{{author}}</li>
                 <li v-for="item in paragraphs" :key="item.index" class="paragraph">
                     {{ item }}

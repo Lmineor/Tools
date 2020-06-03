@@ -30,7 +30,7 @@
                 v-on:change="getcontent"
             />
             <div v-if="hasPoem" class="poem">
-                <li class="poem title"><span class="prefix">《</span>{{poem}}<span class="prefix">》</span></li>
+                <li class="poem title"><span class="prefix">『</span>{{poem}}<span class="prefix">』</span></li>
                 <li class="poem writer"><span class="prefix">{{dynasty}}·</span>{{writer}}</li>
                 <li v-for="item in content" :key="item.index" class="poem content">
                     {{ item }}

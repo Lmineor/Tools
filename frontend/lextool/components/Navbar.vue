@@ -44,11 +44,11 @@ export default {
             margin-bottom: 5px;
             display: flex;
             align-items: center;
-            color: var(--t1);
+            color:#003399;
             cursor: pointer;
             text-shadow: 1px 1px 1px rgba($color: #000000, $alpha: 0.15);
             a {
-                color: var(--t1);
+                color:#003399;
                 cursor: pointer;
                 display: flex;
                 align-items: center;

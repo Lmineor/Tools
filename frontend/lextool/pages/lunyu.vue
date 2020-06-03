@@ -4,7 +4,7 @@
             <!-- <nya-dropdown style="width:33%" label="朝代" :itemlist="itemlist" :nodatatext="nodatatext"></nya-dropdown> -->
             <nya-dropdown v-model="chapter" style="width:33%" :items="chapters" label="章" v-on:change="getparagraphs" />
             <div v-if="hasparagraphs" class="paragraphs">
-                <li class="chapter"><span class="prefix">《</span>{{chapter}}<span class="prefix">》</span></li>
+                <li class="chapter"><span class="prefix">『</span>{{chapter}}<span class="prefix">』</span></li>
                 <li v-for="item in paragraphs" :key="item.index" class="paragraph">
                     {{ item }}
                 </li>

@@ -11,7 +11,7 @@
                 :total="total"
             />
             <div v-if="showcontent" class="shijing">
-                <li class="title"><span class="prefix">《</span>{{shijingtitle}}<span class="prefix">》</span></li>
+                <li class="title"><span class="prefix">『</span>{{shijingtitle}}<span class="prefix">』</span></li>
                 <li class="chapter"><span class="prefix">{{chapter}}·</span>{{section}}</li>
                 <li v-for="item in content" :key="item.index" class="content">
                     {{ item }}

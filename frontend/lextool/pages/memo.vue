@@ -121,6 +121,7 @@ export default {
       text-overflow: ellipsis;
       background-color: #ffffff;
       font-size: 15px;
+      // background-image: url('../static/bianqian.jpg');
     }
     .nya-btn {
       position: relative;
