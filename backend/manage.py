@@ -22,7 +22,6 @@ def schema_drop():
 
 @manager.command
 def schema_update():
-    db.drop_all()
     db.create_all()
     print('you had update all tables')
 

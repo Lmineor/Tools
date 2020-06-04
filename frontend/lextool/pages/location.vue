@@ -58,7 +58,15 @@ export default {
             }
             this.$axios.credentials = true;
             this.$axios
-                .get('https://sp0.baidu.com/8aQDcjqpAAV3otqbppnN2DJv/api.php?resource_name=guishudi&query=' + this.mobile)
+                .get(
+                    'https://sp0.baidu.com/8aQDcjqpAAV3otqbppnN2DJv/api.php?resource_name=guishudi&query=' + this.mobile, 
+                    {
+                        headers: {
+                            'Access-Control-Allow-Origin': '*',
+                        },
+                        auth: false
+                    }
+                    )
                 .then(re => {
                     let data = re.data.data
                     if(!data){
