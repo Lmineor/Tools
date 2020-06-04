@@ -28,6 +28,11 @@ export const state = () => {
                     },
                     hot:'new', //debug new recommend
                 },
+                // {
+                // name: '号码归属地',
+                // path: '/location',
+                // hot:'new', //debug new recommend
+                // },
             ]
         },
         {
