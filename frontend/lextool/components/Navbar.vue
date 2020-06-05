@@ -48,7 +48,7 @@ export default {
             cursor: pointer;
             text-shadow: 1px 1px 1px rgba($color: #000000, $alpha: 0.15);
             a {
-                color:#003399;
+                color:#fff;
                 cursor: pointer;
                 display: flex;
                 align-items: center;

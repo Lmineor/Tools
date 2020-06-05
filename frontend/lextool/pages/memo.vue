@@ -53,8 +53,8 @@ export default {
           timer: 1500,
         });
       this.$axios.defaults.auth = {
-                username: Cookie.get('auth'),
-                password: ''
+          username: Cookie.get('auth'),
+          password: ''
       }
       this.$axios
         .get(

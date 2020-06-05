@@ -1,9 +1,12 @@
 <template>
     <div class="panel" icon="person-outline">
         <div class="login-text">
-            <a href="https://github.com/Prolht/Tools" target="_blank" rel="noopener noreferrer" style="color: #003366;">
+            <a v-if="$store.state.user" href="https://github.com/Prolht/Tools" target="_blank" rel="noopener noreferrer" style="color: #fff;">
+                {{$store.state.user}}
+            </a>
+            <a v-else href="https://github.com/Prolht/Tools" target="_blank" rel="noopener noreferrer" style="color: #fff;">
                 (❤ ω ❤)o
-            </a>o
+            </a>
             <!-- <a>{{$store.state.user}}</a> -->
         </div>
         <!-- <div class="login-text">
