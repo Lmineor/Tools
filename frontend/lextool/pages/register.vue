@@ -18,13 +18,21 @@
         fullwidth
       />
       <nya-input
-        v-model="password"
+        v-model="password1"
         label="密码"
-        placeholder="密码"
+        placeholder="位数大于等于6位小于等于32位"
         autocomplete="off"
         fullwidth
         type="password"
-        @keyup.enter="login"
+      />
+      <nya-input
+        v-model="password2"
+        label="确认密码"
+        placeholder="位数大于等于6位小于等于32位"
+        autocomplete="off"
+        fullwidth
+        type="password"
+        @keyup.enter="register"
       />
       <div class="nya-btn" id="register" @click="register">注册</div>
     </nya-container>
@@ -46,39 +54,61 @@ export default {
       title: '注册',
       username: '',
       email: '',
-      password: '',
+      password1: '',
+      password2: '',
       isFocus: false
     }
   },
   methods: {
     register () {
-      if (this.username === '' || this.email === '' || this.password === '') {
+      if (this.username === '' || this.email === '' || this.password1 === '') {
         this.$swal({
             toast: true,
             position: 'top-end',
             type: 'error',
             title: '用户名、邮箱、密码都不能为空',
             // title: err,
-            timer: 1500,
+            timer: 3000,
         });
         return
-      }
+      };
       if ( !validEmail(this.email)) {
         this.$swal({
             toast: true,
             position: 'top-end',
             type: 'error',
             title: '邮箱格式不正确',
-            timer: 1500,
+            timer: 3000,
         });
-      }
+        return
+      };
+      if (this.password1 != this.password2) {
+        this.$swal({
+            toast: true,
+            position: 'top-end',
+            type: 'error',
+            title: '两次输入的密码不一致，请检查后重新输入',
+            timer: 3000,
+        });
+        return
+      };
+      if ( !((this.password1.length >= 6) && (this.password1.length <=32))) {
+        this.$swal({
+            toast: true,
+            position: 'top-end',
+            type: 'error',
+            title: '密码位数应大于等于6位小于等于32位',
+            timer: 3000,
+        });
+        return
+      };
       this.$axios
         .post(
             envs.apiUrl + '/user/register',
             {
                 username: this.username,
                 email: this.email,
-                password: this.password
+                password: this.password1
             },
         )
         .then(re => {
@@ -97,7 +127,7 @@ export default {
               position: 'top-end',
               type: 'error',
               title: re.data.msg,
-              timer: 2000,
+              timer: 3000,
             });
           }
         })
@@ -107,7 +137,7 @@ export default {
             position: 'top-end',
             type: 'error',
             title: '注册失败',
-            timer: 1500,
+            timer: 3000,
           });
         });
     }
