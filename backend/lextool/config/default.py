@@ -38,7 +38,7 @@ class DefaultConfig(object):
     
     SESSION_TIME = 30*60 
     
-    EXPIRATION = 60*60*24  # auth有效期1天
+    EXPIRATION = 60*60*1  # auth有效期1小时
     
     LOGPATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
