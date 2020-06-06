@@ -1,41 +1,6 @@
 export const state = () => {
     const tools = [
         {
-            title: '热点相关',
-            icon: 'options-2-outline',
-            list: [
-                {
-                    name: '新冠肺炎',
-                    path: 'https://ncov.dxy.cn/ncovh5/view/pneumonia',
-                    head: {
-                        keywords: ['武汉', '肺炎'],
-                        description: '武汉重启的介绍'
-                    },
-                    hot:''//debug new recommend
-                },
-            ]
-        },
-        {
-            title: '其他工具',
-            icon: 'heart-outline',
-            list: [
-                {
-                    name: '便签',
-                    path: '/memo',
-                    head: {
-                        keywords: ['memo'],
-                        description: 'memo'
-                    },
-                    hot:'new', //debug new recommend
-                },
-                // {
-                // name: '号码归属地',
-                // path: '/location',
-                // hot:'new', //debug new recommend
-                // },
-            ]
-        },
-        {
             title: '编程开发',
             icon: 'code-outline',
             list: [
@@ -153,6 +118,50 @@ export const state = () => {
         //         }
         //     ]
         // },
+        {
+            title: '热点相关',
+            icon: 'options-2-outline',
+            list: [
+                {
+                    name: '新冠肺炎',
+                    path: 'https://ncov.dxy.cn/ncovh5/view/pneumonia',
+                    head: {
+                        keywords: ['武汉', '肺炎'],
+                        description: '武汉重启的介绍'
+                    },
+                    hot:''//debug new recommend
+                },
+                {
+                    name: '百度热榜',
+                    path: 'http://top.baidu.com/?fr=mhd_card',
+                    head: {
+                        keywords: ['百度热榜', '百度热榜'],
+                        description: '百度热榜'
+                    },
+                    hot:'new'//debug new recommend
+                },
+            ]
+        },
+        {
+            title: '其他工具',
+            icon: 'heart-outline',
+            list: [
+                {
+                    name: '便签',
+                    path: '/memo',
+                    head: {
+                        keywords: ['memo'],
+                        description: 'memo'
+                    },
+                    hot:'new', //debug new recommend
+                },
+                // {
+                // name: '号码归属地',
+                // path: '/location',
+                // hot:'new', //debug new recommend
+                // },
+            ]
+        },
         {
             title: '网站相关',
             icon: 'settings-2-outline',
