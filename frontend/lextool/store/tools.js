@@ -43,9 +43,18 @@ export const state = () => {
             ]
         },
         {
-            title: '嗑盐工具',
+            title: '学习工具',
             icon: 'layers-outline',
             list: [
+                {
+                    name: '背背单词',
+                    path: '/words',
+                    head: {
+                        keywords: ['单词'],
+                        description: '背背单词'
+                    },
+                    hot:'new'//debug new recommend
+                },
                 {
                     name: 'Sci-Hub可用网址',
                     path: '/sci',

@@ -19,13 +19,13 @@ def get_daily_words():
     if request.method == 'GET':
         try:
             items = EnWords.query.order_by(func.rand()).limit(20)
-            res = [{item.word: item.translation} for item in items]
+            res = [{'word': item.word, 'translation': item.translation} for item in items]
         except Exception as e:
             res = []
             logger.error(e)
         return jsonify({
             'code': 200,
-            'chapters': res
+            'words': res
         })
     # else:
     #     chapter = request.get_json()['chapter']

@@ -3,7 +3,7 @@
     <nya-container :title=title>
       <Form :model="formLeft" label-position="left" :label-width="70">
         <FormItem label="用户名*">
-            <Input v-model="username" style="width:30%;"></Input>
+            <Input v-model="username" style="width:30%;" @keyup.enter="update"></Input>
         </FormItem>
         <FormItem label="邮箱">
             <span style="width:30%;">{{email}}</span>
@@ -13,7 +13,7 @@
             <span style="color:rgb(255, 0, 0);">位数大于等于6位小于等于32位</span>
         </FormItem>
         <FormItem v-if="modify" label="确认密码">
-            <Input v-model="password2" type="password" style="width:30%;"></Input>
+            <Input v-model="password2" type="password" style="width:30%;" @keyup.enter="update"></Input>
             <span style="color:rgb(255, 0, 0);">位数大于等于6位小于等于32位</span>
         </FormItem>
     </Form>
