@@ -1,7 +1,7 @@
 <template>
   <div class="user-info">
     <nya-container :title=title>
-      <Form :model="formLeft" label-position="left" :label-width="70">
+      <Form label-position="left" :label-width="70">
         <FormItem label="用户名*">
             <Input v-model="username" style="width:30%;" @keyup.enter="update"></Input>
         </FormItem>
@@ -100,16 +100,18 @@ export default {
         });
         return
       };
-      if ( !((this.password1.length >= 6) && (this.password1.length <=32))) {
-        this.$swal({
-            toast: true,
-            position: 'top-end',
-            type: 'error',
-            title: '密码位数应大于等于6位小于等于32位',
-            timer: 3000,
-        });
-        return
-      };
+      if (this.password1){
+        if ( !((this.password1.length >= 6) && (this.password1.length <=32))) {
+          this.$swal({
+              toast: true,
+              position: 'top-end',
+              type: 'error',
+              title: '密码位数应大于等于6位小于等于32位',
+              timer: 3000,
+          });
+          return
+        };
+      }
       this.$axios
         .post(
             envs.apiUrl + '/user/update',
@@ -134,9 +136,10 @@ export default {
               toast: true,
               position: 'top-end',
               type: 'error',
-              title: '出了点问题，请稍后再试',
+              title: '出了点问题，重新登录试试',
               timer: 3000,
             });
+            this.$router.push("/login") // 跳转到login页
           }
         })
         .catch(err => {

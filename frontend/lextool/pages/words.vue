@@ -19,6 +19,7 @@ export default {
     data() {
         return {
             title: '每日英语',
+            loading: true,
             columns: [
                     {
                         title: '单词',
@@ -51,6 +52,7 @@ export default {
                         timer: 3000,
                     });
                 });
+            this.loading = false;
         },
     }
 };
