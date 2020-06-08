@@ -17,6 +17,13 @@ def usermemo():
     return jsonify({'memo': memo})
 
 
+@user.route("/userinfo", methods=['POST', 'GET'])
+@auth.login_required
+def userinfo():
+    email = g.user.email
+    return jsonify({'email': email})
+
+
 @user.route("/saveusermemo", methods=['POST', 'GET'])
 @auth.login_required
 def saveusermemo():
@@ -37,6 +44,38 @@ def logout():
     else:
         return jsonify({'code': 201, 'description': 'No user was found.'})
 
+
+@user.route('/update', methods=['POST'])
+@auth.login_required
+def user_update():
+    """
+    test
+    """
+    username = request.get_json()['username']
+    email = request.get_json()['email']
+    password = request.get_json()['password']
+    try:
+        id = g.user.id
+        currentuser = User.query.get(id)
+        if password:
+            currentuser.password = password
+        currentuser.username = username
+        db.session.add(currentuser)
+        db.session.commit()
+        msg = "success"
+        res = {
+            'code': 200,
+            'msg': msg
+        }
+        return jsonify(res)
+        
+    except Exception as e:
+        msg = "fail"
+        res = {
+            'code': 400,
+            'msg': msg
+        }
+        return jsonify(res)
 
 @user.route('/register', methods=['POST'])
 def user_register():
