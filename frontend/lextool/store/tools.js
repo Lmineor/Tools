@@ -171,6 +171,10 @@ export const state = () => {
                     path: '/userinfo'
                 },
                 {
+                    name: '帮助',
+                    path: '/help'
+                },
+                {
                     name: '友情链接',
                     path: '/links'
                 }
