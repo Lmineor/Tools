@@ -136,7 +136,7 @@ export default {
               toast: true,
               position: 'top-end',
               type: 'error',
-              title: '出了点问题，重新登录试试',
+              title: '登录已过期，请重新登录',
               timer: 3000,
             });
             this.$router.push("/login") // 跳转到login页
@@ -147,9 +147,10 @@ export default {
             toast: true,
             position: 'top-end',
             type: 'error',
-            title: '未知错误',
+            title: '登录已过期，请重新登录',
             timer: 3000,
           });
+          this.$router.push("/login") // 跳转到login页
         });
     },
   }
