@@ -22,7 +22,6 @@
       <a href='/help'>忘记密码？</a>
       <div class="nya-btn" id="register" @click="register">注册</div>
     </nya-container>
-
   </div>
 </template>
 
