@@ -1,6 +1,6 @@
 <template>
     <nya-container v-if="$store.state.welcome" class="welcome">
-        <h2>欢迎使用LexTools</h2>
+        <h2>欢迎使用Lex吐司</h2>
         <p>
             这是我自己开发或收集的小工具合集，若有新的工具欢迎提建议。
         </p>
