@@ -19,6 +19,7 @@
         @keyup.enter="login"
       />
       <div class="nya-btn" id = "login" @click="login">登 录</div>
+      <a href='/help'>忘记密码？</a>
       <div class="nya-btn" id="register" @click="register">注册</div>
     </nya-container>
 
@@ -53,7 +54,7 @@ export default {
             timer: 1500,
         });
         return
-      }
+      };
       if ( !validEmail(this.email)) {
         this.$swal({
             toast: true,
@@ -63,7 +64,7 @@ export default {
             timer: 1500,
         });
         return
-      }
+      };
        this.$axios.defaults.auth = {
                 username: this.email,
                 password: this.password,
