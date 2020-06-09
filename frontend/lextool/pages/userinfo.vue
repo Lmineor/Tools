@@ -144,12 +144,12 @@ export default {
         })
         .catch(err => {
             this.$swal({
-            toast: true,
-            position: 'top-end',
-            type: 'error',
-            title: '登录已过期，请重新登录',
-            timer: 3000,
-          });
+              toast: true,
+              position: 'top-end',
+              type: 'error',
+              title: '登录已过期，请重新登录',
+              timer: 3000,
+            });
           this.$router.push("/login") // 跳转到login页
         });
     },

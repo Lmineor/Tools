@@ -7,3 +7,4 @@ class EnWords(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     word = db.Column(db.String(32))
     translation = db.Column(db.String(512))
+    spelling = db.Column(db.String(64))
