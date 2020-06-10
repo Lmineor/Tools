@@ -9,10 +9,12 @@
                 <table class="nya-table">
                     <tr>
                         <th>单词</th>
+                        <th>音标</th>
                         <th>词义</th>
                     </tr>
                     <tr v-for="(item, index) in words" :key="index">
-                        <td>{{ item.word }} 美：{{item.spellingA}} 英：{{item.spellingE}}</td>
+                        <td>{{ item.word }}</td>
+                        <td>美：{{item.spellingA}} 英：{{item.spellingE}}</td>
                         <td class="translation">{{ item.translation }}</td>
                     </tr>
                 </table>
