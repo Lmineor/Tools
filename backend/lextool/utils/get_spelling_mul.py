@@ -55,11 +55,11 @@ class BingDictSpider:
             if matchObjectE.group(1):
                 phoneticSpellingE = matchObjectE.group(1)
         if phoneticSpellingE.startswith('['):
-            sql_updateE = "UPDATE `cet6` SET `spellingE` = '%s' WHERE `id` = %d" % (phoneticSpellingE.replace('\'', '\\\''), target[0])
+            sql_updateE = "UPDATE `cet4` SET `spellingE` = '%s' WHERE `id` = %d" % (phoneticSpellingE.replace('\'', '\\\''), target[0])
             self.update_sql(sql_updateE)
         else:
             print('Nothing')
-            sql_updateE = "UPDATE `cet6` SET `spellingE` = '%s' WHERE `id` = %d" % ('', target[0])
+            sql_updateE = "UPDATE `cet4` SET `spellingE` = '%s' WHERE `id` = %d" % ('', target[0])
             self.update_sql(sql_updateE)
 
 
@@ -67,11 +67,11 @@ class BingDictSpider:
             if matchObjectA.group(1):
                 phoneticSpellingA = matchObjectA.group(1)
         if phoneticSpellingA.startswith('['):
-            sql_updateA = "UPDATE `cet6` SET `spellingA` = '%s' WHERE `id` = %d" % (phoneticSpellingA.replace('\'', '\\\''), target[0])
+            sql_updateA = "UPDATE `cet4` SET `spellingA` = '%s' WHERE `id` = %d" % (phoneticSpellingA.replace('\'', '\\\''), target[0])
             self.update_sql(sql_updateA)
         else:
             print('Nothing')
-            sql_updateA = "UPDATE `cet6` SET `spellingA` = '%s' WHERE `id` = %d" % ('', target[0])
+            sql_updateA = "UPDATE `cet4` SET `spellingA` = '%s' WHERE `id` = %d" % ('', target[0])
             self.update_sql(sql_updateA)
 
     def update_sql(self, sql_update):
@@ -86,9 +86,9 @@ class BingDictSpider:
         for i in lst:
             self.q.put(i)
 def generate_data():
-    total = 2089
+    total = 3662
     for i in range(1, total+1):
-        sql = "SELECT * FROM cet6 WHERE id = %s" % i
+        sql = "SELECT * FROM cet4 WHERE id = %s" % i
         try:
             cur.execute(sql)
             # 获取所有记录列表
@@ -111,7 +111,7 @@ if __name__ == '__main__':
     
     # for j in range(5):
     lst = []
-    for i in range(1, 2090):
+    for i in range(1, 3663):
         try:
             lst.append(next(dataGenerator))
         except Exception as e:
