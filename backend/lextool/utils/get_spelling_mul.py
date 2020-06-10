@@ -44,20 +44,35 @@ class BingDictSpider:
         '''
         print(target)
         response = self.__send_request(target)
-        regularExpression = r'<div\s+class="hd_pr b_primtxt">英&#160;(.+?)</div>'  # /([^\/]*)/
-        matchObject = re.search(regularExpression, response, re.I)
+        regularExpressionE = r'<div\s+class="hd_pr b_primtxt">英&#160;(.+?)</div>'  # /([^\/]*)/
+        regularExpressionA = r'<div\s+class="hd_prUS b_primtxt">美&#160;(.+?)</div>'  # /([^\/]*)/
+        matchObjectE = re.search(regularExpressionE, response, re.I)
+        matchObjectA = re.search(regularExpressionA, response, re.I)
 
-        phoneticSpelling = ""
-        if matchObject:
-            if matchObject.group(1):
-                phoneticSpelling = matchObject.group(1)
-        if phoneticSpelling.startswith('['):
-            sql_update = "UPDATE `enwords` SET `spellingE` = '%s' WHERE `id` = %d" % (phoneticSpelling.replace('\'', '\\\''), target[0])
-            self.update_sql(sql_update)
+        phoneticSpellingE = ""
+        phoneticSpellingA = ""
+        if matchObjectE:
+            if matchObjectE.group(1):
+                phoneticSpellingE = matchObjectE.group(1)
+        if phoneticSpellingE.startswith('['):
+            sql_updateE = "UPDATE `cet6` SET `spellingE` = '%s' WHERE `id` = %d" % (phoneticSpellingE.replace('\'', '\\\''), target[0])
+            self.update_sql(sql_updateE)
         else:
             print('Nothing')
-            sql_update = "UPDATE `enwords` SET `spellingE` = '%s' WHERE `id` = %d" % ('', target[0])
-            self.update_sql(sql_update)
+            sql_updateE = "UPDATE `cet6` SET `spellingE` = '%s' WHERE `id` = %d" % ('', target[0])
+            self.update_sql(sql_updateE)
+
+
+        if matchObjectA:
+            if matchObjectA.group(1):
+                phoneticSpellingA = matchObjectA.group(1)
+        if phoneticSpellingA.startswith('['):
+            sql_updateA = "UPDATE `cet6` SET `spellingA` = '%s' WHERE `id` = %d" % (phoneticSpellingA.replace('\'', '\\\''), target[0])
+            self.update_sql(sql_updateA)
+        else:
+            print('Nothing')
+            sql_updateA = "UPDATE `cet6` SET `spellingA` = '%s' WHERE `id` = %d" % ('', target[0])
+            self.update_sql(sql_updateA)
 
     def update_sql(self, sql_update):
         try:
@@ -71,14 +86,14 @@ class BingDictSpider:
         for i in lst:
             self.q.put(i)
 def generate_data():
-    total = 103981
+    total = 2089
     for i in range(1, total+1):
-        sql = "SELECT * FROM enwords WHERE id = %s" % i
+        sql = "SELECT * FROM cet6 WHERE id = %s" % i
         try:
             cur.execute(sql)
             # 获取所有记录列表
             result = cur.fetchone()
-            yield (i,result[0])
+            yield (i,result[1])
         except:
             pass
 
@@ -94,23 +109,24 @@ if __name__ == '__main__':
     spider = BingDictSpider(url=url)
     # dataGenerator = spider.generate_data()
     
-    for j in range(10):
-        lst = []
-        for i in range(10000):
-            try:
-                lst.append(next(dataGenerator))
-            except Exception as e:
-                print(e)
-                break
-        spider.putData(lst)
-        Process_list = []
-        # 创建并启动进程
-        for i in range(6):
-            p = Process(target = spider.run, args = ())
-            p.start()
-            print(os.getpid())
-            Process_list.append(p)
+    # for j in range(5):
+    lst = []
+    for i in range(1, 2090):
+        try:
+            lst.append(next(dataGenerator))
+        except Exception as e:
+            print(e)
+            break
+    spider.putData(lst)
+    Process_list = []
+    # 创建并启动进程
+    for i in range(10):
+        p = Process(target = spider.run, args = ())
+        p.start()
+        print(os.getpid())
+        Process_list.append(p)
 
-        # 让主进程等待子进程执行完成
-        for i in Process_list:
-            i.join()
+    # 让主进程等待子进程执行完成
+    for i in Process_list:
+        i.join()
+
