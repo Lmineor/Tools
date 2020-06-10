@@ -3,7 +3,7 @@
 import os
 
 try:
-    from .local_config import SQLALCHEMY_BINDS, SQLALCHEMY_DATABASE_URI, SECRET_KEY
+    from .local_config import *
 except ImportError:
     pass
 except Exception as e:
@@ -43,6 +43,12 @@ class DefaultConfig(object):
     LOGPATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
     SpecialChar = {'&#230;': 'æ'}
+
+    Domain = "www.lex666.online"
+
+    MAIL_HOST = MAIL_HOST  # 设置服务器
+    MAIL_USER = MAIL_USER  # 用户名
+    MAIL_PASS = MAIL_PASS  # 口令
 
 
 if __name__ == '__main__':
