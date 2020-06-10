@@ -6,7 +6,7 @@ from sqlalchemy.sql.expression import func
 from ...logger import logger
 from ...models.words import EnWords
 from ...models import db
-
+from ...utils.parseCharacter import parseSpelling
 
 words = Blueprint('words', __name__)
 
@@ -19,7 +19,7 @@ def get_daily_words():
     if request.method == 'GET':
         try:
             items = EnWords.query.order_by(func.rand()).limit(20)
-            res = [{'word': item.word, 'translation': item.translation} for item in items]
+            res = [{'word': item.word, 'translation': item.translation, 'spellingA': parseSpelling(item.spellingA), 'spellingE': parseSpelling(item.spellingE)} for item in items]
         except Exception as e:
             res = []
             logger.error(e)

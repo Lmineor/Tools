@@ -42,6 +42,8 @@ class DefaultConfig(object):
     
     LOGPATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+    SpecialChar = {'&#230;': 'æ'}
+
 
 if __name__ == '__main__':
     print(DefaultConfig.LOGPATH)

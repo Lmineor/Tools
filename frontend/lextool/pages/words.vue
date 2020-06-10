@@ -2,18 +2,18 @@
     <div class="words">
         <nya-container :title="title">
             <div v-show="!showInfo">
+                <!-- <div class="toward nya-btn" @click="singlePage">
+                    <i class="eva eva-arrow-forward-outline"></i>
+                    <span>逐词背诵</span>
+                </div> -->
                 <table class="nya-table">
                     <tr>
                         <th>单词</th>
                         <th>词义</th>
-                        <th>英文详解</th>
                     </tr>
                     <tr v-for="(item, index) in words" :key="index">
-                        <td>{{ item.word }}</td>
+                        <td>{{ item.word }} 美：{{item.spellingA}} 英：{{item.spellingE}}</td>
                         <td class="translation">{{ item.translation }}</td>
-                        <td class="view-deep" @click="searchWord(item.word)">
-                            英文详解
-                        </td>
                     </tr>
                 </table>
             </div>
@@ -23,7 +23,12 @@
                     <i class="eva eva-arrow-back-outline"></i>
                     <span>返回</span>
                 </div>
-
+                <div class="word-area">
+                    <div class="back nya-btn" @click="showInfo = false">
+                        <i class="eva eva-arrow-forward-outline"></i>
+                        <span>下一个</span>
+                    </div>
+                </div>
             </div>
         </nya-container>
     </div>
@@ -41,7 +46,7 @@ export default {
     },
     data() {
         return {
-            title: '每日英语',
+            title: '背背单词',
             loading: true,
             showInfo: false,
             columns: [
@@ -90,7 +95,7 @@ export default {
                 });
             this.loading = false;
         },
-        searchWord(){
+        singlePage(){
             this.showInfo = true;
 
         }
@@ -100,6 +105,9 @@ export default {
 
 <style lang="scss">
 .words {
+    .nya-btn{
+        margin-bottom: 10px;
+    }
     table {
         table-layout: auto;
         width: 100%;

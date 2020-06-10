@@ -44,7 +44,7 @@ class BingDictSpider:
         '''
         print(target)
         response = self.__send_request(target)
-        regularExpression = r'<div\s+class="hd_prUS b_primtxt">美&#160;(.+?)</div>'  # /([^\/]*)/
+        regularExpression = r'<div\s+class="hd_pr b_primtxt">英&#160;(.+?)</div>'  # /([^\/]*)/
         matchObject = re.search(regularExpression, response, re.I)
 
         phoneticSpelling = ""
@@ -52,11 +52,11 @@ class BingDictSpider:
             if matchObject.group(1):
                 phoneticSpelling = matchObject.group(1)
         if phoneticSpelling.startswith('['):
-            sql_update = "UPDATE `enwords` SET `spelling` = '%s' WHERE `id` = %d" % (phoneticSpelling.replace('\'', '\\\''), target[0])
+            sql_update = "UPDATE `enwords` SET `spellingE` = '%s' WHERE `id` = %d" % (phoneticSpelling.replace('\'', '\\\''), target[0])
             self.update_sql(sql_update)
         else:
             print('Nothing')
-            sql_update = "UPDATE `enwords` SET `spelling` = '%s' WHERE `id` = %d" % ('', target[0])
+            sql_update = "UPDATE `enwords` SET `spellingE` = '%s' WHERE `id` = %d" % ('', target[0])
             self.update_sql(sql_update)
 
     def update_sql(self, sql_update):
@@ -72,7 +72,7 @@ class BingDictSpider:
             self.q.put(i)
 def generate_data():
     total = 103981
-    for i in range(1, 10000):
+    for i in range(1, total+1):
         sql = "SELECT * FROM enwords WHERE id = %s" % i
         try:
             cur.execute(sql)
@@ -94,10 +94,14 @@ if __name__ == '__main__':
     spider = BingDictSpider(url=url)
     # dataGenerator = spider.generate_data()
     
-    for j in range(100):
+    for j in range(10):
         lst = []
-        for i in range(100):
-            lst.append(next(dataGenerator))
+        for i in range(10000):
+            try:
+                lst.append(next(dataGenerator))
+            except Exception as e:
+                print(e)
+                break
         spider.putData(lst)
         Process_list = []
         # 创建并启动进程
