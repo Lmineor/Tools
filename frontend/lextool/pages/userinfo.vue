@@ -73,10 +73,11 @@ export default {
               toast: true,
               position: 'top-end',
               type: 'error',
-              title: '出了点问题，请稍候再试',
+              title: '出了点问题，请重新登录',
               timer: 2000,
             });
             this.email = '';
+            this.$router.push("/login") // 跳转到login页
         });
     },
     update(){
@@ -165,7 +166,7 @@ export default {
       height: 500px;
       text-overflow: ellipsis;
       font-size: 15px;
-      border-style: none; 
+      border-style: none;
     }
     .nya-btn {
       position: relative;
