@@ -38,4 +38,4 @@ npm run build
 
 # start
 pm2 restart $PROJECT_NAME_F
-echo "Complete Fronteend"
+echo "Complete Frontend"
