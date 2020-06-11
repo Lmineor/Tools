@@ -28,7 +28,4 @@ def send_register_active_email(email, username, token):
         '<h2>Hi {}, </h2>Click the link to active your account' \
         '<a href="http://{}/user/active/{}">http://{}/user/active/{}</a> ' \
             .format(username, DefaultConfig.Domain, token, DefaultConfig.Domain, token)
-    try:
-        send_email(subject, receiver, html_message=html_message)
-    except Exception as e:
-        print(e)
+    send_email(subject, receiver, html_message=html_message)
