@@ -91,7 +91,7 @@ def user_register():
     email = request.get_json()['email']
     password = request.get_json()['password']
     try:
-        user = User(username=username, email=email, password=password)
+        user = User.query.filter_by(email=email).first()
         if user and not user.activate:
             # 用户已经注册，但是未点击激活链接，则重新生成激活链接并发送邮件
             token = user.generate_auth_token(expiration=5*60).decode('ascii')  # 此时token过期时间为5分钟
@@ -102,8 +102,16 @@ def user_register():
                 'code': 200,
                 'msg': msg
             }
+        elif user and user.activate:
+            # 用户已经注册，且已经激活
+            msg = "该邮箱已经注册过，换个邮箱试试吧！"
+            res = {
+                'code': 401,
+                'msg': msg
+            }
         else:
-            # 用户未注册
+            # 用户尚未注册
+            user = User(username=username, email=email, password=password)
             db.session.add(user)
             db.session.commit()
             token = user.generate_auth_token(expiration=5 * 60).decode('ascii')  # 此时token过期时间为5分钟
@@ -115,14 +123,10 @@ def user_register():
                 'msg': msg
             }
     except Exception as e:
-        code = str(e.__cause__).split(',')[0][1:]
-        if code == '1062':
-            msg = "该邮箱已经注册过，换个邮箱试试吧！"
-        else:
-            logger.error(e)
-            msg = "未知错误，请稍后再试，或直接发邮件到luohai2233@163.com"
+        logger.error(e)
+        msg = "未知错误，请稍后再试，或直接发邮件到luohai2233@163.com"
         res = {
-            'code': 400,
+            'code': 404,
             'msg': msg
         }
     return jsonify(res)
@@ -139,7 +143,7 @@ def user_activate(token):
         return redirect('http://' + DefaultConfig.FrontDomain + '/login')
     else:
         flash('激活失败')
-        return jsonify({'code': 401, 'msg': '令牌失效，请重新注册'})
+        return jsonify({'code': 401, 'msg': "令牌失效，请重新注册"})
 
 
 @auth.verify_password
