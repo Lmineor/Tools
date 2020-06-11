@@ -14,7 +14,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(128))
-    activate = db.Column(db.Boolean)
+    activate = db.Column(db.Boolean, default=False)
     memo = db.Column(db.Text)
 
     def __repr__(self):
