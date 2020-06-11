@@ -92,7 +92,7 @@ def user_register():
     password = request.get_json()['password']
     try:
         user = User(username=username, email=email, password=password)
-        if not user.activate:
+        if user and not user.activate:
             # 用户已经注册，但是未点击激活链接，则重新生成激活链接并发送邮件
             token = user.generate_auth_token(expiration=5*60).decode('ascii')  # 此时token过期时间为5分钟
             send_register_active_email(user.email, user.username, token)
