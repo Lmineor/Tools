@@ -35,6 +35,8 @@
         @keyup.enter="register"
       />
       <div class="nya-btn" id="register" @click="register">注册</div>
+      <span v-if="sent_email" style="font-size: x-small">邮件已经发送到注册的邮箱，请尽快点击链接激活账号</span>
+      <a v-if="sent_email" @click="register">没有收到？，点击重新发送，或瞅瞅垃圾箱里有没有？</a>
     </nya-container>
 
   </div>
@@ -56,7 +58,8 @@ export default {
       email: '',
       password1: '',
       password2: '',
-      isFocus: false
+      isFocus: false,
+      sent_email: false
     }
   },
   methods: {
@@ -108,11 +111,12 @@ export default {
             {
                 username: this.username,
                 email: this.email,
-                password: this.password1
+                password: this.password1,
             },
         )
         .then(re => {
           if(re.data.code == 200) {
+            this.sent_email = true;
             this.$swal({
               toast: true,
               position: 'top-end',
@@ -120,7 +124,7 @@ export default {
               title: '注册成功',
               timer: 1500,
             });
-            this.$router.push("/login") // 跳转到login页
+            // this.$router.push("/login") // 跳转到login页
           } else{
             this.$swal({
               toast: true,
@@ -150,7 +154,7 @@ export default {
   .register {
     width: 100%;
     max-width: 400px;
-    margin: 100px auto 0;
+    margin: 10px auto 0;
     .nya-btn {
       font-size: 17px;
       font-weight: bold;

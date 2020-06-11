@@ -12,7 +12,7 @@ def send_email(subject, receiver, html_message):
     msg['Subject'] = subject
     msg['From'] = DefaultConfig.MAIL_USER
     msg['To'] = receiver
-    html_message = MIMEText(html_message, 'html')
+    html_message = MIMEText(html_message, 'html', 'utf-8')
     msg.attach(html_message)
 
     try:

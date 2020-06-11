@@ -14,6 +14,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(128))
+    activate = db.Column(db.Boolean)
     memo = db.Column(db.Text)
 
     def __repr__(self):
@@ -37,6 +38,7 @@ class User(db.Model, UserMixin):
         s = Serializer(DefaultConfig.SECRET_KEY, expires_in=expiration)
         return s.dumps({'id': self.id})
 
+
     # 解析token，确认登录的用户身份
     @staticmethod
     def verify_auth_token(token):
@@ -49,3 +51,20 @@ class User(db.Model, UserMixin):
             return None  # invalid token
         user = User.query.get(data['id'])
         return user
+
+    @staticmethod
+    def check_activate_token(token):
+        s = Serializer(DefaultConfig.SECRET_KEY)
+        try:
+            data = s.loads(token)
+        except:
+            return False
+        u = User.query.get(data['id'])
+        if not u:
+            # 用户已被删除
+            return False
+        if not u.activate:
+            u.activate = True
+            db.session.add(u)
+            db.session.commit()
+        return True

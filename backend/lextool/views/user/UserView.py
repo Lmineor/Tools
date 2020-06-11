@@ -1,10 +1,15 @@
 from flask import Blueprint, request
 from flask import jsonify, g
 from flask import session
+from flask import flash
+from flask import redirect
 
 from . import auth
 from ...models import db
 from ...models.user import User
+from ...utils.tasks import send_register_active_email
+from ...logger import logger
+from ...config.default import DefaultConfig
 
 user = Blueprint('user', __name__)
 
@@ -12,21 +17,21 @@ user = Blueprint('user', __name__)
 # 路由
 @user.route("/usermemo", methods=['POST', 'GET'])
 @auth.login_required
-def usermemo():
+def get_user_memo():
     memo = g.user.memo
     return jsonify({'memo': memo})
 
 
 @user.route("/userinfo", methods=['POST', 'GET'])
 @auth.login_required
-def userinfo():
+def user_info():
     email = g.user.email
     return jsonify({'email': email})
 
 
 @user.route("/saveusermemo", methods=['POST', 'GET'])
 @auth.login_required
-def saveusermemo():
+def save_user_memo():
     id = g.user.id
     memo = request.get_json()['memo']
     currentuser = User.query.get(id)
@@ -68,7 +73,6 @@ def user_update():
             'msg': msg
         }
         return jsonify(res)
-        
     except Exception as e:
         msg = "fail"
         res = {
@@ -76,6 +80,7 @@ def user_update():
             'msg': msg
         }
         return jsonify(res)
+
 
 @user.route('/register', methods=['POST'])
 def user_register():
@@ -87,18 +92,34 @@ def user_register():
     password = request.get_json()['password']
     try:
         user = User(username=username, email=email, password=password)
-        db.session.add(user)
-        db.session.commit()
-        msg = "注册成功"
-        res = {
-            'code': 200,
-            'msg': msg
-        }
+        if not user.activate:
+            # 用户已经注册，但是未点击激活链接，则重新生成激活链接并发送邮件
+            token = user.generate_auth_token(expiration=5*60).decode('ascii')  # 此时token过期时间为5分钟
+            send_register_active_email(user.email, user.username, token)
+            flash('邮件已经发送！')
+            msg = "注册成功,激活链接已发送到你注册时的邮箱，请及时激活"
+            res = {
+                'code': 200,
+                'msg': msg
+            }
+        else:
+            # 用户未注册
+            db.session.add(user)
+            db.session.commit()
+            token = user.generate_auth_token(expiration=5 * 60).decode('ascii')  # 此时token过期时间为5分钟
+            send_register_active_email(user.email, user.username, token)
+            flash('邮件已经发送！')
+            msg = "注册成功,激活链接已发送到你注册时的邮箱，请及时激活"
+            res = {
+                'code': 200,
+                'msg': msg
+            }
     except Exception as e:
         code = str(e.__cause__).split(',')[0][1:]
         if code == '1062':
             msg = "该邮箱已经注册过，换个邮箱试试吧！"
         else:
+            logger.error(e)
             msg = "未知错误，请稍后再试，或直接发邮件到luohai2233@163.com"
         res = {
             'code': 400,
@@ -107,11 +128,25 @@ def user_register():
     return jsonify(res)
 
 
+@user.route('/active/<token>', methods=['GET'])
+def user_activate(token):
+    """
+    激活
+    :return: None
+    """
+    if User.check_activate_token(token):
+        flash('激活成功')
+        return redirect('http://' + DefaultConfig.FrontDomain + '/login')
+    else:
+        flash('激活失败')
+        return jsonify({'code': 401, 'msg': '令牌失效，请重新注册'})
+
+
 @auth.verify_password
 def verify_password(email_or_token, password):
     if request.path == "/user/login":
         user = User.query.filter_by(email=email_or_token).first()
-        if not user or not user.check_password_hash(password):
+        if not user or not user.check_password_hash(password) or not user.activate:
             return False
     else:
         user = User.verify_auth_token(email_or_token)

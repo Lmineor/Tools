@@ -44,8 +44,9 @@ class DefaultConfig(object):
 
     SpecialChar = {'&#230;': 'æ'}
 
-    Domain = "www.lex666.online"
-
+    # Domain = "tools.lex666.online"
+    Domain = Domain
+    FrontDomain = FrontDomain
     MAIL_HOST = MAIL_HOST  # 设置服务器
     MAIL_USER = MAIL_USER  # 用户名
     MAIL_PASS = MAIL_PASS  # 口令
