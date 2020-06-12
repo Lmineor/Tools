@@ -6,7 +6,7 @@ from flask import redirect
 
 from . import auth
 from ...models import db
-from ...models.user import User
+from ...models.user import User, Role
 from ...utils.tasks import send_register_active_email
 from ...logger import logger
 from ...config.default import DefaultConfig
@@ -118,6 +118,9 @@ def user_register():
             # 用户尚未注册
             user = User(username=username, email=email, password=password)
             db.session.add(user)
+            db.session.flush()
+            role = Role(role=False, user_id=user.id)
+            db.session.add(role)
             db.session.commit()
             token = user.generate_auth_token(expiration=5 * 60).decode('ascii')  # 此时token过期时间为5分钟
             send_register_active_email(user.email, user.username, token)
