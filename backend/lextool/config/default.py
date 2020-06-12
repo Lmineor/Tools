@@ -6,20 +6,16 @@ try:
     from .local_config import *
 except ImportError:
     pass
-except Exception as e:
-    SQLALCHEMY_DATABASE_URI = None
-    SQLALCHEMY_BINDS = None
-    SECRET_KEY = None
-    raise e
 
 
 class DefaultConfig(object):
 
     # Default Database URI
-    SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI
+    SQLALCHEMY_DATABASE_URI = 'mysql://{username}:{password}@localhost:3306/{db}'.format(**Default_DB)
 
     # 需要绑定的多个数据库
-    SQLALCHEMY_BINDS = SQLALCHEMY_BINDS
+    SQLALCHEMY_BINDS = {'{db}'.format(**item):'mysql://{username}:{password}@localhost:3306/{db}'.format(**item) for item in BINDS_DB}
+
 
     # Pagination Number
     PER_PAGE = 30  # 分页每页的个数
@@ -34,6 +30,7 @@ class DefaultConfig(object):
 		'CACHE_DEFAULT_TIMEOUT': 922337203685477580,
 		'CACHE_THRESHOLD': 922337203685477580
 	}
+
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     
     SESSION_TIME = 30*60 
@@ -44,7 +41,6 @@ class DefaultConfig(object):
 
     SpecialChar = {'&#230;': 'æ'}
 
-    # Domain = "tools.lex666.online"
     Domain = Domain
     FrontDomain = FrontDomain
     MAIL_HOST = MAIL_HOST  # 设置服务器
