@@ -20,12 +20,10 @@ def send_register_active_email(email, username, token):
     # 组织邮件信息
     subject = '欢迎注册lex吐司'
     receiver = email
-    # html_message = """
-    # <h2>Hi {}, 欢迎注册lex吐司</h2>请点击下方的链接激活你的账户
-    # <a href="http://{}/user/active/{}">http://{}/user/active/{}</a>"""\
-    #     .format(username, DefaultConfig.Domain, token, DefaultConfig.Domain, token)
-    html_message = \
-        '<h2>Hi {}, </h2>Click the link to active your account' \
-        '<a href="http://{}/user/active/{}">http://{}/user/active/{}</a> ' \
-            .format(username, DefaultConfig.Domain, token, DefaultConfig.Domain, token)
+    # html_pattern = """<h2>Hi {}, 欢迎注册lex吐司</h2>请点击下方的链接激活你的账户<br><a href="http://{}/user/active/{}">http://{}/user/active/{}</a>"""
+    html_pattern = """
+        <h2>Hi {}, </h2>Click the link to active your account
+        <a href="http://{}/user/active/{}">http://{}/user/active/{}</a>
+    """
+    html_message = html_pattern.format(username, DefaultConfig.Domain, token, DefaultConfig.Domain, token)
     send_email(subject, receiver, html_message=html_message)

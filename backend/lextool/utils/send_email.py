@@ -1,24 +1,24 @@
+#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.header import Header
-
+from email.message import EmailMessage
 from ..config.default import DefaultConfig
 from ..logger import logger
 
-import traceback
-import sys
-# sys.setdefaultencoding('utf-8')
 
 def send_email(subject, receiver, html_message):
     # Create message container - the correct MIME type is multipart/alternative.
     msg = MIMEMultipart('alternative')
     msg['Subject'] = Header(subject, 'utf-8')
-    msg['From'] = DefaultConfig.MAIL_USER
+    msg['From'] = 'lex吐司管理员'
     msg['To'] = receiver
-    html = MIMEText(html_message.encode('utf-8'), 'plain', 'utf-8')
+    u = html_message.encode('utf-8')
+    print(u)
+    html = MIMEText(html_message.encode('utf-8'), _subtype='html', _charset='utf-8')
     msg.attach(html)
     try:
         smtp_obj = smtplib.SMTP()
@@ -31,5 +31,6 @@ def send_email(subject, receiver, html_message):
         logger.error(e)
         logger.error("Error: 无法发送邮件")
     except Exception as e:
-        exc_type, exc_value, exc_traceback_obj = sys.exc_info()
-        traceback.print_tb(exc_traceback_obj)
+        logger.error(e)
+
+                    
