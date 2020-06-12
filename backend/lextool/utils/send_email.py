@@ -32,5 +32,3 @@ def send_email(subject, receiver, html_message):
         logger.error("Error: 无法发送邮件")
     except Exception as e:
         logger.error(e)
-
-                    

@@ -7,6 +7,14 @@ from ..config.default import DefaultConfig
 from ..models import db
 
 
+class Role(db.Model, RoleMixin):
+    __bind_key__ = 'user'
+    __tablename__ = 'role'
+    index = db.Column(db.Integer(), primary_key=True)
+    role = db.Column(db.Boolean, nullable=False)  # True:admin, False: common user
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+
 class User(db.Model, UserMixin):
     __bind_key__ = 'user'
     __tablename__ = 'user'
