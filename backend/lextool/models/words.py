@@ -1,31 +1,23 @@
 from . import db
 
 
-class EnWords(db.Model):
-    __bind_key__ = 'words'  # 已设置__bind_key__,则采用设置的数据库引擎
+class WordBase(db.Model):
+    __bind_key__ = 'words'
+    __abstract__ = True  # 把__abstract__这个属性设置为True,这个类为基类，不会被创建为表
+    id = db.Column(db.Integer, primary_key=True)
+    word = db.Column(db.String(32), index=True)
+    translation = db.Column(db.String(512), nullable=False)
+    spellingA = db.Column(db.String(64), nullable=True)  # 美音
+    spellingE = db.Column(db.String(64), nullable=True)  # 英音
+
+
+class EnWords(WordBase):
     __tablename__ = 'enwords'
-    id = db.Column(db.Integer, primary_key=True)
-    word = db.Column(db.String(32), index=True)
-    translation = db.Column(db.String(512), nullable=False)
-    spellingA = db.Column(db.String(64), nullable=True)  # 美音
-    spellingE = db.Column(db.String(64), nullable=True)  # 英音
 
 
-class Cet6(db.Model):
-    __bind_key__ = 'words'  # 已设置__bind_key__,则采用设置的数据库引擎
+class Cet6(WordBase):
     __tablename__ = 'cet6'
-    id = db.Column(db.Integer, primary_key=True)
-    word = db.Column(db.String(32), index=True)
-    translation = db.Column(db.String(512), nullable=False)
-    spellingA = db.Column(db.String(64), nullable=True)  # 美音
-    spellingE = db.Column(db.String(64), nullable=True)  # 英音
 
 
-class Cet4(db.Model):
-    __bind_key__ = 'words'  # 已设置__bind_key__,则采用设置的数据库引擎
+class Cet4(WordBase):
     __tablename__ = 'cet4'
-    id = db.Column(db.Integer, primary_key=True)
-    word = db.Column(db.String(32), index=True)
-    translation = db.Column(db.String(512), nullable=False)
-    spellingA = db.Column(db.String(64), nullable=True)  # 美音
-    spellingE = db.Column(db.String(64), nullable=True)  # 英音

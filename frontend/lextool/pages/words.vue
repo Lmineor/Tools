@@ -1,6 +1,6 @@
 <template>
     <div class="words">
-        <nya-container :title="title">
+        <nya-container :title="title + ' ' + book">
             <div v-show="!showInfo">
                 <!-- <div class="toward nya-btn" @click="singlePage">
                     <i class="eva eva-arrow-forward-outline"></i>
@@ -38,70 +38,78 @@
 
 <script>
 import envs from '../env'
+const Cookie = process.client ? require("js-cookie") : undefined;
 
 export default {
-    name: 'ShortUrl',
-    head() {
-        return{
-            title: this.title
-        }
-    },
-    data() {
-        return {
-            title: '背背单词',
-            loading: true,
-            showInfo: false,
-            columns: [
-                    {
-                        title: '单词',
-                        key: 'word'
-                    },
-                    {
-                        title: '词义',
-                        key: 'translation'
-                    }
-                ],
-            words: [],
-        };
-    },
-    mounted (){
-        this.getWords()
-    },
-    methods: {
-        getWords() {
-            this.$store.commit('SET_STORE', {
-                key: 'globalLoading',
-                value: true
-            });
-            this.$axios
-                .get(envs.apiUrl + '/words/daily',)
-                .then(re => {
-                    this.words = re.data.words;
-                    this.$store.commit('SET_STORE', {
-                        key: 'globalLoading',
-                        value: false
-                    });
-                })
-                .catch(err => {
-                    this.$store.commit('SET_STORE', {
-                        key: 'globalLoading',
-                        value: false
-                    });
-                    this.$swal({
-                        toast: true,
-                        position: 'top-end',
-                        type: 'error',
-                        title: 'error' + err,
-                        timer: 3000,
-                    });
-                });
-            this.loading = false;
-        },
-        singlePage(){
-            this.showInfo = true;
+  middleware: 'authenticated', // 需要登录
+  name: 'ShortUrl',
+  head() {
+      return{
+          title: this.title
+      }
+  },
+  data() {
+      return {
+          title: '背背单词',
+          loading: true,
+          showInfo: false,
+          book:'',
+          columns: [
+                  {
+                      title: '单词',
+                      key: 'word'
+                  },
+                  {
+                      title: '词义',
+                      key: 'translation'
+                  }
+              ],
+          words: [],
+      };
+  },
+  mounted (){
+      this.getWords()
+  },
+  methods: {
+      getWords() {
+          this.$store.commit('SET_STORE', {
+              key: 'globalLoading',
+              value: true
+          });
+          this.$axios.defaults.auth = {
+          username: Cookie.get('auth'),
+          password: ''
+          }
+          this.$axios
+              .get(envs.apiUrl + '/words/daily',)
+              .then(re => {
+                  this.words = re.data.words;
+                  this.$store.commit('SET_STORE', {
+                      key: 'globalLoading',
+                      value: false
+                  });
+                  this.book = re.data.book
+              })
+              .catch(err => {
+                  this.$store.commit('SET_STORE', {
+                      key: 'globalLoading',
+                      value: false
+                  });
+                  this.$swal({
+                      toast: true,
+                      position: 'top-end',
+                      type: 'error',
+                      title: 'error' + err,
+                      timer: 3000,
+                  });
+              });
+          this.loading = false;
+      },
+      singlePage(){
+          this.showInfo = true;
 
-        }
-    }
+      }
+  }
 };
 </script>
 
