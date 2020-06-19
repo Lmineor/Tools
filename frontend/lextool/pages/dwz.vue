@@ -52,7 +52,7 @@ export default {
             }
             this.$axios
                 .post(
-                    envs.apiUrl + '/shorturl/shorten',
+                    envs.apiUrl + '/dwz/dwz',
                     {
                         url: this.url,
                     },

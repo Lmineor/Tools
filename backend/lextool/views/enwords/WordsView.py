@@ -1,10 +1,11 @@
 from flask import request
 from flask import Blueprint
-from flask import jsonify
+from flask import jsonify, g
 from sqlalchemy.sql.expression import func
 
+from ..user import auth
 from ...logger import logger
-from ...models.words import EnWords
+from ...models.words import Cet4, Cet6
 from ...models import db
 from ...utils.parseCharacter import parseSpelling
 
@@ -12,20 +13,27 @@ words = Blueprint('words', __name__)
 
 
 @words.route('/daily', methods=['POST', 'GET'])
+@auth.login_required
 def get_daily_words():
     """
-    短链还原部分
+    获取每日单词
     """
+    book = g.user.config.words_book
+    if book == 'Cet4':
+        DB = Cet4
+    else:
+        DB = Cet6
     if request.method == 'GET':
         try:
-            items = EnWords.query.order_by(func.rand()).limit(20)
+            items = DB.query.order_by(func.rand()).limit(20)
             res = [{'word': item.word, 'translation': item.translation, 'spellingA': parseSpelling(item.spellingA), 'spellingE': parseSpelling(item.spellingE)} for item in items]
         except Exception as e:
             res = []
             logger.error(e)
         return jsonify({
             'code': 200,
-            'words': res
+            'words': res,
+            'book':book
         })
     # else:
     #     chapter = request.get_json()['chapter']

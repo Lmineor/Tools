@@ -6,7 +6,7 @@ export const state = () => {
             list: [
                 {
                     name: '短链生成',
-                    path: '/shorturl',
+                    path: '/dwz',
                     head: {
                         keywords: ['url', '短链'],
                         description: '短链生成工具'

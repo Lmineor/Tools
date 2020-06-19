@@ -2,7 +2,7 @@
     <div class="OriginUrl">
         <nya-container title="短链复原">
             <nya-input
-                v-model.trim="shorturl"
+                v-model.trim="dwz"
                 label="请输入短链"
                 placeholder="0000Ha"
                 autocomplete="off"
@@ -13,8 +13,8 @@
                 还原
             </div>
         </nya-container>
-        <nya-container v-if="OriginUrl" title="结果">
-            <div v-html="OriginUrl"></div>
+        <nya-container v-if="url" title="结果">
+            <div v-html="url"></div>
         </nya-container>
         <nya-container title="提示" icon="volume-down-outline">
             <ul class="nya-list">
@@ -38,8 +38,8 @@ export default {
     },
     data() {
         return {
-            OriginUrl:'',
-            shorturl:'',
+            url:'',
+            dwz:'',
         };
     },
     methods: {
@@ -47,7 +47,7 @@ export default {
             pattern = "((http://)|(https://))?([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}(/)"
         },
         getOriginUrl() {
-            if (this.shorturl === ''){
+            if (this.dwz === ''){
                 this.$swal({
                     toast: true,
                     position: 'top-end',
@@ -59,16 +59,16 @@ export default {
             }
             this.$axios
                 .post(
-                    envs.apiUrl + '/shorturl/OriginUrl',
+                    envs.apiUrl + '/dwz/restore',
                     {
-                        shorturl: this.shorturl,
+                        dwz: this.dwz,
                     },
                 )
                 .then(re => {
-                    this.OriginUrl = re.data.OriginUrl;
+                    this.url = re.data.url;
                 })
                 .catch(err => {
-                    this.OriginUrl = "生成失败,该短链不存在";
+                    this.url = "生成失败,该短链不存在";
                     this.loading = false;
                 });
         },

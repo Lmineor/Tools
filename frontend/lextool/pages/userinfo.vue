@@ -8,6 +8,9 @@
         <FormItem label="邮箱">
             <span style="width:30%;">{{email}}</span>
         </FormItem>
+        <FormItem label="单词书">
+            <span style="width:30%;">{{words_book}}</span>
+        </FormItem>
         <FormItem v-if="modify" label="密码">
             <Input v-model="password1" type="password" style="width:30%;"></Input>
             <span style="color:rgb(255, 0, 0);">位数大于等于6位小于等于32位</span>
@@ -46,6 +49,7 @@ export default {
       modify : true,
       password1: '',
       password2: '',
+      words_book: ''
     }
   },
   mounted (){
@@ -62,11 +66,12 @@ export default {
       }
       this.$axios
         .get(
-            envs.apiUrl + '/user/userinfo',
+            envs.apiUrl + '/user/info',
             {withCredentials: true}
         )
         .then(re => {
             this.email = re.data.email;
+            this.words_book = re.data.words_book;
         })
         .catch(err => {
             this.$swal({
@@ -115,7 +120,7 @@ export default {
       }
       this.$axios
         .post(
-            envs.apiUrl + '/user/update',
+            envs.apiUrl + '/user/infoupdate',
             {
                 username: this.username,
                 email: this.email,

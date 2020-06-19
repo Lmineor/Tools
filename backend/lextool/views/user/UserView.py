@@ -6,7 +6,7 @@ from flask import redirect
 
 from . import auth
 from ...models import db
-from ...models.user import User, Role
+from ...models.user import User, UserConfig, UserMemo
 from ...utils.tasks import send_register_active_email
 from ...logger import logger
 from ...config.default import DefaultConfig
@@ -15,77 +15,98 @@ user = Blueprint('user', __name__)
 
 
 # 路由
-@user.route("/usermemo", methods=['POST', 'GET'])
+@user.route("/memo", methods=['GET'])
 @auth.login_required
 def get_user_memo():
-    memo = g.user.memo
+    memo = g.user.memo.memo
     return jsonify({'memo': memo})
 
 
-@user.route("/userinfo", methods=['POST', 'GET'])
+@user.route("/info", methods=['POST', 'GET'])
 @auth.login_required
-def user_info():
+def info():
+    """
+    获取当前登录用户的信息
+    :return: 
+    """
     email = g.user.email
-    return jsonify({'email': email})
+    words_book = g.user.config.words_book
+    return jsonify({'email': email, 'words_book': words_book})
 
 
-@user.route("/saveusermemo", methods=['POST', 'GET'])
+@user.route("/users", methods=['GET'])
+# @auth.login_required
+def get_users():
+    """
+    获取用户名列表，供admin使用
+    """
+    users_obj = User.query.all()
+    res = [
+        {
+            'username': item.username,
+            'email': item.email,
+            'wordbook': UserConfig.query.filter_by(user_id=item.id).first().words_book
+         } for item in users_obj
+    ]
+    return jsonify(res)
+
+
+@user.route("/memoupdate", methods=['POST', 'GET'])
 @auth.login_required
-def save_user_memo():
-    id = g.user.id
+def save_memo():
     memo = request.get_json()['memo']
-    currentuser = User.query.get(id)
-    currentuser.memo = memo
-    db.session.add(currentuser)
+    memo_obj = UserMemo.query.filter_by(user_id=g.user.id).first()
+    memo_obj.memo = memo
+    db.session.add(memo_obj)
     db.session.commit()
-    return jsonify({'memo': memo})
+    return jsonify({'code': 200})
 
 
 @user.route('/logout', methods=['DELETE'])
 def logout():
     if 'username' in session:
         session.pop('username')
-        return jsonify({'code': 200,'description': 'Logout successful.'})
+        return jsonify({'code': 200, 'description': 'Logout successful.'})
     else:
         return jsonify({'code': 201, 'description': 'No user was found.'})
 
 
-@user.route('/update', methods=['POST'])
+@user.route('/infoupdate', methods=['POST'])
 @auth.login_required
-def user_update():
+def update():
     """
-    test
+    用户信息更新
     """
     username = request.get_json()['username']
     email = request.get_json()['email']
     password = request.get_json()['password']
+    words_book = request.get_json()['words_book']
     try:
-        id = g.user.id
-        currentuser = User.query.get(id)
+        user_config = UserConfig.query.filter_by(user_id=g.user.id).first()
+        user_config.words_book = words_book
+        db.session.add(user_config)
         if password:
-            currentuser.password = password
-        currentuser.username = username
-        db.session.add(currentuser)
+            g.user.password = password
+        g.user.username = username
+        db.session.add(g)
         db.session.commit()
+
         msg = "success"
-        res = {
-            'code': 200,
-            'msg': msg
-        }
-        return jsonify(res)
+        code = 200
     except Exception as e:
         msg = "fail"
-        res = {
-            'code': 400,
-            'msg': msg
-        }
-        return jsonify(res)
+        code = 400
+    res = {
+        'code': code,
+        'msg': msg
+    }
+    return jsonify(res)
 
 
 @user.route('/register', methods=['POST'])
-def user_register():
+def register():
     """
-    test
+    用户注册
     """
     username = request.get_json()['username']
     email = request.get_json()['email']
@@ -119,8 +140,10 @@ def user_register():
             user = User(username=username, email=email, password=password)
             db.session.add(user)
             db.session.flush()
-            role = Role(role=False, user_id=user.id)
-            db.session.add(role)
+            config = UserConfig(role=False, user_id=user.id)
+            db.session.add(config)
+            memo = UserMemo(user_id=user.id)
+            db.session.add(memo)
             db.session.commit()
             token = user.generate_auth_token(expiration=5 * 60).decode('ascii')  # 此时token过期时间为5分钟
             send_register_active_email(user.email, user.username, token)
@@ -141,7 +164,7 @@ def user_register():
 
 
 @user.route('/active/<token>', methods=['GET'])
-def user_activate(token):
+def activate(token):
     """
     激活
     :return: None

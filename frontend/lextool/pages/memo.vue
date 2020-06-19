@@ -58,7 +58,7 @@ export default {
       }
       this.$axios
         .get(
-            envs.apiUrl + '/user/usermemo',
+            envs.apiUrl + '/user/memo',
             {withCredentials: true}
         )
         .then(re => {
@@ -82,7 +82,7 @@ export default {
       }
       this.$axios
         .post(
-            envs.apiUrl + '/user/saveusermemo',
+            envs.apiUrl + '/user/memoupdate',
             {
                 username: this.user,
                 memo: this.memo,
@@ -120,7 +120,7 @@ export default {
       height: 500px;
       text-overflow: ellipsis;
       font-size: 15px;
-      border-style: none; 
+      border-style: none;
     }
     .nya-btn {
       position: relative;

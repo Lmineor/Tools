@@ -7,6 +7,7 @@ import random
 conn = MySQLdb.connect(host="127.0.0.1", port=3306, user="root", passwd="123456", db="words", charset='utf8')
 cur = conn.cursor()
 
+
 def insert_data(data):
     param = []
     for i in data:

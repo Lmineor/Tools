@@ -39,7 +39,7 @@ def __10to62(num):
             res = '0' + res
     return res
 
-def gen_dwz(origin):
+def generate_dwz(origin):
     '''
     origin: 数据库的递增字段
     '''
