@@ -84,8 +84,9 @@ def redir(code):
     重定向部分
     """
     try:
-        item = DWZ.query.filter_by(dwz == str(code)).first()
+        item = DWZ.query.filter_by(dwz=str(code)).first()
         url = item.url
+        print(url)
     except Exception as e:
         url = ''
         logger.error("Error is {}".format(e))
