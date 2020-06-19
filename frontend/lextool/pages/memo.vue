@@ -59,12 +59,22 @@ export default {
       this.$axios
         .get(
             envs.apiUrl + '/user/memo',
-            {withCredentials: true}
         )
         .then(re => {
             this.memo = re.data.memo;
         })
         .catch(err => {
+          if (err.response.status === 401) {
+            this.$swal({
+              toast: true,
+              position: 'top-end',
+              type: 'error',
+              title: '登录过期，请重新登录',
+              timer: 3000,
+            });
+            this.$router.push("/login")
+          }
+          else {
             this.$swal({
               toast: true,
               position: 'top-end',
@@ -73,6 +83,7 @@ export default {
               timer: 2000,
             });
             this.memo = '';
+          }
         });
     },
     savememo() {

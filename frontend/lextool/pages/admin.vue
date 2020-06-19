@@ -62,22 +62,38 @@ export default {
       this.$axios
         .get(
           envs.apiUrl + '/user/users',
-          {withCredentials: true}
+          // {withCredentials: true}
         )
         .then(re => {
-          // this.users = re.data.users;
-          this.users = [{'username': 'lex','email': 'luohai2233@163.com','wordbook':'CET4'},
-            {'username': 'lex','email': 'luohai2233@163.com','wordbook':'CET4'},
-            {'username': 'lex','email': 'luohai2233@163.com','wordbook':'CET4'}]
+          if(re.data){this.users = re.data;}
+          else{
+            this.$swal({
+              toast: true,
+              position: 'top-end',
+              type: 'error',
+              title: '你没有权限',
+              timer: 3000,
+            });
+            this.$router.push("/"); // 跳转到首页
+          }
+          this.$store.commit('SET_STORE', {
+            key: 'globalLoading',
+            value: false
+          });
         })
         .catch(err => {
+          this.$store.commit('SET_STORE', {
+            key: 'globalLoading',
+            value: false
+          });
           this.$swal({
             toast: true,
             position: 'top-end',
             type: 'error',
-            title: '操作失败，请排查',
+            title: '登录过期，请重新登录',
             timer: 3000,
           });
+          this.$router.push("/login")
         })
     },
     update(){

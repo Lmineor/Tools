@@ -2,7 +2,7 @@ import datetime
 
 from werkzeug.security import generate_password_hash, check_password_hash  # 转换密码用到的库
 from flask_security import UserMixin  # 登录和角色需要继承的对象
-from itsdangerous import TimedJSONWebSignatureSerializer as BadSignature
+from itsdangerous import BadSignature, SignatureExpired
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 from ..config.default import DefaultConfig
@@ -67,8 +67,8 @@ class User(db.Model, UserMixin):
             data = s.loads(token)
         except BadSignature as e:
             return None  # invalid token
-        except Exception as e:
-            return None  # invalid token
+        except SignatureExpired as e:
+            return None  # token expire
         user = User.query.get(data['id'])
         return user
 

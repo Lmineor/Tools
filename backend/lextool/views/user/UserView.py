@@ -35,11 +35,14 @@ def info():
 
 
 @user.route("/users", methods=['GET'])
-# @auth.login_required
+@auth.login_required
 def get_users():
     """
     获取用户名列表，供admin使用
     """
+    if not g.user.config.role:
+        res = []
+        return jsonify(res)
     users_obj = User.query.all()
     res = [
         {

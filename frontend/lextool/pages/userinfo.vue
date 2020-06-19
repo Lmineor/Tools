@@ -67,13 +67,23 @@ export default {
       this.$axios
         .get(
             envs.apiUrl + '/user/info',
-            {withCredentials: true}
         )
         .then(re => {
             this.email = re.data.email;
             this.words_book = re.data.words_book;
         })
         .catch(err => {
+          if (err.response.status === 401) {
+            this.$swal({
+              toast: true,
+              position: 'top-end',
+              type: 'error',
+              title: '登录过期，请重新登录',
+              timer: 3000,
+            });
+            this.$router.push("/login")
+          }
+          else {
             this.$swal({
               toast: true,
               position: 'top-end',
@@ -83,6 +93,7 @@ export default {
             });
             this.email = '';
             this.$router.push("/login") // 跳转到login页
+          }
         });
     },
     update(){

@@ -33,10 +33,10 @@ class DefaultConfig(object):
 
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     
-    SESSION_TIME = 30*60 
+    # SESSION_TIME = 30*60
     
+    # EXPIRATION = 30  # auth有效期1小时
     EXPIRATION = 60*60*1  # auth有效期1小时
-    
     LOGPATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
     SpecialChar = {'&#230;': 'æ'}
