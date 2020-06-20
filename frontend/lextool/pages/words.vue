@@ -111,7 +111,7 @@ export default {
                     toast: true,
                     position: 'top-end',
                     type: 'error',
-                    title: 'error' + err,
+                    title: err,
                     timer: 3000,
                   });
                 }

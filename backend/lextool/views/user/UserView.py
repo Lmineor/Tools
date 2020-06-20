@@ -27,7 +27,7 @@ def get_user_memo():
 def info():
     """
     获取当前登录用户的信息
-    :return: 
+    :return:
     """
     email = g.user.email
     words_book = g.user.config.words_book
