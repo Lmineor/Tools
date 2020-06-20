@@ -35,8 +35,8 @@ class User(db.Model, UserMixin):
     activate = db.Column(db.Boolean, default=False)
     create_at = db.Column(db.DateTime, default=datetime.datetime.now)
     update_at = db.Column(db.DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
-    memo = db.relationship("UserMemo", uselist=False, backref="user")
-    config = db.relationship("UserConfig", uselist=False, backref="user")
+    memo = db.relationship("UserMemo", uselist=False, backref="user", cascade="delete")
+    config = db.relationship("UserConfig", uselist=False, backref="user", cascade="delete")
 
     def __repr__(self):
         return "<User_id:{0}>".format(self.id)

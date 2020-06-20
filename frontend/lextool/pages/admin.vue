@@ -13,12 +13,12 @@
               <tr v-for="(item, index) in users" :key="index">
                   <td>{{ item.username }}</td>
                   <td>{{item.email}}</td>
-                  <td>{{item.wordbook}}</td>
+                  <td>{{item.wordsbook}}</td>
                   <td>
-                    <Button type="primary" @click="update">初始化密码</Button>
+                    <Button type="primary" @click="update(index, 'chgpsw')">初始化密码</Button>
                   </td>
                   <td>
-                    <Button type="warning" @click="delete_user">删除用户</Button>
+                    <Button type="warning" @click="update(index, 'deluser')">删除用户</Button>
                   </td>
               </tr>
           </table>
@@ -31,7 +31,6 @@
 
 const Cookie = process.client ? require("js-cookie") : undefined;
 import envs from '../env'
-import {validEmail} from '@/utils/validate'
 
 
 export default {
@@ -61,7 +60,7 @@ export default {
       });
       this.$axios
         .get(
-          envs.apiUrl + '/user/users',
+          envs.apiUrl + '/admin/users',
           // {withCredentials: true}
         )
         .then(re => {
@@ -96,14 +95,15 @@ export default {
           this.$router.push("/login")
         })
     },
-    update(){
+    update(index, action){
       this.$axios
         .post(
-          envs.apiUrl + '/user/update',
+          envs.apiUrl + '/admin/updates',
           {
-            username: this.username,
-            email: this.email,
-            password: '123456abc'
+            action:action,
+            email: this.users[index].email,
+            password: '123456abc',
+            wordsbook:'CET4'
           },
         )
         .then(re => {
@@ -126,6 +126,7 @@ export default {
             timer: 3000,
           });
         });
+      this.getUsers();
     },
     delete_user(){
       this.$axios

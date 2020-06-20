@@ -19,7 +19,7 @@ def get_daily_words():
     获取每日单词
     """
     book = g.user.config.words_book
-    if book == 'Cet4':
+    if book == 'CET4':
         DB = Cet4
     else:
         DB = Cet6

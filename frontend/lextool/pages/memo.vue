@@ -27,7 +27,7 @@ export default {
   data () {
     return {
       rows: 23,
-      memo: '造吧',
+      memo: '',
       title: '便签',
       email: '',
       password: '',
@@ -38,20 +38,14 @@ export default {
   },
   mounted (){
     this.getmemo();
-    setInterval(() => {
-        this.savememo();//保存表单信息的操作
-      },20000)
+    // setInterval(() => {
+    //     this.savememo();//保存表单信息的操作
+    //   },20000)
     this.loading = false;
   },
   methods: {
     getmemo(){
       this.user = Cookie.get('user');
-      this.$swal({
-          toast: false,
-          position: 'center',
-          title: '你好: ' + this.user,
-          timer: 1500,
-        });
       this.$axios.defaults.auth = {
           username: Cookie.get('auth'),
           password: ''
@@ -79,10 +73,10 @@ export default {
               toast: true,
               position: 'top-end',
               type: 'error',
-              title: '出了点问题，请稍候再试',
+              title: '登录过期，请重新登录',
               timer: 2000,
             });
-            this.memo = '';
+            this.$router.push("/login")
           }
         });
     },

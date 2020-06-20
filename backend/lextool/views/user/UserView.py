@@ -14,44 +14,16 @@ from ...config.default import DefaultConfig
 user = Blueprint('user', __name__)
 
 
-# 路由
+# ---------------------------------------------------------------------------------
+# memo 相关接口
+# ---------------------------------------------------------------------------------
+
+
 @user.route("/memo", methods=['GET'])
 @auth.login_required
 def get_user_memo():
     memo = g.user.memo.memo
     return jsonify({'memo': memo})
-
-
-@user.route("/info", methods=['POST', 'GET'])
-@auth.login_required
-def info():
-    """
-    获取当前登录用户的信息
-    :return:
-    """
-    email = g.user.email
-    words_book = g.user.config.words_book
-    return jsonify({'email': email, 'words_book': words_book})
-
-
-@user.route("/users", methods=['GET'])
-@auth.login_required
-def get_users():
-    """
-    获取用户名列表，供admin使用
-    """
-    if not g.user.config.role:
-        res = []
-        return jsonify(res)
-    users_obj = User.query.all()
-    res = [
-        {
-            'username': item.username,
-            'email': item.email,
-            'wordbook': UserConfig.query.filter_by(user_id=item.id).first().words_book
-         } for item in users_obj
-    ]
-    return jsonify(res)
 
 
 @user.route("/memoupdate", methods=['POST', 'GET'])
@@ -65,13 +37,20 @@ def save_memo():
     return jsonify({'code': 200})
 
 
-@user.route('/logout', methods=['DELETE'])
-def logout():
-    if 'username' in session:
-        session.pop('username')
-        return jsonify({'code': 200, 'description': 'Logout successful.'})
-    else:
-        return jsonify({'code': 201, 'description': 'No user was found.'})
+# ---------------------------------------------------------------------------------
+# 用户更新自己信息相关接口
+# ---------------------------------------------------------------------------------
+
+@user.route("/info", methods=['POST', 'GET'])
+@auth.login_required
+def info():
+    """
+    获取当前登录用户的信息
+    :return:
+    """
+    email = g.user.email
+    words_book = g.user.config.words_book
+    return jsonify({'email': email, 'words_book': words_book})
 
 
 @user.route('/infoupdate', methods=['POST'])
@@ -104,6 +83,20 @@ def update():
         'msg': msg
     }
     return jsonify(res)
+
+
+# ---------------------------------------------------------------------------------
+# 用户登录模块
+# ---------------------------------------------------------------------------------
+
+
+@user.route('/logout', methods=['DELETE'])
+def logout():
+    if 'username' in session:
+        session.pop('username')
+        return jsonify({'code': 200, 'description': 'Logout successful.'})
+    else:
+        return jsonify({'code': 201, 'description': 'No user was found.'})
 
 
 @user.route('/register', methods=['POST'])
@@ -149,7 +142,7 @@ def register():
             db.session.add(memo)
             db.session.commit()
             token = user.generate_auth_token(expiration=5 * 60).decode('ascii')  # 此时token过期时间为5分钟
-            send_register_active_email(user.email, user.username, token)
+            # send_register_active_email(user.email, user.username, token)
             flash('邮件已经发送！')
             msg = "注册成功,激活链接已发送到你注册时的邮箱，请及时激活"
             res = {
