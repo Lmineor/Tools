@@ -21,3 +21,11 @@ class Cet6(WordBase):
 
 class Cet4(WordBase):
     __tablename__ = 'cet4'
+
+
+class GRE(WordBase):
+    __tablename__ = 'gre'
+
+
+class TOEFL(WordBase):
+    __tablename__ = 'toefl'
