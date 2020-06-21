@@ -8,6 +8,7 @@
                 autocomplete="off"
                 autofocus
                 fullwidth
+                @keyup.enter="getShortUrl"
             />
             <div class="nya-btn" @click="getShortUrl">
                 生成

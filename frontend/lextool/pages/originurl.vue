@@ -8,6 +8,7 @@
                 autocomplete="off"
                 autofocus
                 fullwidth
+                @keyup.enter="getOriginUrl"
             />
             <div class="nya-btn" @click="getOriginUrl">
                 还原
