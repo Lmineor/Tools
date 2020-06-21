@@ -91,12 +91,13 @@ def update():
 
 
 @user.route('/logout', methods=['DELETE'])
+@auth.login_required
 def logout():
-    if 'username' in session:
-        session.pop('username')
-        return jsonify({'code': 200, 'description': 'Logout successful.'})
-    else:
-        return jsonify({'code': 201, 'description': 'No user was found.'})
+    username = request.get_json()['username']
+    email = request.get_json()['email']
+    logger.info("User: {}, Email: {} logout.".format(username, email))
+    return jsonify({'code': 200, 'description': 'Logout successful.'})
+
 
 
 @user.route('/register', methods=['POST'])

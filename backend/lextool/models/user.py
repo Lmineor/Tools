@@ -54,7 +54,7 @@ class User(db.Model, UserMixin):
     def check_password_hash(self, password):
         return check_password_hash(self.password_hash, password)
 
-    # 获取token，有效时间1天
+    # 获取token
     def generate_auth_token(self, expiration=DefaultConfig.EXPIRATION):
         s = Serializer(DefaultConfig.SECRET_KEY, expires_in=expiration)
         return s.dumps({'id': self.id})

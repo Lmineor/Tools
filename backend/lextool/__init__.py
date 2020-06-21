@@ -23,7 +23,6 @@ def create_app():
     app.config['SQLALCHEMY_BINDS'] = DefaultConfig.SQLALCHEMY_BINDS
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = DefaultConfig.SQLALCHEMY_TRACK_MODIFICATIONS
     app.config['SECRET_KEY'] = DefaultConfig.SECRET_KEY
-    # app.permanent_session_lifetime = datetime.timedelta(seconds=DefaultConfig.SESSION_TIME)
     register_blueprint(app)
     register_database(app)
     cache.init_app(app, config=DefaultConfig.FILESYSTEM)

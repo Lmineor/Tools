@@ -2,14 +2,18 @@
   <div class="user-info">
     <nya-container :title=title>
       <Form label-position="left" :label-width="70">
-        <FormItem label="用户名*">
+        <FormItem label="用户名" class="forms">
             <Input v-model="username" style="width:30%;" @keyup.enter="update"></Input>
+          <span>*</span>
         </FormItem>
-        <FormItem label="邮箱">
+        <FormItem label="邮箱" class="forms">
             <span style="width:30%;">{{email}}</span>
         </FormItem>
-        <FormItem label="单词书">
+        <FormItem label="单词书" class="forms">
             <span style="width:30%;">{{words_book}}</span>
+        </FormItem>
+        <FormItem label="修改密码">
+            <i-switch v-model="modify"/>
         </FormItem>
         <FormItem v-if="modify" label="密码">
             <Input v-model="password1" type="password" style="width:30%;"></Input>
@@ -19,13 +23,13 @@
             <Input v-model="password2" type="password" style="width:30%;" @keyup.enter="update"></Input>
             <span style="color:rgb(255, 0, 0);">位数大于等于6位小于等于32位</span>
         </FormItem>
-    </Form>
-    <div class="nya-btn" id="register" @click="update">更新信息</div>
+      </Form>
+      <div class="nya-btn" id="register" @click="update">更新信息</div>
+      <div class="nya-btn" id="logout" @click="logout">退出登录</div>
     </nya-container>
     <nya-container title="提示" icon="volume-down-outline">
         <ul class="nya-list">
             <li>带*号的为必填项</li>
-            <li>若不修改密码，置空即可</li>
             <li>有问题，联系我<a href="mailto:luohai2233@163.com">luohai2233@163.com</a></li>
         </ul>
     </nya-container>
@@ -46,7 +50,7 @@ export default {
       title: '个人信息',
       username: '',
       email: '',
-      modify : true,
+      modify : false,
       password1: '',
       password2: '',
       words_book: ''
@@ -58,6 +62,47 @@ export default {
     this.loading = false;
   },
   methods: {
+    logout(){
+      this.$axios
+        .delete(
+            envs.apiUrl + '/user/logout',
+          {
+            data:{
+                username: this.username,
+                email: this.email
+            },
+          }
+        )
+        .then(re => {
+          if(re.data.code === 200) {
+            let token = null;
+            let username = null;
+            this.$store.commit("SET_AUTH", token);
+            this.$store.commit("SET_USER_IFO", username);
+            Cookie.set("auth", token);
+            Cookie.set("user", username);
+            this.$swal({
+              toast: true,
+              position: 'top-end',
+              type: 'success',
+              title: '注销成功',
+              timer: 1500,
+            });
+            this.$router.push("/");
+          }
+        })
+        .catch(err => {
+            this.$swal({
+              toast: true,
+              position: 'top-end',
+              type: 'error',
+              title: '注销失败',
+              timer: 3000,
+            });
+          // this.$router.push("/")
+        });
+      console.log('logout');
+    },
     getUserInfo(){
       this.username = Cookie.get('user');
       this.$axios.defaults.auth = {
@@ -176,17 +221,17 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style  lang="scss">
-  .memo {
+  .user-info {
     width: 100%;
-    .textarea{
-      height: 500px;
-      text-overflow: ellipsis;
-      font-size: 15px;
-      border-style: none;
+    .forms{
+      margin-top: 10px;
     }
     .nya-btn {
       position: relative;
       margin-top: 15px;
+    }
+    #logout{
+      margin-left: 30px;
     }
   }
 </style>
