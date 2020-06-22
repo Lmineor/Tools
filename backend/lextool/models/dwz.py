@@ -1,3 +1,5 @@
+import datetime
+
 from . import db
 
 
@@ -10,3 +12,4 @@ class DWZ(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String(80), unique=True)
     dwz = db.Column(db.String(10), unique=True)
+    create_at = db.Column(db.DateTime, default=datetime.datetime.now)
