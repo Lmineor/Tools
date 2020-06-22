@@ -1,5 +1,11 @@
-# encoding:utf-8
-# default config file
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+@Author  : lex(luohai2233@163.com)
+@File    : default.py
+"""
+
 import os
 
 try:
@@ -13,12 +19,12 @@ class DefaultConfig(object):
     # Default Database URI
     SQLALCHEMY_DATABASE_URI = 'mysql://{username}:{password}@localhost:3306/{db}'.format(**Default_DB)
 
-    # 需要绑定的多个数据库
+    # multidb to bind
     SQLALCHEMY_BINDS = {'{db}'.format(**item):'mysql://{username}:{password}@localhost:3306/{db}'.format(**item) for item in BINDS_DB}
 
 
     # Pagination Number
-    PER_PAGE = 30  # 分页每页的个数
+    PER_PAGE = 30
 
     # Secret Key for Token
     SECRET_KEY = SECRET_KEY
@@ -33,19 +39,22 @@ class DefaultConfig(object):
 
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     
-    
-    # EXPIRATION = 30  # auth有效期1小时
-    EXPIRATION = 60*60*1  # auth有效期1小时
+    # token valid time
+    EXPIRATION = 60*60*1 # 1 hour
     LOGPATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
     SpecialChar = {'&#230;': 'æ'}
-
+    
+    # Domain for verify token by url
     Domain = Domain
+    
+    # After verify token, redirect to login router
     FrontDomain = FrontDomain
-    MAIL_HOST = MAIL_HOST  # 设置服务器
-    MAIL_USER = MAIL_USER  # 用户名
-    MAIL_PASS = MAIL_PASS  # 口令
-
-
-if __name__ == '__main__':
-    print(DefaultConfig.LOGPATH)
+    
+    # Mail config
+    MAIL_HOST = MAIL_HOST  # mail host
+    MAIL_USER = MAIL_USER # mail user
+    MAIL_PASS = MAIL_PASS  # mail password
+    
+    # English Words Book
+    WORDSBOOK = ['CET4', 'CET6', 'TOEFL', 'GRE']

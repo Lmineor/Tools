@@ -1,3 +1,5 @@
+import datetime
+
 from flask import request
 from flask import Blueprint
 from flask import jsonify, g
@@ -5,7 +7,7 @@ from sqlalchemy.sql.expression import func
 
 from ..user import auth
 from ...logger import logger
-from ...models.words import Cet4, Cet6
+from ...models.words import Cet4, Cet6, TOEFL, GRE
 from ...models import db
 from ...utils.parseCharacter import parseSpelling
 
@@ -20,20 +22,24 @@ def get_daily_words():
     """
     book = g.user.config.words_book
     if book == 'CET4':
-        DB = Cet4
+        db = Cet4
+    elif book == 'CET6':
+        db = Cet6
+    elif book == 'TOEFL':
+        db = TOEFL
     else:
-        DB = Cet6
+        db = GRE
     if request.method == 'GET':
         try:
-            items = DB.query.order_by(func.rand()).limit(20)
-            res = [{'word': item.word, 'translation': item.translation, 'spellingA': parseSpelling(item.spellingA), 'spellingE': parseSpelling(item.spellingE)} for item in items]
+            items = db.query.order_by(func.rand()).limit(20)
+            data = [{'word': item.word, 'translation': item.translation, 'spellingA': parseSpelling(item.spellingA), 'spellingE': parseSpelling(item.spellingE)} for item in items]
         except Exception as e:
-            res = []
+            data = []
             logger.error(e)
         return jsonify({
             'code': 200,
-            'words': res,
-            'book':book
+            'words': data,
+            'book': book
         })
     # else:
     #     chapter = request.get_json()['chapter']

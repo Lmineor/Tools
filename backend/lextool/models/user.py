@@ -12,15 +12,17 @@ from ..models import db
 class UserConfig(db.Model):
     __tablename__ = 'config'
     index = db.Column(db.Integer(), primary_key=True)
-    words_book = db.Column(db.String(10), default='CET4')  # 1: CET4, 2 CET6, 3:All -> EnWords
+    words_book = db.Column(db.String(10), default='CET4')  # 1: CET4, 2 CET6, 3: TOEFL 4: GRE
     role = db.Column(db.Boolean, nullable=False)  # True:admin, False: common user
     user_id = db.Column(db.Integer(), db.ForeignKey('user.id'))
+    create_at = db.Column(db.DateTime, default=datetime.datetime.now)
+    update_at = db.Column(db.DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
 
 
 class UserMemo(db.Model):
     __tablename__ = 'memo'
     index = db.Column(db.Integer(), primary_key=True)
-    memo = db.Column(db.Text, default="写下你的便签")
+    memo = db.Column(db.Text(16777216), default="写下你的便签")
     user_id = db.Column(db.Integer(), db.ForeignKey('user.id'))
     create_at = db.Column(db.DateTime, default=datetime.datetime.now)
     update_at = db.Column(db.DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)

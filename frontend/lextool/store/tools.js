@@ -32,7 +32,7 @@ export const state = () => {
                     hot:''//debug new recommend
                 },
                 {
-                    name: 'Markdown',
+                    name: 'Markdown编辑器',
                     path: '/markdown',
                     head: {
                         keywords: ['Markdown'],

@@ -1,16 +1,16 @@
 <template>
     <div class="main">
         <nya-container :title="title">
-            <!-- <nya-dropdown style="width:33%" label="朝代" :itemlist="itemlist" :nodatatext="nodatatext"></nya-dropdown> -->
             <nya-dropdown v-model="chapter" style="width:33%" :items="chapters" label="章" v-on:change="getparagraphs" />
             <div v-if="hasparagraphs" class="paragraphs">
                 <li class="chapter"><span class="prefix">『</span>{{chapter}}<span class="prefix">』</span></li>
                 <li v-for="item in paragraphs" :key="item.index" class="paragraph">
                     {{ item }}
+                  <Divider />
                 </li>
             </div>
         </nya-container>
-        
+
     </div>
 </template>
 
@@ -90,7 +90,7 @@ export default {
             color: #000000;
         }
         .paragraph{
-            font-size: 20px;
+            font-size: 22px;
             margin-top: 10px;
             font-weight: 100;
             text-align: left;
