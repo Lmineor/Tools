@@ -13,6 +13,7 @@ class UserConfig(db.Model):
     __tablename__ = 'config'
     index = db.Column(db.Integer(), primary_key=True)
     words_book = db.Column(db.String(10), default='CET4')  # 1: CET4, 2 CET6, 3: TOEFL 4: GRE
+    words_num = db.Column(db.Integer(), default=20)
     role = db.Column(db.Boolean, nullable=False)  # True:admin, False: common user
     user_id = db.Column(db.Integer(), db.ForeignKey('user.id'))
     create_at = db.Column(db.DateTime, default=datetime.datetime.now)
