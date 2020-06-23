@@ -2,10 +2,9 @@
     <div class="words">
         <nya-container :title="title + ' ' + book">
             <div v-show="!showInfo">
-                <!-- <div class="toward nya-btn" @click="singlePage">
-                    <i class="eva eva-arrow-forward-outline"></i>
-                    <span>逐词背诵</span>
-                </div> -->
+                <div class="toward nya-btn" @click="changeWords">
+                    <span>换一批</span>
+                </div>
                 <table class="nya-table">
                     <tr>
                         <th>单词</th>
@@ -77,8 +76,8 @@ export default {
               value: true
           });
           this.$axios.defaults.auth = {
-          username: Cookie.get('auth'),
-          password: ''
+            username: Cookie.get('auth'),
+            password: ''
           }
           this.$axios
               .get(envs.apiUrl + '/words/daily',)
@@ -118,9 +117,52 @@ export default {
               });
           this.loading = false;
       },
-      singlePage(){
-          this.showInfo = true;
-
+      changeWords(){
+          this.$store.commit('SET_STORE', {
+              key: 'globalLoading',
+              value: true
+          });
+          this.$axios.defaults.auth = {
+            username: Cookie.get('auth'),
+            password: ''
+          }
+          this.$axios
+              .get(envs.apiUrl + '/words/daily?refresh=1',)
+              .then(re => {
+                  this.words = re.data.words;
+                  this.$store.commit('SET_STORE', {
+                      key: 'globalLoading',
+                      value: false
+                  });
+                  this.book = re.data.book
+              })
+              .catch(err => {
+                console.log(err)
+                this.$store.commit('SET_STORE', {
+                    key: 'globalLoading',
+                    value: false
+                });
+                if (err.response.status === 401) {
+                  this.$swal({
+                    toast: true,
+                    position: 'top-end',
+                    type: 'error',
+                    title: '登录过期，请重新登录',
+                    timer: 3000,
+                  });
+                  this.$router.push("/login")
+                }
+                else {
+                  this.$swal({
+                    toast: true,
+                    position: 'top-end',
+                    type: 'error',
+                    title: err,
+                    timer: 3000,
+                  });
+                }
+              });
+          this.loading = false;
       }
   }
 };
