@@ -1,95 +1,100 @@
 from flask import Blueprint
 from flask import request
 from flask import jsonify
+from sqlalchemy.sql.expression import func
 
 from ...models.poem import *
 from ...cache import cache
 from ...config.default import DefaultConfig
 from ...logger import logger
+from ...utils.simp2tra import simp2tra
 
 
 poem = Blueprint('poem', __name__)
 
 
-@poem.route('/getauthor', methods=['POST'])
+@poem.route('/poet/poets', methods=['POST'])
 def get_author():
     """
     得到某个朝代的作者列表
     """
     dynasty = request.get_json()['dynasty']
     page = request.get_json()['page']
+    logger.info("Get Poets of {} in page {}".format(dynasty, page))
     if cache.get(str(page) + dynasty):
-        total = cache.get('authors_num' + dynasty)
-        authors = cache.get(str(page) + dynasty)
+        total = cache.get('poets_num' + dynasty)
+        poets = cache.get(str(page) + dynasty)
     else:
         try:
-            if dynasty == '唐':
-                total = len(PoemTangAuthor.query.all())
-                items = PoemTangAuthor.query.paginate(page=page, per_page=DefaultConfig.PER_PAGE, error_out=False).items
-                authors = list(set([item.name for item in items]))
-            else:
-                total = len(PoemSongAuthor.query.all())
-                items = PoemSongAuthor.query.paginate(page=page, per_page=DefaultConfig.PER_PAGE, error_out=False).items
-                authors = list(set([item.name for item in items]))
+            total = db.session.query(func.count(PoetIntroduction.id)).filter(PoetIntroduction.dynasty == dynasty).scalar()
+            items = PoetIntroduction.query.filter_by(dynasty=dynasty).paginate(page=page, per_page=DefaultConfig.PER_PAGE,
+                                                                           error_out=False).items
+            poets = list(set([item.poet for item in items]))
+            code = 200
+            cache.set('poets_num' + dynasty, total)
+            cache.set(str(page) + dynasty, poets)
         except Exception as e:
-            authors = []
+            code = 404
+            poets = []
             total = 0
-            logger.error(e)
-        cache.set('authors_num' + dynasty, total)
-        cache.set(str(page) + dynasty, authors)
+            logger.error("Error: {}".format(e))
     data = {
-        'code': 200,
+        'code': code,
         'total': total,
-        'authors': authors
+        'authors': poets
     }
     return jsonify(data)
 
 
-@poem.route('/gettitle', methods=['POST'])
-def get_title():
+@poem.route('/poet/poems', methods=['POST'])
+def get_poems():
     """
-    test
+    获取诗人的诗作
     """
-    author = request.get_json()['author']
+    poet = request.get_json()['poet']
     dynasty = request.get_json()['dynasty']
-    logger.info('author' + author)
-    if cache.get(author + dynasty):
-        titles = cache.get(author + dynasty)
+    logger.info("Get {} {}'s Poems".format(dynasty, poet))
+    if cache.get(poet + dynasty + "poems"):
+        poems = cache.get(poet + dynasty + "poems")
     else:
         try:
-            items = PoemTangSong.query.filter_by(author=author, dynasty=dynasty).all()
-            titles = list(set([item.title for item in items]))
+            items = db.session.query(PoemTangSong.poem).filter(
+                PoemTangSong.poet == poet, PoemTangSong.dynasty == dynasty).all()
+            poems = [item[0] for item in items]
+            cache.set(poet + dynasty + "poems", poems)
         except Exception as e:
-            titles = []
-            logger.error(e)
-        cache.set(author + dynasty, titles)
+            poems = []
+            logger.error("Error : {}".format(e))
     return jsonify({
         'code': 200,
-        'titles': titles
+        'poems': poems
     })
 
 
-@poem.route('/getpoem', methods=['POST'])
-def get_poem():
+@poem.route('/poet/content', methods=['POST'])
+def get_content():
     """
-    test
+    获取诗歌内容
     """
-    author = request.get_json()['author']
+    poet = request.get_json()['poet']
     dynasty = request.get_json()['dynasty']
-    title = request.get_json()['title']
-    logger.info('author' + author)
-    if cache.get(author + dynasty + title):
-        poem = cache.get(author + dynasty + title)
+    poem = request.get_json()['poem']
+    logger.info("Get {}'s {}'s content".format(poet, poem))
+    if cache.get(poet + dynasty + poem):
+        content = cache.get("content" + poet + dynasty + poem)
     else:
         try:
-            poem = PoemTangSong.query.filter_by(author=author, dynasty=dynasty, title=title).first().paragraphs
+            content = db.session.query(PoemTangSong).filter(PoemTangSong.poet == poet,
+                                                            PoemTangSong.dynasty == dynasty,
+                                                            PoemTangSong.poem == poem).first().paragraphs
+            # content = PoemTangSong.query.filter_by(poet=poet, dynasty=dynasty, poem=poem).first().paragraphs
+            cache.set("content" + poet + dynasty + poem, content)
         except Exception as e:
-            poem = ''
-            logger.error(e)
-        cache.set(author + dynasty + title, poem)
+            content = ''
+            logger.error("Error is: {}".format(e))
     return jsonify({
         'code': 200,
-        'poem': poem
+        'content': content
     })
 
 
@@ -244,3 +249,26 @@ def get_shijing():
             'chapter': chapter,
             'section': section,
         })
+
+
+@poem.route('/poet/info', methods=['POST'])
+def get_introduction():
+    """
+    诗人简介
+    """
+    poet = request.get_json()['poet']
+    dynasty = request.get_json()['dynasty']
+    introduction = cache.get(poet + dynasty)
+    if not introduction:
+        try:
+            item = PoetIntroduction.query.filter_by(dynasty=dynasty, poet=poet).first()
+            code = 200
+            introduction = item.descb
+            cache.set(poet + dynasty, introduction)
+        except Exception as e:
+            logger.error("Get Introduction Error {}".format(e))
+            introduction = 'error'
+            code = 404
+    else:
+        code = 200
+    return jsonify({'code': code, 'introduction': introduction})
