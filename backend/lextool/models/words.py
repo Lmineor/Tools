@@ -1,3 +1,5 @@
+import datetime
+
 from . import db
 
 
@@ -29,3 +31,9 @@ class GRE(WordBase):
 
 class TOEFL(WordBase):
     __tablename__ = 'toefl'
+
+
+class DailyWords(WordBase):
+    __tablename__ = 'daily_words'
+    user_id = db.Column(db.Integer(), nullable=False)
+    create_at = db.Column(db.DateTime, default=datetime.date.today())
