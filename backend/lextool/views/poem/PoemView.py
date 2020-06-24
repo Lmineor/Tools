@@ -24,13 +24,14 @@ def get_author():
     if cache.get(str(page) + dynasty):
         total = cache.get('poets_num' + dynasty)
         poets = cache.get(str(page) + dynasty)
+        code = 200
     else:
         try:
             total = db.session.query(func.count(PoetIntroduction.id)).filter(PoetIntroduction.dynasty == dynasty).scalar()
-            items = PoetIntroduction.query.filter_by(dynasty=dynasty).paginate(page=page, per_page=DefaultConfig.PER_PAGE,
-                                                                           error_out=False).items
-            poets = list(set([item.poet for item in items]))
+            items = PoetIntroduction.query.filter_by(dynasty=dynasty).paginate(
+                page=page, per_page=DefaultConfig.PER_PAGE, error_out=False).items
             code = 200
+            poets = list(set([item.poet for item in items]))
             cache.set('poets_num' + dynasty, total)
             cache.set(str(page) + dynasty, poets)
         except Exception as e:
@@ -41,7 +42,7 @@ def get_author():
     data = {
         'code': code,
         'total': total,
-        'authors': poets
+        'poets': poets
     }
     return jsonify(data)
 
@@ -87,10 +88,11 @@ def get_content():
             content = db.session.query(PoemTangSong).filter(PoemTangSong.poet == poet,
                                                             PoemTangSong.dynasty == dynasty,
                                                             PoemTangSong.poem == poem).first().paragraphs
+            content = content.split('。')
             # content = PoemTangSong.query.filter_by(poet=poet, dynasty=dynasty, poem=poem).first().paragraphs
             cache.set("content" + poet + dynasty + poem, content)
         except Exception as e:
-            content = ''
+            content = []
             logger.error("Error is: {}".format(e))
     return jsonify({
         'code': 200,
@@ -251,7 +253,7 @@ def get_shijing():
         })
 
 
-@poem.route('/poet/info', methods=['POST'])
+@poem.route('/poet/introduction', methods=['POST'])
 def get_introduction():
     """
     诗人简介
