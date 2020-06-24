@@ -11,24 +11,6 @@ class PoetIntroduction(db.Model):
     dynasty = db.Column(db.String(8))
 
 
-class PoetSong(db.Model):
-    __bind_key__ = 'poem'  # 已设置__bind_key__,则采用设置的数据库引擎
-    __tablename__ = 'poet_song'
-
-    id = db.Column(db.Integer, primary_key=True)
-    descb = db.Column(db.Text)
-    poet = db.Column(db.String(100))
-
-
-class PoetTang(db.Model):
-    __bind_key__ = 'poem'  # 已设置__bind_key__,则采用设置的数据库引擎
-    __tablename__ = 'poet_tang'
-
-    id = db.Column(db.Integer, primary_key=True)
-    descb = db.Column(db.Text)
-    poet = db.Column(db.String(100))
-
-
 class PoemTangSong(db.Model):
     __bind_key__ = 'poem'  # 已设置__bind_key__,则采用设置的数据库引擎
     __tablename__ = 'tang_song_poem'
