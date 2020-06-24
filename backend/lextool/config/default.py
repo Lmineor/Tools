@@ -24,7 +24,7 @@ class DefaultConfig(object):
 
 
     # Pagination Number
-    PER_PAGE = 30
+    PER_PAGE = 15
 
     # Secret Key for Token
     SECRET_KEY = SECRET_KEY
