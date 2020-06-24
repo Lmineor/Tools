@@ -10,21 +10,27 @@
                   </p>
                   <Input search size="small" slot="extra"  style="width:100px;" placeholder="搜索诗人"/>
                   <ul>
-                      <span v-for="item in authors" :key="item.index">
+                      <span v-for="item in poets" :key="item.index">
 <!--                        <a href="#">{{item}} </a>-->
-                        <Button type="primary" class="author-btn" :title="item">{{item}}</Button>
+                        <Button type="primary" class="author-btn" :title="item" @click="getPoems(item)">{{item}}</Button>
                       </span>
                   </ul>
+                <Page :total="total" class="page" @on-change='changePage' :page-size="15"/>
               </Card>
               <Card style="width:97%">
                   <p slot="title">
                       <Icon type="logo-freebsd-devil" />
-                      诗歌
+                      诗作
+                    <span style="color:blue;">{{poet}}</span>
                   </p>
                   <Input search size="small" slot="extra"  style="width:100px;" placeholder="搜索诗歌"/>
-                  <ul>
-                      <span v-for="item in authors" :key="item.index">
-                        <Button type="primary" class="author-btn" :title="item">{{item}}</Button>
+                  <ul >
+                      <Spin v-if="loading" fix>
+                        <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
+                        <div>加载中</div>
+                      </Spin>
+                      <span v-else v-for="item in poems" :key="item.index">
+                        <Button type="primary" class="author-btn" :title="item" @click="getContent(item)">{{item}}</Button>
                       </span>
                   </ul>
               </Card>
@@ -46,23 +52,27 @@
                   <p slot="title" style="font-size: 20px;color: blue;font-weight: bold;margin-bottom:5px;">
                       {{poem}}
                   </p>
-                  <a slot="title" href="#" style="font-size: 15px;">{{dynasty}}：{{author}}
+                  <a slot="title" @click="getPoetIntroduction" style="font-size: 15px;">{{dynasty}}：{{poet}}
                   </a>
                   <ul>
-                      <li v-for="item in content">
+                      <Spin v-if="loading_content" fix>
+                        <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
+                        <div>加载中</div>
+                      </Spin>
+                      <li v-else v-for="item in content" style="list-style: none;">
                           <span class="poem-content">
                             {{item}}
                           </span>
                       </li>
                   </ul>
               </Card>
-              <Card style="width:100%;">
+              <Card v-if="show_introduction" style="width:100%;">
                   <p slot="title">
                       诗人简介
                   </p>
                   <ul>
-                    <span>
-                      {{desc}}
+                    <span class="introduction">
+                      {{introduction}}
                     </span>
                   </ul>
               </Card>
@@ -88,118 +98,136 @@ export default {
           content: ['茫茫南與北，道直事難諧', '榆莢錢生樹，楊花玉糝街',
             '塵縈遊子面，蝶弄美人釵','却憶青山上，雲門掩竹齋','却憶青山上，雲門掩竹齋','却憶青山上，雲門掩竹齋','却憶青山上，雲門掩竹齋','却憶青山上，雲門掩竹齋','却憶青山上，雲門掩竹齋'],
           dynasty:'唐',
-          author: '杜甫',
-          desc:'是一个很牛逼的诗人',
-          movieList: [
-                    {
-                        name: 'The Shawshank Redemption',
-                        url: 'https://movie.douban.com/subject/1292052/',
-                        rate: 9.6
-                    },
-                    {
-                        name: 'Leon:The Professional',
-                        url: 'https://movie.douban.com/subject/1295644/',
-                        rate: 9.4
-                    },
-                    {
-                        name: 'Farewell to My Concubine',
-                        url: 'https://movie.douban.com/subject/1291546/',
-                        rate: 9.5
-                    },
-                    {
-                        name: 'Forrest Gump',
-                        url: 'https://movie.douban.com/subject/1292720/',
-                        rate: 9.4
-                    },
-                    {
-                        name: 'Life Is Beautiful',
-                        url: 'https://movie.douban.com/subject/1292063/',
-                        rate: 9.5
-                    },
-                    {
-                        name: 'Spirited Away',
-                        url: 'https://movie.douban.com/subject/1291561/',
-                        rate: 9.2
-                    },
-                    {
-                        name: 'Schindlers List',
-                        url: 'https://movie.douban.com/subject/1295124/',
-                        rate: 9.4
-                    },
-                    {
-                        name: 'The Legend of 1900',
-                        url: 'https://movie.douban.com/subject/1292001/',
-                        rate: 9.2
-                    },
-                    {
-                        name: 'WALL·E',
-                        url: 'https://movie.douban.com/subject/2131459/',
-                        rate: 9.3
-                    },
-                    {
-                        name: 'Inception',
-                        url: 'https://movie.douban.com/subject/3541415/',
-                        rate: 9.2
-                    }
-                ],
-          randomMovieList: [],
-          authors: [],
-          defaultpage: 1,
-          dynastys: ['唐', '宋']
+          poet: '杜甫',
+          introduction:'是一个很牛逼的诗人',
+          poets: [],
+          page: 1,
+          dynastys: ['唐', '宋'],
+          total: 1,
+          loading: false,
+          loading_content:false,
+          loading_introduction:false,
+          show_introduction:false
         };
     },
     computed:{
     },
     mounted () {
-            this.changeLimit();
-            this.getwriters();
+            // this.changeLimit();
+            this.getPoets();
     },
     methods: {
-       getwriters (){
-            this.dynasty = '唐',
-            this.loading = true,
-            this.writers = [],
-            this.poem = '',
-            this.$axios
-                .post(
-                    envs.apiUrl + '/poem/getauthor',
-                    {
-                        dynasty: '唐',
-                        page: this.defaultpage,
-                    },
-                )
-                .then(re => {
-                    this.authors = re.data.authors.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'})).slice(0,10);
-                    this.total = re.data.total;
-                    this.showWriters = true;
-                    this.loading = false;
-                    this.poem = '从军行';
-                })
-                .catch(err => {
-                    this.res = '生成失败';
-                    this.loading = false;
-                });
+      changePage(page){
+            this.page = page;
+            this.getPoets()
         },
-      changeLimit () {
-                function getArrayItems(arr, num) {
-                    const temp_array = [];
-                    for (let index in arr) {
-                        temp_array.push(arr[index]);
-                    }
-                    const return_array = [];
-                    for (let i = 0; i<num; i++) {
-                        if (temp_array.length>0) {
-                            const arrIndex = Math.floor(Math.random()*temp_array.length);
-                            return_array[i] = temp_array[arrIndex];
-                            temp_array.splice(arrIndex, 1);
-                        } else {
-                            break;
-                        }
-                    }
-                    return return_array;
-                }
-                this.randomMovieList = getArrayItems(this.movieList, 5);
-            }
+      getPoets (){
+        this.show_introduction = false;
+        this.dynasty = '唐',
+        this.$axios
+            .post(
+                envs.apiUrl + '/poem/poet/poets',
+                {
+                    dynasty: '唐',
+                    page: this.page,
+                },
+            )
+            .then(re => {
+                this.poets = re.data.poets.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'})).slice(0,15);
+                this.total = re.data.total;
+            })
+            .catch(err => {
+                this.$swal({
+                  toast: true,
+                  position: 'top-end',
+                  type: 'error',
+                  title: err,
+                  timer: 3000,
+                });
+            });
+        },
+      getPoems(item){
+        this.show_introduction = false;
+        this.loading = true;
+        this.poet = item;
+        this.$axios
+          .post(
+              envs.apiUrl + '/poem/poet/poems',
+              {
+                  dynasty: '唐',
+                  poet: item
+              },
+          )
+          .then(re => {
+              this.poems = re.data.poems;
+              this.loading = false;
+          })
+          .catch(err => {
+              this.$swal({
+                toast: true,
+                position: 'top-end',
+                type: 'error',
+                title: err,
+                timer: 3000,
+              });
+              this.loading = false;
+          });
+      },
+      getContent(item){
+        this.poem = item;
+        this.loading_content = true;
+        this.$axios
+          .post(
+              envs.apiUrl + '/poem/poet/content',
+              {
+                  dynasty: '唐',
+                  poet: this.poet,
+                  poem: this.poem
+              },
+          )
+          .then(re => {
+              this.content = re.data.content;
+              this.loading_content = false;
+          })
+          .catch(err => {
+              this.$swal({
+                toast: true,
+                position: 'top-end',
+                type: 'error',
+                title: err,
+                timer: 3000,
+              });
+              this.loading_content = false;
+          });
+      },
+      getPoetIntroduction(){
+        this.loading_info = true;
+        this.$axios
+          .post(
+              envs.apiUrl + '/poem/poet/introduction',
+              {
+                  dynasty: '唐',
+                  poet: this.poet
+              },
+          )
+          .then(re => {
+            if(re.data.introduction) {
+              this.introduction = re.data.introduction;
+            }else{this.introduction = '暂无'}
+            this.loading_introduction = false;
+            this.show_introduction = true;
+          })
+          .catch(err => {
+              this.$swal({
+                toast: true,
+                position: 'top-end',
+                type: 'error',
+                title: err,
+                timer: 3000,
+              });
+              this.loading_introduction = false;
+          });
+      }
     }
 };
 </script>
@@ -233,14 +261,22 @@ export default {
                 0px 8px 64px 0px rgba(10, 14, 29, 0.08);
         }
       }
+      .page{
+        width:100%;
+        text-align: center;
+    }
     }
     .right{
+
       width: 55%;
       float:left;
       position: relative;
       .poem-content{
         font-family: 楷体;
         font-size: 30px;
+      }
+      .introduction{
+        font-size: 17px;
       }
     }
   }
