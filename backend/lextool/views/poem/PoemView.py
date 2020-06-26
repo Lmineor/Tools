@@ -72,6 +72,37 @@ def get_poems():
     })
 
 
+@poem.route('/poet/search', methods=['POST'])
+def search_poets():
+    """
+    获取诗人的诗作
+    """
+    keyword = simp2tra(request.get_json()['keyword'])
+    page = request.get_json()['page']
+    logger.info("Search Poets has {}".format(keyword))
+    has_cache = cache.get('/poet/search' + keyword + str(page))
+    if not keyword or not isinstance(keyword, str):
+        return jsonify({'code': 200, 'poets': []})
+    if has_cache:
+        poets = has_cache
+        total = cache.get('/poet/search' + keyword + 'total')
+    else:
+        try:
+            poets = PoetIntroduction.search_poet(keyword, page)
+            total = PoetIntroduction.search_keyword_total(keyword)
+            cache.set('/poet/search' + keyword + str(page), poets)
+            cache.set('/poet/search' + keyword + 'total', total)
+        except Exception as e:
+            poets = []
+            total = 0
+            logger.error("Error : {}".format(e))
+    return jsonify({
+        'code': 200,
+        'poets': poets,
+        'total': total
+    })
+
+
 @poem.route('/poet/content', methods=['POST'])
 def get_content():
     """

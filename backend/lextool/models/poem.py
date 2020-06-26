@@ -1,14 +1,28 @@
 from . import db
+from ..config.default import DefaultConfig
 
 
 class PoetIntroduction(db.Model):
     __bind_key__ = 'poem'  # 已设置__bind_key__,则采用设置的数据库引擎
     __tablename__ = 'poet_introduction'  # 诗人简介
 
-    id = db.Column(db.Integer, primary_key=True, index=True)
+    id = db.Column(db.Integer, primary_key=True)
     descb = db.Column(db.Text(16777216))
-    poet = db.Column(db.String(100))
+    poet = db.Column(db.String(100), index=True)
     dynasty = db.Column(db.String(8))
+
+    @classmethod
+    def search_poet(cls, keyword, page):
+        items = cls.query.filter(
+                cls.poet.like("%%{}%%".format(keyword)) if keyword is not None else "")\
+            .paginate(page=page, per_page=DefaultConfig.PER_PAGE, error_out=False).items
+        return [item.poet for item in items]
+
+    @classmethod
+    def search_keyword_total(cls, keyword):
+        total = len(cls.query.filter(
+            cls.poet.like("%%{}%%".format(keyword)) if keyword is not None else "").all())
+        return total
 
 
 class PoemTangSong(db.Model):

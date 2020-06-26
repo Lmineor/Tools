@@ -8,14 +8,29 @@
                       <Icon type="logo-freebsd-devil" />
                       诗人
                   </p>
-                  <Input search size="small" slot="extra"  style="width:100px;" placeholder="搜索诗人"/>
-                  <ul>
-                      <span v-for="item in poets" :key="item.index">
+                  <Input
+                    search
+                    size="small"
+                    slot="extra"
+                    v-model="keyword"
+                    style="width:100px;"
+                    @on-search="search_keyword(1)"
+                    placeholder="搜索诗人"
+                  />
+                  <ul v-if="!show_msg" >
+                    <Spin v-if="loading_poets" fix>
+                        <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
+                        <div>加载中</div>
+                      </Spin>
+                      <span v-else v-for="item in poets" :key="item.index">
 <!--                        <a href="#">{{item}} </a>-->
                         <Button type="primary" class="author-btn" :title="item" @click="getPoems(item)">{{item}}</Button>
                       </span>
                   </ul>
-                <Page :total="total" class="page" @on-change='changePage' :page-size="15"/>
+                  <ul v-else>
+                    <span>{{msg}}</span>
+                  </ul>
+                <Page :total="poet_total" class="page" @on-change='changePoetPage' :page-size="15"/>
               </Card>
               <Card style="width:97%">
                   <p slot="title">
@@ -95,33 +110,42 @@ export default {
         return {
           title: '诗歌',
           poem: '春感詩',
+          poems: [],
+          keyword: '',
           content: ['茫茫南與北，道直事難諧', '榆莢錢生樹，楊花玉糝街',
             '塵縈遊子面，蝶弄美人釵','却憶青山上，雲門掩竹齋','却憶青山上，雲門掩竹齋','却憶青山上，雲門掩竹齋','却憶青山上，雲門掩竹齋','却憶青山上，雲門掩竹齋','却憶青山上，雲門掩竹齋'],
           dynasty:'唐',
-          poet: '杜甫',
           introduction:'是一个很牛逼的诗人',
+          poet: '杜甫',
           poets: [],
           page: 1,
+          poet_page: 1,
           dynastys: ['唐', '宋'],
-          total: 1,
+          poet_total: 1,
+          poem_total: 1,
+          msg: '暂无词诗人信息',
           loading: false,
           loading_content:false,
           loading_introduction:false,
-          show_introduction:false
+          show_introduction:false,
+          show_msg: false,
+          loading_poets: true,
+          is_search: false
         };
     },
     computed:{
     },
     mounted () {
             // this.changeLimit();
-            this.getPoets();
+            this.getPoets(1);
     },
     methods: {
-      changePage(page){
-            this.page = page;
-            this.getPoets()
+      changePoetPage(page){
+            this.poet_page = page;
+            if (!this.is_search){this.getPoets(page)}
+            else{this.search_keyword(page)}
         },
-      getPoets (){
+      getPoets (page){
         this.show_introduction = false;
         this.dynasty = '唐',
         this.$axios
@@ -129,12 +153,13 @@ export default {
                 envs.apiUrl + '/poem/poet/poets',
                 {
                     dynasty: '唐',
-                    page: this.page,
+                    page: page,
                 },
             )
             .then(re => {
                 this.poets = re.data.poets.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'})).slice(0,15);
-                this.total = re.data.total;
+                this.poet_total = re.data.total;
+                this.loading_poets = false;
             })
             .catch(err => {
                 this.$swal({
@@ -214,6 +239,41 @@ export default {
             if(re.data.introduction) {
               this.introduction = re.data.introduction;
             }else{this.introduction = '暂无'}
+            this.loading_introduction = false;
+            this.show_introduction = true;
+          })
+          .catch(err => {
+              this.$swal({
+                toast: true,
+                position: 'top-end',
+                type: 'error',
+                title: err,
+                timer: 3000,
+              });
+              this.loading_introduction = false;
+          });
+      },
+      search_keyword(page){
+        if(!this.keyword){
+          this.is_search = true;
+          this.getPoets(1);
+          return;
+        }
+        this.is_search = true;
+        this.$axios
+          .post(
+              envs.apiUrl + '/poem/poet/search',
+              {
+                  keyword: this.keyword,
+                  page: page,
+              },
+          )
+          .then(re => {
+            if(re.data.poets) {
+              this.poets = re.data.poets;
+              this.show_msg = false;
+              this.poet_total = re.data.total;
+            }else{this.show_msg = true;}
             this.loading_introduction = false;
             this.show_introduction = true;
           })
