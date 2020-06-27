@@ -1,13 +1,23 @@
 <template>
-  <div class="help">
+  <div>
     <nya-container :title=title>
-      <template v-for="qa in qas">
-        <li style="font-size:25px; list-style: none;">Q: {{ qa.q }}</li>
-        <li style="font-size:17px; list-style: none;">A：{{ qa.a }}</li>
-        <li style="font-size:17px; list-style: none;"><br></li>
-      </template>
+      <div class="help">
+        <template v-for="qa in qas">
+          <Card class="help-card">
+            <p slot="title">
+              <Icon type="md-help" />
+                {{qa.q}}
+            </p>
+            <ul>
+              <span class="introduction">
+                <Icon type="logo-twitch" />
+                {{ qa.a }}
+              </span>
+            </ul>
+          </Card>
+        </template>
+      </div>
     </nya-container>
-
   </div>
 </template>
 
@@ -23,8 +33,12 @@ export default {
       title: '帮助中心',
       qas: [
         {
-          'q': '忘记密码怎么办', 
+          'q': '忘记密码怎么办',
           'a': '用你注册时的邮箱，发送邮件给luohai2233@163.com,格式：邮件主题：忘记密码+你注册时的邮箱，正文： 同主题'
+        },
+        {
+          'q': '有疑问？',
+          'a': '发送邮件给luohai2233@163.com'
         },
       ]
     }
@@ -34,4 +48,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style  lang="scss">
+  .help {
+    display: table;
+    width: 100%;
+    .help-card {
+      margin-bottom: 10px;
+      position: relative;
+    }
+  }
 </style>
