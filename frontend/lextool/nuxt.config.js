@@ -66,7 +66,7 @@ export default {
   /*
   ** Customize the progress-bar color
   */
-  loading: { 
+  loading: {
     color: '#00adb5',
     height: '4px'
   },
@@ -78,7 +78,7 @@ export default {
     '~styles/main.scss',
     'eva-icons/style/eva-icons.css'
   ],
-  
+
   styleResources: {
     scss: ['styles/variables.scss']
   },
@@ -103,6 +103,10 @@ export default {
     },
     {
       src: './plugins/shortid.js',
+      ssr: false
+    },
+    {
+      src: './plugins/fullscreen.js',
       ssr: false
     },
     {

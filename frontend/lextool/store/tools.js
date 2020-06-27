@@ -11,7 +11,7 @@ export const state = () => {
                         keywords: ['url', '短链'],
                         description: '短链生成工具'
                     },
-                    hot:''//debug new recommend
+                    hot:'recommend'//debug new recommend
                 },
                 {
                     name: '短链还原',
@@ -20,7 +20,7 @@ export const state = () => {
                         keywords: ['还原', '短链'],
                         description: '短链还原工具'
                     },
-                    hot:'new'//debug new recommend
+                    hot:'recommend'//debug new recommend
                 },
                 {
                     name: 'Leetcode',
@@ -38,7 +38,7 @@ export const state = () => {
                         keywords: ['Markdown'],
                         description: 'Markdown'
                     },
-                    hot:'', //debug new recommend
+                    hot:'recommend', //debug new recommend
                 },
             ]
         },
@@ -53,7 +53,16 @@ export const state = () => {
                         keywords: ['单词'],
                         description: '背背单词'
                     },
-                    hot:'new'//debug new recommend
+                    hot:'recommend'//debug new recommend
+                },
+                {
+                      name: '专注时钟',
+                      path: '/focus_clock',
+                      head: {
+                          keywords: ['专注'],
+                          description: ''
+                      },
+                      hot:'new'//debug new recommend
                 },
                 {
                     name: 'Sci-Hub可用网址',
@@ -95,7 +104,7 @@ export const state = () => {
                         keywords: ['论语', '子曰'],
                         description: '论语'
                     },
-                    hot:'new'//debug new recommend
+                    hot:'recommend'//debug new recommend
                 },
                 {
                     name: '宋词',
@@ -104,7 +113,7 @@ export const state = () => {
                         keywords: ['宋词'],
                         description: '宋词'
                     },
-                    hot:'new'//debug new recommend
+                    hot:'recommend'//debug new recommend
                 },
                 {
                     name: '诗经',
@@ -113,7 +122,7 @@ export const state = () => {
                         keywords: ['诗经', '风'],
                         description: '诗经'
                     },
-                    hot:'new'//debug new recommend
+                    hot:'recommend'//debug new recommend
                 },
             ]
         },
@@ -147,7 +156,7 @@ export const state = () => {
                         keywords: ['百度热榜', '百度热榜'],
                         description: '百度热榜'
                     },
-                    hot:'new'//debug new recommend
+                    hot:''//debug new recommend
                 },
             ]
         },
@@ -162,7 +171,7 @@ export const state = () => {
                         keywords: ['memo'],
                         description: 'memo'
                     },
-                    hot:'new', //debug new recommend
+                    hot:'', //debug new recommend
                 },
                 // {
                 // name: '号码归属地',
