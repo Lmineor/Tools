@@ -143,7 +143,7 @@ def register():
             db.session.add(memo)
             db.session.commit()
             token = user.generate_auth_token(expiration=5 * 60).decode('ascii')  # 此时token过期时间为5分钟
-            # send_register_active_email(user.email, user.username, token)
+            send_register_active_email(user.email, user.username, token)
             flash('邮件已经发送！')
             msg = "注册成功,激活链接已发送到你注册时的邮箱，请及时激活"
             res = {
