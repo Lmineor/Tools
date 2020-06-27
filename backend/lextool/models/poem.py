@@ -2,11 +2,14 @@ from . import db
 from ..config.default import DefaultConfig
 
 
-class PoetIntroduction(db.Model):
-    __bind_key__ = 'poem'  # 已设置__bind_key__,则采用设置的数据库引擎
-    __tablename__ = 'poet_introduction'  # 诗人简介
-
+class Base(db.Model):
+    __abstract__ = True
     id = db.Column(db.Integer, primary_key=True)
+
+
+class PoetIntroduction(Base):
+    __tablename__ = 'poem_poet_introduction'  # 诗人简介
+
     descb = db.Column(db.Text(16777216))
     poet = db.Column(db.String(100), index=True)
     dynasty = db.Column(db.String(8))
@@ -25,52 +28,42 @@ class PoetIntroduction(db.Model):
         return total
 
 
-class PoemTangSong(db.Model):
-    __bind_key__ = 'poem'  # 已设置__bind_key__,则采用设置的数据库引擎
-    __tablename__ = 'tang_song_poem'
+class PoemTangSong(Base):
+    __tablename__ = 'poem_tang_song_poem'
 
-    id = db.Column(db.Integer, primary_key=True, unique=True, index=True)
     paragraphs = db.Column(db.Text)
-    poem = db.Column(db.Text)
+    poem = db.Column(db.Text(65536))
     poet = db.Column(db.String(100))
     dynasty = db.Column(db.String(8))
 
 
-class PoemLunyu(db.Model):
-    __bind_key__ = 'poem'  # 已设置__bind_key__,则采用设置的数据库引擎
-    __tablename__ = 'lun_yu'
+class PoemLunyu(Base):
+    __tablename__ = 'poem_lun_yu'
 
-    id = db.Column(db.Integer, primary_key=True)
-    paragraphs = db.Column(db.Text)
+    paragraphs = db.Column(db.Text(65536))
     chapter = db.Column(db.String(50))
 
 
-class PoemSongci(db.Model):
-    __bind_key__ = 'poem'  # 已设置__bind_key__,则采用设置的数据库引擎
-    __tablename__ = 'song_ci'
+class PoemSongci(Base):
+    __tablename__ = 'poem_song_ci'
 
-    id = db.Column(db.Integer, primary_key=True)
-    paragraphs = db.Column(db.Text)
+    paragraphs = db.Column(db.Text(16777216))
     rhythmic = db.Column(db.String(40))
     poet = db.Column(db.String(100))
 
 
-class CiAuthor(db.Model):
-    __bind_key__ = 'poem'  # 已设置__bind_key__,则采用设置的数据库引擎
-    __tablename__ = 'ci_poet'
+class CiAuthor(Base):
+    __tablename__ = 'poem_ci_poet'
 
-    id = db.Column(db.Integer, primary_key=True)
-    long_desc = db.Column(db.Text)
-    short_desc = db.Column(db.Text)
+    long_desc = db.Column(db.Text(16777216))
+    short_desc = db.Column(db.Text(65536))
     poet = db.Column(db.String(100))
 
 
-class ShiJing(db.Model):
-    __bind_key__ = 'poem'  # 已设置__bind_key__,则采用设置的数据库引擎
-    __tablename__ = 'shi_jing'
+class ShiJing(Base):
+    __tablename__ = 'poem_shi_jing'
 
-    id = db.Column(db.Integer, primary_key=True)
-    poem = db.Column(db.TEXT)
+    poem = db.Column(db.Text(16777216))
     chapter = db.Column(db.String(30))
     section = db.Column(db.String(30))
-    content = db.Column(db.Text)
+    content = db.Column(db.Text(65536))

@@ -20,7 +20,6 @@ def create_app():
     app = Flask(__name__)
     # 数据库配置
     app.config['SQLALCHEMY_DATABASE_URI'] = DefaultConfig.SQLALCHEMY_DATABASE_URI
-    app.config['SQLALCHEMY_BINDS'] = DefaultConfig.SQLALCHEMY_BINDS
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = DefaultConfig.SQLALCHEMY_TRACK_MODIFICATIONS
     app.config['SECRET_KEY'] = DefaultConfig.SECRET_KEY
     register_blueprint(app)
