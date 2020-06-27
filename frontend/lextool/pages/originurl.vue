@@ -15,7 +15,9 @@
             </div>
         </nya-container>
         <nya-container v-if="url" title="结果">
-            <div v-html="url"></div>
+          <div class="res-url"><span>{{url}}</span></div>
+
+<!--            <div v-html="url"></div>-->
         </nya-container>
         <nya-container title="提示" icon="volume-down-outline">
             <ul class="nya-list">
@@ -81,6 +83,11 @@ export default {
 .OriginUrl {
     .nya-btn {
         margin-top: 15px;
+    }
+    .res-url{
+      width: 100%;
+      word-break:break-all;
+      overflow: hidden;
     }
 }
 </style>
