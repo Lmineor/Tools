@@ -3,6 +3,9 @@
         <h2>欢迎使用Lex吐司</h2>
         <p>
             这是我自己开发或收集的小工具合集，若有新的工具欢迎提建议。
+          <a href="/comment_board">
+            在这儿留言
+          </a>
         </p>
         <div class="close" title="关闭" @click="close">
             <i class="eva eva-close-outline"></i>
