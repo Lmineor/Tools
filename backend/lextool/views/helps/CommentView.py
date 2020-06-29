@@ -19,8 +19,8 @@ def get_user_memo():
         return jsonify({'data': data})
     else:
         mail = request.get_json()['mail']
-        type = request.get_json()['type']
+        types = request.get_json()['type']
         content = request.get_json()['content']
         date = request.get_json()['date']
-        data = Comment.save(content, type, mail, date)
+        data = Comment.save(content, types, mail, date)
         return jsonify(data)
