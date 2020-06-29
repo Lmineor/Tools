@@ -2,8 +2,9 @@
   <div>
     <nya-container :title=title>
       <div class="comment">
-        <div  style="margin-bottom: 10px">
-          <div class="nya-btn" id="register" @click="show_drawer = true">吐个槽</div>
+        <div style="margin-bottom: 20px;padding-bottom: 10px">
+          <span style="font-weight: bold;font-size: 19px">审核通过的将会在这里显示</span>
+          <div class="nya-btn" id="register" @click="show_drawer = true" style="float: right">吐个槽</div>
           <Drawer
               title="吐槽中心"
               v-model="show_drawer"
@@ -50,13 +51,13 @@
         </div>
         <template v-for="comment in comments">
           <Card class="help-card">
-            <p slot="title">
+            <p slot="title" style="font-weight: bold;font-size: 20px">
               <Icon type="ios-alert-outline" />
                 {{types[comment.comment_type]}}
             </p>
             <span slot="extra">{{comment.create_at}}</span>
             <ul>
-              <span class="introduction">
+              <span style="font-size: 17px">
                 <Icon type="md-book" />
                 {{ comment.content }}
               </span>
@@ -64,6 +65,11 @@
           </Card>
         </template>
       </div>
+    </nya-container>
+    <nya-container title="说明">
+        <ul class="nya-list">
+            <li>若有特殊原因未能提交成功，可以直接联系我邮箱：<a href="mailto:luohai2233@163.com">luohai2233@163.com</a></li>
+        </ul>
     </nya-container>
   </div>
 </template>
@@ -99,7 +105,7 @@ export default {
       },
       formValidate: {
         mail: '',
-        type: '',
+        type: 'other',
         date: '',
         content: ''
       },
