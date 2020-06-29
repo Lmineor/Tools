@@ -14,7 +14,8 @@ PROJECT_NAME_F=lextool                              # frontend name
 
 
 # stop backend
-lsof -i:${PROJECT_PORT}|awk '{print$2}' |grep -v PID|xargs kill -9 # 暂停
+#lsof -i:${PROJECT_PORT}|awk '{print$2}' |grep -v PID|xargs kill -9 # 暂停
+uwsgi --stop uwsgi.pid
 
 # stop frontend
 pm2 stop $PROJECT_NAME_F
@@ -32,7 +33,9 @@ pip install -r requirements.txt
 # python manage.py db init  # 只使用一次
 python manage.py db migrate # 检查模型字段是否修改,如果改变,就产生新的迁移文件.
 python manage.py db upgrade # 对迁移文件进行迁移
-nohup python run.py >> server.log 2>&1 &
+#nohup python run.py >> server.log 2>&1 &
+cd ..
+uwsgi --ini uwsgi.ini
 echo "==================Complete Backend=================="
 
 # frontend
