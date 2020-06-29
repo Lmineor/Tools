@@ -62,7 +62,8 @@ export default {
         padding: 8px 15px;
         font-weight: bold;
         font-size: 0;
-        background-color: var(--theme);
+        /*background-color: var(--theme);*/
+        background-color: #024466;
         color: #fff;
         box-shadow: 0 8px 10px rgba(36, 159, 253, 0.30196);
         border-radius: 8px;

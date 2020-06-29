@@ -46,12 +46,12 @@
 <!--            </ul>-->
           </Card>
           <Card class="time-card" style="margin-top: 20px">
-            <p slot="title">
-              你的slogan
+            <p slot="title" style="font-weight: bold;font-size: 20px">
+              Slogan
             </p>
             <ul>
               <span>
-                <nya-input v-model.trim="tip" :placeholder="保持专注" fullwidth autofocus/>
+                <nya-input v-model.trim="tip" fullwidth autofocus/>
               </span>
             </ul>
           </Card>

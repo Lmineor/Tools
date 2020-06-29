@@ -15,7 +15,7 @@
                 </nuxt-link>
             </template>
         </Search> -->
-        
+
         <Favorites v-show="!searchText" />
 
         <nya-container
@@ -59,7 +59,7 @@
                         {{ tool.name }}
                     </nuxt-link>
                     <a
-                        v-else-if="showBtn(tool) && tool.path[0] !== '/'" 
+                        v-else-if="showBtn(tool) && tool.path[0] !== '/'"
                         :key="index2"
                         :target="$store.state.setting.inNewTab ? '_blank' : '_self'"
                         :title="tool.name"
@@ -82,13 +82,13 @@
                     </div>
                 </li>
                 <li><b>欢迎将本站收藏到收藏夹，以便以后使用</b></li>
-                <li>
-                    本站域名：<a
-                        :href="$store.state.env.url"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >{{ $store.state.env.domain }}</a>
-                </li>
+<!--                <li>-->
+<!--                    本站域名：<a-->
+<!--                        :href="$store.state.env.url"-->
+<!--                        target="_blank"-->
+<!--                        rel="noopener noreferrer"-->
+<!--                    >{{ $store.state.env.domain }}</a>-->
+<!--                </li>-->
                 <li v-if="$store.state.isMobile.any">
                     如果遇到无法使用或者样式问题，请更换浏览器后重试，推荐使用 Chrome 浏览器，对 iOS 设备兼容性可能不太好
                 </li>
@@ -215,13 +215,19 @@ export default {
         text-overflow: ellipsis;
         white-space: nowrap;
         transition: all 0.3s ease;
-        background-color: transparent;
+        /*background-color: transparent;*/
         font-size: 18px;
         border-radius: 4px;
         &:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 16px 0px rgba(10, 14, 29, 0.04),
                 0px 8px 64px 0px rgba(10, 14, 29, 0.08);
+            border-color: #024466;
+            color: #ffffff;
+            /*background-color: var(--theme);*/
+            /*border-color: var(--theme);*/
+            /*color: var(--theme);*/
+            background-color: #024466;
         }
         @media (max-width: 1050px) {
             width: calc(25% - 14px);

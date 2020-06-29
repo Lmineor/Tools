@@ -9,7 +9,7 @@
             <ul class="nya-list">
                 <li>数据来源 <a href="https://www.howsci.com/sci-hub-alternative.html" target="_blank" rel="noopener noreferrer">Sci-Hub 可用网址 | 科研动力</a></li>
                 <li>仅供学习科研使用噢</li>
-                <li>有新的可用链接欢迎反馈<a href="mailto:luohai2233@163.com">luohai2233@163.com</a></li>
+                <li>有新的可用链接<a href="/comment_board">欢迎反馈</a></li>
             </ul>
         </nya-container>
     </div>

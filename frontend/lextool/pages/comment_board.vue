@@ -44,8 +44,8 @@
                 </FormItem>
             </Form>
             <div class="demo-drawer-footer">
-                <Button style="margin-right: 8px" @click="show_drawer = false">取消</Button>
-                <Button type="primary" @click="make_complaints">确定</Button>
+              <div class="nya-btn" @click="make_complaints" style="margin-right: 8px">确定</div>
+              <div class="nya-btn" @click="show_drawer = false">取消</div>
             </div>
         </Drawer>
         </div>

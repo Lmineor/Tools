@@ -290,6 +290,7 @@ a.nya-btn{
     display: inline-block;
     padding: 10px 15px;
     font-size: 16px;
+    //font-size: 26px;
     font-weight: 700;
     cursor: pointer;
     outline: none;
@@ -310,9 +311,16 @@ a.nya-btn{
         border-color: var(--theme);
     }
 
-    &:hover{
-        border-color: var(--theme);
-        color: var(--theme);
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px 0px rgba(10, 14, 29, 0.04),
+            0px 8px 64px 0px rgba(10, 14, 29, 0.08);
+        border-color: #024466;
+        color: #ffffff;
+        /*background-color: var(--theme);*/
+        /*border-color: var(--theme);*/
+        /*color: var(--theme);*/
+        background-color: #024466;
     }
 
     &[disabled="disabled"] {
