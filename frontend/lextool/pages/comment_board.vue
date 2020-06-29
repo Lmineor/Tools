@@ -40,7 +40,7 @@
                   </Col>
                 </Row>
                 <FormItem label="详细说说" label-position="top" prop="content">
-                    <Input type="textarea" v-model="formValidate.content" :rows="4" placeholder="展开说说看" maxlength="255" show-word-limit/>
+                    <Input type="textarea" v-model.trim="formValidate.content" :rows="4" placeholder="展开说说看" maxlength="255" show-word-limit/>
                 </FormItem>
             </Form>
             <div class="demo-drawer-footer">
@@ -105,7 +105,7 @@ export default {
       },
       formValidate: {
         mail: '',
-        type: 'other',
+        type: '',
         date: '',
         content: ''
       },
@@ -122,6 +122,16 @@ export default {
   },
   methods: {
     make_complaints() {
+      if(!this.formValidate.type){
+        this.$swal({
+              toast: true,
+              position: 'top-end',
+              type: 'error',
+              title: '请选择要吐槽的类型',
+              timer: 1000,
+            });
+        return;
+      };
       this.$axios
         .post(
           envs.apiUrl + '/helps/comment',

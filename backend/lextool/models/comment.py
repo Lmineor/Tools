@@ -36,14 +36,15 @@ class Comment(db.Model):
         return data
 
     @staticmethod
-    def save(content, comment_type, email, create_at):
+    def save(content, comment_type, email):
         try:
-            new_comment = Comment(content=content, comment_type=comment_type, email=email, create_at=create_at)
+            new_comment = Comment(content=content, comment_type=comment_type, email=email)
             db.session.add(new_comment)
             db.session.commit()
             code = 200
             msg = 'success'
         except Exception as e:
+            logger.error(e)
             code = 403
             msg = e
-        return {'code': code, 'msg': msg}
+        return code, msg

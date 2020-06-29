@@ -139,12 +139,6 @@ export default {
       '@nuxtjs/axios',
       '@nuxtjs/pwa',
       '@nuxtjs/style-resources',
-      // [
-      //     '@nuxtjs/google-analytics',
-      //     {
-      //         id: ''
-      //     }
-      // ],
       [
           'vue-sweetalert2/nuxt',
           {
@@ -161,14 +155,19 @@ export default {
       ]
   ],
 
+
   /*
   ** Axios module configuration
   */
   axios: {
     baseURL: env.axios,
-    progress: false
+    progress: false,
+    // proxy: true
   // See https://github.com/nuxt-community/axios-module#options
   },
+  // proxy: {
+  //       '/api': 'http://192.168.238:9012'
+  // },
 
 
   /*
