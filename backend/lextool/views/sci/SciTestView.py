@@ -3,15 +3,9 @@ import requests
 from flask import Blueprint, request
 from flask import jsonify
 
-from backend.lextool.models.comment import Comment
-from backend.lextool.logger import logger
+from ...logger import logger
 
 sci = Blueprint('sci', __name__)
-
-
-# ---------------------------------------------------------------------------------
-# memo 相关接口
-# ---------------------------------------------------------------------------------
 
 
 @sci.route("/test", methods=['POST'])
