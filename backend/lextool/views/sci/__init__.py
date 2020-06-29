@@ -2,13 +2,12 @@
 # -*- coding: utf-8 -*-
 
 """
-@Time    : 2020/6/28 19:03
+@Time    : 2020/6/29 19:00
 @Author  : lex(luohai2233@163.com)
 @File    : __init__.py.py
 @Software: PyCharm
 """
-
 from flask import Blueprint
 
 
-helps = Blueprint('helps', __name__)
+sci = Blueprint('sci', __name__)

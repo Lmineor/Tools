@@ -4,7 +4,7 @@ from flask import jsonify
 from ...models.comment import Comment
 from ...logger import logger
 
-helps = Blueprint('helps', __name__)
+comment = Blueprint('comment', __name__)
 
 
 # ---------------------------------------------------------------------------------
@@ -12,13 +12,12 @@ helps = Blueprint('helps', __name__)
 # ---------------------------------------------------------------------------------
 
 
-@helps.route("/comment", methods=['GET', 'POST'])
+@comment.route("/", methods=['GET', 'POST'])
 def get_comment():
     if request.method == 'GET':
         data = Comment.load_show_able_comment()
         return jsonify({'data': data})
     else:
-        print(request.data)
         email = request.get_json()['mail']
         comment_type = request.get_json()['type']
         content = request.get_json()['content']

@@ -23,7 +23,7 @@
             <ul class="nya-list">
                 <li>本站短链可以直接通过访问的方式进行</li>
                 <li>格式：www.lex666.online/s/<获得的短链></li>
-                <li>例如: <a href = "https://www.lex666.online/s/00000a">https://www.lex666.online/s/000002</a>可以跳转到百度</li>
+                <li>例如: <a href = "https://www.lex666.online/s/000007">https://www.lex666.online/s/000002</a>可以跳转到百度</li>
             </ul>
         </nya-container>
 

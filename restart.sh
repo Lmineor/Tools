@@ -15,13 +15,14 @@ PROJECT_NAME_F=lextool                              # frontend name
 
 # stop backend
 #lsof -i:${PROJECT_PORT}|awk '{print$2}' |grep -v PID|xargs kill -9 # 暂停
-cd ..
+cd /www/wwwroot
 uwsgi --stop uwsgi.pid
 
 # stop frontend
 pm2 stop $PROJECT_NAME_F
 
 #pull
+cd /www/wwwroot/Tools
 git pull
 
 # install dependence & build
