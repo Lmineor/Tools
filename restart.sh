@@ -15,6 +15,7 @@ PROJECT_NAME_F=lextool                              # frontend name
 
 # stop backend
 #lsof -i:${PROJECT_PORT}|awk '{print$2}' |grep -v PID|xargs kill -9 # 暂停
+cd ..
 uwsgi --stop uwsgi.pid
 
 # stop frontend
