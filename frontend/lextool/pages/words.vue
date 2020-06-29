@@ -90,7 +90,6 @@ export default {
                   this.book = re.data.book
               })
               .catch(err => {
-                console.log(err)
                 this.$store.commit('SET_STORE', {
                     key: 'globalLoading',
                     value: false
