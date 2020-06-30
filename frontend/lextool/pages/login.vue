@@ -1,23 +1,14 @@
 <template>
   <div class="login">
     <nya-container :title=title>
-      <nya-input
-        v-model="email"
-        label="邮箱"
-        placeholder="邮箱"
-        autocomplete="off"
-        autofocus
-        fullwidth
-      />
-      <nya-input
-        v-model="password"
-        label="密码"
-        placeholder="密码"
-        autocomplete="off"
-        fullwidth
-        type="password"
-        @keyup.enter="login"
-      />
+      <Form label-position="left" :label-width="80" :model="info" :rules="ruleValidate" ref="info">
+        <FormItem label="邮  箱：" style="margin-right: 5px;" prop="email">
+          <Input v-model="info.email"></Input>
+        </FormItem>
+        <FormItem label="密 码：" prop="password">
+            <Input v-model="info.password" type="password" @on-keyup.enter="login"></Input>
+        </FormItem>
+      </Form>
       <div class="nya-btn" id = "login" @click="login">登 录</div>
       <a href='/help'>忘记密码？</a>
       <div class="nya-btn" id="register" @click="register">注册</div>
@@ -29,7 +20,6 @@
 
 const Cookie = process.client ? require("js-cookie") : undefined;
 import envs from '../env'
-import {validEmail} from '@/utils/validate'
 
 
 export default {
@@ -39,12 +29,26 @@ export default {
       title: '用户登录',
       email: '',
       password: '',
-      isFocus: false
+      isFocus: false,
+      info: {
+        email: '',
+        password: '',
+      },
+      ruleValidate: {
+        email: [
+          {required: true, message: '邮箱不能为空', trigger: 'blur'},
+          {type: 'email', message: '邮箱格式不正确', trigger: 'blur'}
+        ],
+        password: [
+          {required: true, message: '密码不能为空', trigger: 'blur'},
+          { type: 'string', min: 6, max: 20, message: '密码长度6-20个字符', trigger: 'blur' },
+        ],
+      },
     }
   },
   methods: {
     login () {
-      if ( this.email === '' || this.password === '') {
+      if ( this.info.email === '' || this.info.password === '') {
         this.$swal({
             toast: true,
             position: 'top-end',
@@ -52,22 +56,12 @@ export default {
             title: '邮箱或密码不能为空',
             timer: 1500,
         });
-        return
+        return;
       };
-      if ( !validEmail(this.email)) {
-        this.$swal({
-            toast: true,
-            position: 'top-end',
-            type: 'error',
-            title: '邮箱格式不正确',
-            timer: 1500,
-        });
-        return
+      this.$axios.defaults.auth = {
+        username: this.info.email,
+        password: this.info.password,
       };
-       this.$axios.defaults.auth = {
-                username: this.email,
-                password: this.password,
-            }
       this.$axios
         .get(envs.apiUrl + '/user/login')
          .then(re => {
@@ -87,13 +81,11 @@ export default {
           this.$router.push("/") // 跳转到首页
         })
         .catch(err => {
-          console.log(err);
           this.$swal({
               toast: true,
               position: 'top-end',
               type: 'error',
               title: '用户名或密码错误',
-              // title: err,
               timer: 1500,
           });
         });

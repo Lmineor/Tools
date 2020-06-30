@@ -1,28 +1,50 @@
 <template>
   <div class="user-info">
     <nya-container :title=title>
-      <Form label-position="left" :label-width="70">
-        <FormItem label="用户名" class="forms">
-            <Input v-model="username" style="width:30%;" @keyup.enter="update"></Input>
-          <span>*</span>
-        </FormItem>
-        <FormItem label="邮箱" class="forms">
-            <span style="width:30%;">{{email}}</span>
-        </FormItem>
-        <FormItem label="单词书" class="forms">
-            <span style="width:30%;">{{words_book}}</span>
-        </FormItem>
-        <FormItem label="修改密码">
-            <i-switch v-model="modify"/>
-        </FormItem>
-        <FormItem v-if="modify" label="密码">
-            <Input v-model="password1" type="password" style="width:30%;"></Input>
-            <span style="color:rgb(255, 0, 0);">位数大于等于6位小于等于32位</span>
-        </FormItem>
-        <FormItem v-if="modify" label="确认密码">
-            <Input v-model="password2" type="password" style="width:30%;" @keyup.enter="update"></Input>
-            <span style="color:rgb(255, 0, 0);">位数大于等于6位小于等于32位</span>
-        </FormItem>
+      <Form label-position="left" :label-width="100" :model="info" :rules="ruleValidate" ref="info">
+        <Row :gutter="32">
+          <Col span="12">
+            <FormItem label="用户名：" prop="username">
+                <Input v-model="info.username" style="width:50%;" @keyup.enter="update"></Input>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="邮箱：" style="margin-right: 5px;">
+              <Input v-model="info.email" style="width:50%; font-weight: bold;" disabled></Input>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="单词书">
+                <Select v-model="info.words_book" placeholder="类型" style="width:50%;">
+                    <Option value="CET4">CET4</Option>
+                    <Option value="CET6">CET6</Option>
+                    <Option value="GRE">GRE</Option>
+                    <Option value="TOEFL">TOEFL</Option>
+                </Select>
+            </FormItem>
+          </Col>
+        </Row>
+        <Row :gutter="32">
+          <Col span="12">
+            <FormItem label="修改密码">
+              <i-switch v-model="modify"/>
+            </FormItem>
+          </Col>
+        </Row>
+        <Row :gutter="32">
+          <Col span="12">
+            <FormItem v-show="modify" label="密码" prop="password1">
+                <Input v-model="info.password1" type="password" style="width:50%;"></Input>
+            </FormItem>
+          </Col>
+        </Row>
+        <Row :gutter="32">
+          <Col span="12">
+            <FormItem v-show="modify" label="确认密码" prop="password2">
+                <Input v-model="info.password2" type="password" style="width:50%;" @on-keyup.enter="update"></Input>
+            </FormItem>
+          </Col>
+        </Row>
       </Form>
       <div class="nya-btn" id="register" @click="update">更新信息</div>
       <div class="nya-btn" id="logout" @click="logout">退出登录</div>
@@ -48,12 +70,28 @@ export default {
   data () {
     return {
       title: '个人信息',
-      username: '',
-      email: '',
       modify : false,
-      password1: '',
-      password2: '',
-      words_book: ''
+      ruleValidate: {
+        username: [
+          {required: true, message: '用户名不能为空', trigger: 'change'},
+          { type: 'string', min: 1, max: 20, message: '长度1-20个字符', trigger: 'blur' },
+        ],
+        password1: [
+          {required: true, message: '密码不能为空', trigger: 'blur'},
+          { type: 'string', min: 6, max: 20, message: '密码长度6-20个字符', trigger: 'blur' },
+        ],
+        password2: [
+          {required: true, message: '密码不能为空', trigger: 'blur'},
+          { type: 'string', min: 6, max: 20, message: '密码长度6-20个字符', trigger: 'blur' },
+        ],
+      },
+      info: {
+        username: '',
+        email: '',
+        words_book: 'CET4',
+        password1: '',
+        password2: '',
+      },
     }
   },
   mounted (){
@@ -68,8 +106,8 @@ export default {
             envs.apiUrl + '/user/logout',
           {
             data:{
-                username: this.username,
-                email: this.email
+                username: this.info.username,
+                email: this.info.email
             },
           }
         )
@@ -79,16 +117,9 @@ export default {
             let username = null;
             this.$store.commit("SET_AUTH", token);
             this.$store.commit("SET_USER_IFO", username);
-            Cookie.set("auth", token);
-            Cookie.set("user", username);
-            this.$swal({
-              toast: true,
-              position: 'top-end',
-              type: 'success',
-              title: '注销成功',
-              timer: 1500,
-            });
-            this.$router.push("/");
+            Cookie.remove("auth");
+            Cookie.remove("user");
+            this.$router.push("/login");
           }
         })
         .catch(err => {
@@ -101,10 +132,9 @@ export default {
             });
           // this.$router.push("/")
         });
-      console.log('logout');
     },
     getUserInfo(){
-      this.username = Cookie.get('user');
+      this.info.username = Cookie.get('user');
       this.$axios.defaults.auth = {
           username: Cookie.get('auth'),
           password: ''
@@ -114,8 +144,8 @@ export default {
             envs.apiUrl + '/user/info',
         )
         .then(re => {
-            this.email = re.data.email;
-            this.words_book = re.data.words_book;
+            this.info.email = re.data.email;
+            this.info.words_book = re.data.words_book;
         })
         .catch(err => {
           if (err.response.status === 401) {
@@ -142,7 +172,7 @@ export default {
         });
     },
     update(){
-      if (!this.username){
+      if (!this.info.username){
         this.$swal({
             toast: true,
             position: 'top-end',
@@ -152,7 +182,7 @@ export default {
         });
         return
       }
-      if (this.password1 != this.password2) {
+      if (this.info.password1 !== this.info.password2) {
         this.$swal({
             toast: true,
             position: 'top-end',
@@ -160,10 +190,10 @@ export default {
             title: '两次输入的密码不一致，请检查后重新输入',
             timer: 3000,
         });
-        return
+        return;
       };
-      if (this.password1){
-        if ( !((this.password1.length >= 6) && (this.password1.length <=32))) {
+      if (this.info.password1){
+        if ( !((this.info.password1.length >= 6) && (this.info.password1.length <=32))) {
           this.$swal({
               toast: true,
               position: 'top-end',
@@ -178,13 +208,14 @@ export default {
         .post(
             envs.apiUrl + '/user/infoupdate',
             {
-                username: this.username,
-                email: this.email,
-                password: this.password1
+                username: this.info.username,
+                email: this.info.email,
+                password: this.info.password1,
+                words_book : this.info.words_book
             },
         )
         .then(re => {
-          if(re.data.code == 200) {
+          if(re.data.code === 200) {
             this.$swal({
               toast: true,
               position: 'top-end',
@@ -192,16 +223,16 @@ export default {
               title: '更新成功，请重新登录',
               timer: 1500,
             });
-            this.$router.push("/login") // 跳转到login页
+            this.logout();
           } else{
             this.$swal({
               toast: true,
               position: 'top-end',
               type: 'error',
-              title: '登录已过期，请重新登录',
+              title: '未知错误，请重新登录试试',
               timer: 3000,
             });
-            this.$router.push("/login") // 跳转到login页
+            this.logout();
           }
         })
         .catch(err => {
@@ -212,7 +243,7 @@ export default {
               title: '登录已过期，请重新登录',
               timer: 3000,
             });
-          this.$router.push("/login") // 跳转到login页
+          this.logout();
         });
     },
   }
@@ -223,9 +254,6 @@ export default {
 <style  lang="scss">
   .user-info {
     width: 100%;
-    .forms{
-      margin-top: 10px;
-    }
     .nya-btn {
       position: relative;
       margin-top: 15px;

@@ -67,15 +67,18 @@ def update():
         user_config = UserConfig.query.filter_by(user_id=g.user.id).first()
         user_config.words_book = words_book
         db.session.add(user_config)
+        db.session.commit()
+        current_user = User.query.get(g.user.id)
         if password:
-            g.user.password = password
-        g.user.username = username
-        db.session.add(g)
+            current_user.password = password
+        current_user.username = username
+        db.session.add(current_user)
         db.session.commit()
 
         msg = "success"
         code = 200
     except Exception as e:
+        print(e)
         msg = "fail"
         code = 400
     res = {

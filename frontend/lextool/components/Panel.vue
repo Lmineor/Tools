@@ -4,7 +4,7 @@
             <a v-if="$store.state.user" href="https://github.com/Prolht/Tools" target="_blank" rel="noopener noreferrer" style="color: #fff;">
                 {{$store.state.user}}
             </a>
-            <a v-else href="https://github.com/Prolht/Tools" target="_blank" rel="noopener noreferrer" style="color: #fff;">
+            <a v-else href="https://github.com/Prolht/Tools" target="_blank" rel="noopener noreferrer" style="color: #024466;">
                 (❤ ω ❤)o
             </a>
             <!-- <a>{{$store.state.user}}</a> -->
