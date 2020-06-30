@@ -45,6 +45,8 @@ cd $PROJECT_F_BASE_PATH$PROJECT_NAME_F
 npm install
 npm run build
 
+
+# pm2 start npm --name “lextool” -- run start  # 第一次启动用
 # start
-pm2 restart $PROJECT_NAME_F
+pm2 start $PROJECT_NAME_F
 echo "==================Complete Frontend=================="

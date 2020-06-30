@@ -2,7 +2,11 @@
     <nya-container v-if="$store.state.welcome" class="welcome">
         <h2 style="font-family: 'Times New Roman'">Welcome to Muggle's World</h2>
         <p>
-          <span style="font-family: 'Times New Roman'">Spruce wood with a unicorn hair core, 11" and solid flexibility</span><br>
+          <span style="font-family: 'Times New Roman'">
+            Spruce wood with a unicorn hair core, 11" and solid flexibility
+            [云杉木，独角兽内芯，11英寸，柔韧性偏硬]
+          </span>
+          <br>
           这是我自己开发或收集的小工具合集，若有新的工具欢迎提建议。
           <a href="/comment_board">
             在这儿留言

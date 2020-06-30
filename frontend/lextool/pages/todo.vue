@@ -1,14 +1,38 @@
 <template>
   <div class="todo">
-    <nya-container :title=title>
-      <Input v-model="todo" class="contend">
-        
-        <Radio slot="append">
-            <span>完成</span>
-        </Radio>
-      </Input>
-      <TimePicker :steps="[1, 15, 15]" placeholder="Select time" style="width: 112px"></TimePicker>
-      <div class="nya-btn" @click="savememo">保存</div>
+    <nya-container :title=title class="todos">
+      <div v-for="(todo, index) in todos" track-by="$index">
+          <Card class="todo-card">
+            <p slot="title">
+              <Icon type="md-help" />
+                {{todo.ddl}}
+            </p>
+            <Radio v-model="todo.finished" slot="extra" @on-change="finish(index)">完成</Radio>
+            <ul>
+              <span class="content">
+                <Icon type="logo-twitch" />
+                {{ todo.todo }}
+              </span>
+            </ul>
+          </Card>
+        </div>
+    </nya-container>
+    <nya-container :title=title2 class="todos">
+      <template v-for="(todo, index) in finished_todos">
+          <Card class="todo-card">
+            <p slot="title">
+              <Icon type="md-help" />
+                {{todo.ddl}}
+            </p>
+            <Radio v-model="todo.cancel" slot="extra" @on-change="cancel(index)">撤销</Radio>
+            <ul>
+              <span class="content">
+                <Icon type="logo-twitch" />
+                {{ todo.todo }}
+              </span>
+            </ul>
+          </Card>
+        </template>
     </nya-container>
 
   </div>
@@ -27,8 +51,21 @@ export default {
   data () {
     return {
       rows: 23,
-      todo: '造吧',
+      finished: false,
+      todos: [
+                {'ddl':'今天','todo':'完成开发1', 'finished': false, 'cancel': true, 'id': 'xxxxxxx'},
+                {'ddl':'今天','todo':'完成开发2', 'finished': false, 'cancel': true, 'id': 'xxxxxxx'},
+                {'ddl':'今天','todo':'完成开发3', 'finished': false, 'cancel': true, 'id': 'xxxxxxx'},
+                {'ddl':'今天','todo':'完成开发4', 'finished': false, 'cancel': true, 'id': 'xxxxxxx'},
+            ],
+      finished_todos: [
+                {'ddl':'今天','todo':'完成1', 'finished': true, 'cancel': false, 'id': 'xxxxxxx'},
+                {'ddl':'今天','todo':'完成2', 'finished': true, 'cancel': false, 'id': 'xxxxxxx'},
+                {'ddl':'今天','todo':'完成3', 'finished': true, 'cancel': false, 'id': 'xxxxxxx'},
+                {'ddl':'今天','todo':'完成4', 'finished': true, 'cancel': false, 'id': 'xxxxxxx'},
+            ],
       title: 'ToDo',
+      title2: '已完成的',
       email: '',
       password: '',
       isFocus: false,
@@ -37,76 +74,31 @@ export default {
     }
   },
   mounted (){
-    this.getmemo();
-    // setInterval(() => {
-    //     this.savememo();//保存表单信息的操作
-    //   },20000)
+
+    // this.getmemo();
+    // // setInterval(() => {
+    // //     this.savememo();//保存表单信息的操作
+    // //   },20000)
     this.loading = false;
   },
   methods: {
-    getmemo(){
-      this.user = Cookie.get('user');
-      this.$swal({
-          toast: false,
-          position: 'center',
-          title: '你好: ' + this.user,
-          timer: 1500,
-        });
-      this.$axios.defaults.auth = {
-                username: Cookie.get('auth'),
-                password: ''
-      }
-      this.$axios
-        .get(
-            envs.apiUrl + '/user/usermemo',
-            {withCredentials: true}
-        )
-        .then(re => {
-            this.memo = re.data.memo;
-        })
-        .catch(err => {
-            this.$swal({
-              toast: true,
-              position: 'top-end',
-              type: 'error',
-              title: '出了点问题，请稍候再试',
-              timer: 2000,
-            });
-            this.memo = '';
-        });
+    finish(index) {
+      //
+      let item = this.todos.splice(index, 1);
+      console.log(item);
+      item.cancel = false;
+      // item.finished = true;
+      this.$forceUpdate();
+      this.finished_todos.push(item);
+
     },
-    savememo() {
-      this.$axios.defaults.auth = {
-          username: Cookie.get('auth'),
-          password: ''
-      }
-      this.$axios
-        .post(
-            envs.apiUrl + '/user/saveusermemo',
-            {
-                username: this.user,
-                memo: this.memo,
-            },
-        )
-        .then(re => {
-          this.$swal({
-              toast: true,
-              position: 'top-end',
-              type: 'success',
-              title: '保存成功',
-              timer: 1500,
-            });
-        })
-        .catch(err => {
-            this.$swal({
-              toast: true,
-              position: 'top-end',
-              type: 'error',
-              title: '出了点问题，请稍候再试',
-              timer: 2000,
-            });
-            this.memo = '';
-        });
+    cancel(index) {
+      let item = this.finished_todos[index];
+      item.finished = false;
+      item.cancel = true;
+      this.todos.push(item);
+      this.finished_todos.splice(index, 1);
+      console.log(index);
     },
   }
 }
@@ -115,16 +107,15 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style  lang="scss">
   .todo {
-    width: 100%;
-    .contend{
-      width: 60%;
-      text-overflow: ellipsis;
-      font-size: 15px;
-      border-style: none; 
-    }
-    .nya-btn {
-      position: relative;
-      margin-top: 15px;
+    .todos {
+      display: table;
+      width: 100%;
+      .todo-card {
+        width: 30%;
+        float: left;
+        margin-left: 2%;
+        margin-top: 2%;
+      }
     }
   }
 </style>

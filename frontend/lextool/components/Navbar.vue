@@ -2,7 +2,7 @@
     <div class="navbar">
         <header>
             <h1 class="title">
-                <nuxt-link to="/">
+                <nuxt-link to="/" style="font-family: 'Times New Roman'">
                     Muggle's World
                 </nuxt-link>
             </h1>
