@@ -8,21 +8,21 @@
           <Drawer
               title="吐槽中心"
               v-model="show_drawer"
-              width="400"
+              width="25%"
               :mask-closable="true"
               :styles="styles"
           >
             <Form :model="formValidate" :rules="ruleValidate" ref="formData">
                 <Row :gutter="32">
-                    <Col span="12">
-                        <FormItem label="邮箱" label-position="top" prop="mail" >
+                    <Col span="12" style="width: 100%;">
+                        <FormItem label="邮箱" label-position="top" prop="mail">
                             <Input v-model="formValidate.mail" placeholder="请输入邮箱"/>
                         </FormItem>
                     </Col>
 
                 </Row>
                 <Row :gutter="32">
-                    <Col span="12">
+                    <Col span="12"  style="width: 100%;">
                         <FormItem label="吐槽类型" label-position="top" prop="type" >
                             <Select v-model="formValidate.type" placeholder="类型" >
                                 <Option value="suggestion">功能建议</Option>
@@ -33,7 +33,7 @@
                     </Col>
                 </Row>
                 <Row>
-                  <Col span="12">
+                  <Col span="12"  style="width: 100%;">
                       <FormItem label="时间" label-position="top">
                         <DatePicker v-model="formValidate.date" :disabled=true style="display: block" placement="bottom-end"></DatePicker>
                       </FormItem>
