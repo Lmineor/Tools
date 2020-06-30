@@ -45,7 +45,7 @@ export default {
           links: [
             {'url': 'https://www.sci-hub.shop/', 'status': ''},
             // {'url': 'http://www.sci-hub.bz/', 'status': ''},
-            {'url': 'http://sci-hub.hk/', 'status': ''},
+            // {'url': 'http://sci-hub.hk/', 'status': ''},
             {'url': 'http://sci-hub.tw/', 'status': ''},
           ],
         };

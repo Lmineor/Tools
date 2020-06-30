@@ -1,8 +1,9 @@
 <template>
     <nya-container v-if="$store.state.welcome" class="welcome">
-        <h2>欢迎使用Lex吐司</h2>
+        <h2 style="font-family: 'Times New Roman'">Welcome to Muggle's World</h2>
         <p>
-            这是我自己开发或收集的小工具合集，若有新的工具欢迎提建议。
+          <span style="font-family: 'Times New Roman'">Spruce wood with a unicorn hair core, 11" and solid flexibility</span><br>
+          这是我自己开发或收集的小工具合集，若有新的工具欢迎提建议。
           <a href="/comment_board">
             在这儿留言
           </a>

@@ -10,6 +10,7 @@ from ..user import auth
 from ...logger import logger
 from ...models.words import *
 from ...models import db
+from ...cache import cache
 from ...utils.parseCharacter import parseSpelling
 
 words = Blueprint('words', __name__)
@@ -39,11 +40,20 @@ def get_daily_words():
     word_items = db.session.query(DailyWords).filter(DailyWords.user_id == g.user.id).all()
     if not word_items:
         data = generate_user_daily_words(source, g.user.id, recited=[], words_num=words_num)
+        cache.set(str(g.user.id) + current_date + book, data)
     elif str(word_items[0].create_at)[:10] != current_date or refresh:
+        logger.info("Refresh: {}".format(refresh))
         data = generate_user_daily_words(source, g.user.id, recited=[], words_num=words_num)
+        cache.set(str(g.user.id) + current_date + book, data)
     else:
-        data = [{'word': item.word, 'translation': item.translation, 'spellingA': parseSpelling(item.spellingA),
-                 'spellingE': parseSpelling(item.spellingE)} for item in word_items]
+        has_cached = cache.get(str(g.user.id) + current_date + book)
+        if has_cached:
+            logger.info('Get from cache')
+            data = has_cached
+        else:
+            data = [{'word': item.word, 'translation': item.translation, 'spellingA': parseSpelling(item.spellingA),
+                     'spellingE': parseSpelling(item.spellingE)} for item in word_items]
+            cache.set(str(g.user.id) + current_date + book, data)
 
     return jsonify({
         'code': 200,

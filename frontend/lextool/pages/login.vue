@@ -2,10 +2,10 @@
   <div class="login">
     <nya-container :title=title>
       <Form label-position="left" :label-width="80" :model="info" :rules="ruleValidate" ref="info">
-        <FormItem label="邮  箱：" style="margin-right: 5px;" prop="email">
-          <Input v-model="info.email"></Input>
+        <FormItem label="邮  箱：" class="form-item" prop="email">
+          <Input v-model="info.email" autofocus></Input>
         </FormItem>
-        <FormItem label="密 码：" prop="password">
+        <FormItem label="密 码：" class="form-item" prop="password">
             <Input v-model="info.password" type="password" @on-keyup.enter="login"></Input>
         </FormItem>
       </Form>
@@ -104,11 +104,18 @@ export default {
     width: 100%;
     max-width: 400px;
     margin: 100px auto 0;
+    .form-item{
+      font-size: 30px;
+      margin-top: 20px;
+      margin-bottom: 40px;
+      letter-spacing: 1px;
+      margin-right: 5px;
+    }
     .nya-btn {
       font-size: 17px;
       font-weight: bold;
       text-align: center;
-      margin-top:15px;
+      margin-top:10px;
       width: 100px;
     }
     #login{

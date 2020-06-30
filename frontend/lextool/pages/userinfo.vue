@@ -13,6 +13,8 @@
               <Input v-model="info.email" style="width:50%; font-weight: bold;" disabled></Input>
             </FormItem>
           </Col>
+        </Row>
+        <Row :gutter="32">
           <Col span="12">
             <FormItem label="单词书">
                 <Select v-model="info.words_book" placeholder="类型" style="width:50%;">
@@ -20,6 +22,16 @@
                     <Option value="CET6">CET6</Option>
                     <Option value="GRE">GRE</Option>
                     <Option value="TOEFL">TOEFL</Option>
+                </Select>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="单词数量">
+                <Select v-model="info.words_num" placeholder="数量" style="width:50%;">
+                    <Option value="20">20</Option>
+                    <Option value="50">50</Option>
+                    <Option value="100">100</Option>
+                    <Option value="200">200</Option>
                 </Select>
             </FormItem>
           </Col>
@@ -52,6 +64,7 @@
     <nya-container title="提示" icon="volume-down-outline">
         <ul class="nya-list">
             <li>带*号的为必填项</li>
+            <li>单词书更改后第二天才会生效哈~</li>
             <li>有问题，联系我<a href="mailto:luohai2233@163.com">luohai2233@163.com</a></li>
         </ul>
     </nya-container>
@@ -89,6 +102,7 @@ export default {
         username: '',
         email: '',
         words_book: 'CET4',
+        words_num: 20,
         password1: '',
         password2: '',
       },
@@ -146,6 +160,8 @@ export default {
         .then(re => {
             this.info.email = re.data.email;
             this.info.words_book = re.data.words_book;
+            this.info.words_num = re.data.words_num
+          console.log(this.info.words_num)
         })
         .catch(err => {
           if (err.response.status === 401) {
@@ -211,7 +227,8 @@ export default {
                 username: this.info.username,
                 email: this.info.email,
                 password: this.info.password1,
-                words_book : this.info.words_book
+                words_book : this.info.words_book,
+                words_num: this.info.words_num,
             },
         )
         .then(re => {

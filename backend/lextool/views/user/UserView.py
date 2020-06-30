@@ -50,7 +50,8 @@ def info():
     """
     email = g.user.email
     words_book = g.user.config.words_book
-    return jsonify({'email': email, 'words_book': words_book})
+    words_num = g.user.config.words_num
+    return jsonify({'email': email, 'words_book': words_book, 'words_num': str(words_num)})
 
 
 @user.route('/infoupdate', methods=['POST'])
@@ -63,9 +64,12 @@ def update():
     email = request.get_json()['email']
     password = request.get_json()['password']
     words_book = request.get_json()['words_book']
+    words_num = request.get_json()['words_num']
+    words_num = int(words_num) if words_num in [20, 50, 100, 200] else 20
     try:
         user_config = UserConfig.query.filter_by(user_id=g.user.id).first()
         user_config.words_book = words_book
+        user_config.words_num = words_num
         db.session.add(user_config)
         db.session.commit()
         current_user = User.query.get(g.user.id)

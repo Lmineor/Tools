@@ -217,7 +217,7 @@ export default {
         transition: all 0.3s ease;
         /*background-color: transparent;*/
         font-size: 18px;
-        border-radius: 4px;
+        border-radius: 10px;
         &:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 16px 0px rgba(10, 14, 29, 0.04),

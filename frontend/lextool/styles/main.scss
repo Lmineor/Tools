@@ -294,6 +294,7 @@ a.nya-btn{
     font-weight: 700;
     cursor: pointer;
     outline: none;
+    border-radius: 10px;
     border: 1px solid var(--border-color);
     background-color: rgba($color: var(--theme), $alpha: .1);
     color: var(--t1);

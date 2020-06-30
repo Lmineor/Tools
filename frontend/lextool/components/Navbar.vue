@@ -3,7 +3,7 @@
         <header>
             <h1 class="title">
                 <nuxt-link to="/">
-                    Lex吐司
+                    Muggle's World
                 </nuxt-link>
             </h1>
             <Panel />
