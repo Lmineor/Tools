@@ -2,6 +2,7 @@ import datetime
 
 from . import db
 from ..logger import logger
+from ..cache import cache
 
 
 class Comment(db.Model):
@@ -14,16 +15,16 @@ class Comment(db.Model):
     solve = db.Column(db.String(100))                                           # 回复内容
     comment_type = db.Column(db.String(10), nullable=False, index=True)         # 类型
     is_show = db.Column(db.Boolean, default=True)                               # 是否评论区可见
-    can_show = db.Column(db.Boolean, default=False)                             # 是否可以显示
+    can_show = db.Column(db.Boolean, default=False)                             # 是否通过审核予以展示
     email = db.Column(db.String(100), nullable=False, index=True)
     create_at = db.Column(db.DateTime, default=datetime.date.today())           # 反馈时间
     is_solved = db.Column(db.Boolean, default=False)                            # 是否回复
-    solved_at = db.Column(db.DateTime, nullable=True)           # 回复时间
+    solved_at = db.Column(db.DateTime, nullable=True)                           # 回复时间
 
     @classmethod
     def load_show_able_comment(cls):
         try:
-            all_comment = cls.query.order_by(cls.create_at.desc()).all()
+            all_comment = cls.query.order_by(cls.create_at.desc()).limit(30).all()
             data = [{'content': item.content,
                      'is_solved': item.is_solved,
                      'comment_type': item.comment_type,
@@ -36,6 +37,7 @@ class Comment(db.Model):
         return data
 
     @staticmethod
+    # @cache.cached(timeout=)
     def save(content, comment_type, email):
         try:
             new_comment = Comment(content=content, comment_type=comment_type, email=email)
