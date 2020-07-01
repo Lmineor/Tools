@@ -32,6 +32,12 @@
                 </div>
             </div>
         </nya-container>
+        <nya-container title="公告" icon="volume-down-outline">
+              <ul class="nya-list">
+                  <li>可以前往 <a href="/userinfo">用户中心</a>修改单词书和每日单词的数量</li>
+                  <li>有意见或建议<a href="/comment_board">欢迎反馈</a></li>
+              </ul>
+        </nya-container>
     </div>
 </template>
 

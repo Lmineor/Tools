@@ -64,7 +64,7 @@
     <nya-container title="提示" icon="volume-down-outline">
         <ul class="nya-list">
             <li>带*号的为必填项</li>
-            <li>单词书更改后第二天才会生效哈~</li>
+            <li>单词书和单词数量更改后第二天才会生效哈~</li>
             <li>有问题，联系我<a href="mailto:luohai2233@163.com">luohai2233@163.com</a></li>
         </ul>
     </nya-container>
@@ -129,8 +129,10 @@ export default {
           if(re.data.code === 200) {
             let token = null;
             let username = null;
-            this.$store.commit("SET_AUTH", token);
-            this.$store.commit("SET_USER_IFO", username);
+            this.$store.state.user = username;
+            this.$store.state.auth = token;
+            // this.$store.commit("SET_AUTH", token);
+            // this.$store.commit("SET_USER_INFO", username);
             Cookie.remove("auth");
             Cookie.remove("user");
             this.$router.push("/login");

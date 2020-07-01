@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import env from '../env';
-import Vuex from 'vuex'
+// import Vuex from 'vuex'
 const cookieparser = process.server ? require('cookieparser') : undefined
 
 export const state = () => ({
@@ -43,10 +43,12 @@ export const mutations = {
     SET_AUTH(state, auth) {
         state.auth = auth;
     },
-    SET_USER_IFO(state, user) {
+    SET_USER_INFO(state, user) {
+      console.log(n);
         state.user = user;
     },
     SET_STORE(state, n) {
+
         if (_.isArray(n.value)) {
             n.value = Array.from(n.value);
         }

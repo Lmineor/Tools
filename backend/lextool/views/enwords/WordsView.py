@@ -24,6 +24,7 @@ def get_daily_words():
     思路：如果用户请求的日期与数据库中create_at相同，则直接查库返回，否则重新生成新的单词，并存到数据库当中
     """
     refresh = request.args.get("refresh")  # 若有refresh请求，则刷新
+
     book = g.user.config.words_book
     words_num = g.user.config.words_num
     current_date = str(datetime.date.today())
@@ -37,6 +38,7 @@ def get_daily_words():
         source = TOEFL
     else:
         source = GRE
+
     word_items = db.session.query(DailyWords).filter(DailyWords.user_id == g.user.id).all()
     if not word_items:
         data = generate_user_daily_words(source, g.user.id, recited=[], words_num=words_num)

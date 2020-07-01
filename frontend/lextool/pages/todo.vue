@@ -65,7 +65,7 @@ export default {
                 {'ddl':'今天','todo':'完成4', 'finished': true, 'cancel': false, 'id': 'xxxxxxx'},
             ],
       title: 'ToDo',
-      title2: '已完成的',
+      title2: '已完成',
       email: '',
       password: '',
       isFocus: false,
