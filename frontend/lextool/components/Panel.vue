@@ -1,7 +1,7 @@
 <template>
     <div class="panel" icon="person-outline">
         <div class="login-text">
-            <a v-if="$store.state.user" href="https://github.com/Prolht/Tools" target="_blank" rel="noopener noreferrer" style="color: #fff;">
+            <a v-if="$store.state.user" href="https://github.com/Prolht/Tools" target="_blank" rel="noopener noreferrer" style="color: #024466;">
                 {{$store.state.user}}
             </a>
             <a v-else href="https://github.com/Prolht/Tools" target="_blank" rel="noopener noreferrer" style="color: #024466;">
