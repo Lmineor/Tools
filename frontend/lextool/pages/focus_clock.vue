@@ -56,9 +56,8 @@
             </ul>
           </Card>
           <div class="nya-btn" @click="toggle" style="float: left;margin-top: 20px">
-<!--                <Icon type="ios-move" size="20"/>-->
-            Go
-        </div>
+            开始
+          </div>
         </div>
 
       </fullscreen>

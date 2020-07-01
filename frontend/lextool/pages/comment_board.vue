@@ -134,7 +134,7 @@ export default {
       };
       this.$axios
         .post(
-          envs.apiUrl + '/comment/',
+          envs.apiUrl + '/comment/new',
           {
             mail: this.formValidate.mail,
             type: this.formValidate.type,
@@ -186,7 +186,7 @@ export default {
         value: true
       });
       this.$axios
-        .get(envs.apiUrl + '/comment/')
+        .get(envs.apiUrl + '/comment')
         .then(re => {
           this.comments = re.data.data;
           this.$store.commit('SET_STORE', {

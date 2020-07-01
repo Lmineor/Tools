@@ -37,7 +37,6 @@ class Comment(db.Model):
         return data
 
     @staticmethod
-    # @cache.cached(timeout=)
     def save(content, comment_type, email):
         try:
             new_comment = Comment(content=content, comment_type=comment_type, email=email)
