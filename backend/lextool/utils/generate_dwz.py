@@ -10,11 +10,6 @@ def __get_domain(raw_input):
     return domain, routers
 
 
-def __shorten(origin):
-    res = __10to62(origin)
-    return res
-
-
 def __10to62(num):
     """
     10进制转62进制
@@ -39,12 +34,14 @@ def __10to62(num):
             res = '0' + res
     return res
 
-def generate_dwz(origin):
-    '''
-    origin: 数据库的递增字段
-    '''
-    su = __shorten(origin)
-    return su
+
+def generate_dwz(num):
+    """
+    :param num:  数据库的递增字段
+    :return:  dwz
+    """
+    res = __10to62(num)
+    return res
 
 
 if __name__ == '__main__':
