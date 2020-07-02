@@ -120,7 +120,6 @@ def get_content():
                                                             PoemTangSong.dynasty == dynasty,
                                                             PoemTangSong.poem == poem).first()
             content = item.paragraphs.split('。') if item else []
-            # content = PoemTangSong.query.filter_by(poet=poet, dynasty=dynasty, poem=poem).first().paragraphs
             cache.set("content" + poet + dynasty + poem, content)
         except Exception as e:
             content = []
