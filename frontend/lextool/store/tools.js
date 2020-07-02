@@ -55,15 +55,15 @@ export const state = () => {
                     },
                     hot:'recommend'//debug new recommend
                 },
-                {
-                      name: '专注时钟',
-                      path: '/focus_clock',
-                      head: {
-                          keywords: ['专注'],
-                          description: ''
-                      },
-                      hot:'new'//debug new recommend
-                },
+                // {
+                //       name: '专注时钟',
+                //       path: '/focus_clock',
+                //       head: {
+                //           keywords: ['专注'],
+                //           description: ''
+                //       },
+                //       hot:'new'//debug new recommend
+                // },
                 {
                     name: 'Sci-Hub可用网址',
                     path: '/sci',
