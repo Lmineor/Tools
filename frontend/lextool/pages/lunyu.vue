@@ -9,7 +9,7 @@
                   </p>
                   <ul>
                       <span v-for="item in chapters" :key="item.index">
-                        <Button type="primary" class="author-btn" :title="item" @click="getparagraphs(item)">{{item}}</Button>
+                        <Button type="primary" class="author-btn" :title="item" @click="getParagraphs(item)">{{item}}</Button>
                       </span>
                   </ul>
               </Card>
@@ -58,11 +58,11 @@ export default {
         };
     },
     mounted (){
-        this.getchapters();
-        this.getparagraphs (this.chapter)
+        this.getChapters();
+        this.getParagraphs (this.chapter)
     },
     methods: {
-        getchapters(){
+        getChapters(){
             this.loading = true,
             this.$axios
                 .get(
@@ -77,7 +77,7 @@ export default {
                     this.loading = false;
                 });
         },
-        getparagraphs (chapter){
+        getParagraphs (chapter){
             this.chapter = chapter,
             this.loading = true,
             this.hasparagraphs = false,

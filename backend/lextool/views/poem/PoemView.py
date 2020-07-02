@@ -173,55 +173,55 @@ def get_songci():
     """
     test
     """
-    author = request.get_json()['author']
+    poet = request.get_json()['poet']
     rhythmic = request.get_json()['rhythmic']
     page = request.get_json()['page']
     if page:  # 获取作者翻页数据
-        if cache.get('authors_num' + 'songci'):
-            total = int(cache.get('authors_num' + 'songci'))
+        if cache.get('poets_num' + 'songci'):
+            total = int(cache.get('poets_num' + 'songci'))
         else:
             total = len(CiAuthor.query.all())
-            cache.set('authors_num' + 'songci', total)
+            cache.set('poets_num' + 'songci', total)
         if cache.get(str(page) + 'songci'):
-            authors = cache.get(str(page) + 'songci')
+            poets = cache.get(str(page) + 'songci')
         else:
             try:
                 items = CiAuthor.query.paginate(page=page, per_page=DefaultConfig.PER_PAGE, error_out=False).items
-                authors = list(set([item.name for item in items]))
+                poets = list(set([item.poet for item in items]))
             except Exception as e:
-                authors = []
+                poets = []
                 logger.error(e)
-            cache.set(str(page) + 'songci', authors)
+            cache.set(str(page) + 'songci', poets)
         return jsonify({
             'code': 200,
-            'authors': authors,
+            'poets': poets,
             'total': total
         })
     elif not rhythmic:  # 获取词牌名s
-        if cache.get(author + '_ci'):
-            rhythmics = cache.get(author + '_ci')
+        if cache.get(poet + '_ci'):
+            rhythmics = cache.get(poet + '_ci')
         else:
             try:
-                items = PoemSongci.query.filter_by(author=author).all()
+                items = PoemSongci.query.filter_by(poet=poet).all()
                 rhythmics = list(set([item.rhythmic for item in items]))
             except Exception as e:
                 rhythmics = []
                 logger.error(e)
-            cache.set(author + '_ci', rhythmics)
+            cache.set(poet + '_ci', rhythmics)
         return jsonify({
             'code': 200,
             'rhythmics': rhythmics
         })
     else:
-        if cache.get(author + rhythmic + '_ci'):
-            paragraphs = cache.get(author + rhythmic + '_ci')
+        if cache.get(poet + rhythmic + '_ci'):
+            paragraphs = cache.get(poet + rhythmic + '_ci')
         else:
             try:
-                paragraphs = PoemSongci.query.filter_by(author=author, rhythmic=rhythmic).first().paragraphs.split('。')
+                paragraphs = PoemSongci.query.filter_by(poet=poet, rhythmic=rhythmic).first().paragraphs.split('。')
             except Exception as e:
                 paragraphs = ''
                 logger.error(e)
-            cache.set(author + rhythmic + '_ci', paragraphs)
+            cache.set(poet + rhythmic + '_ci', paragraphs)
         return jsonify({
             'code': 200,
             'paragraphs': paragraphs
@@ -233,38 +233,38 @@ def get_shijing():
     """
     test
     """
-    title = request.get_json()['title']
+    poem = request.get_json()['poem']
     page = request.get_json()['page']
     if page:  # 获取诗名翻页数据
-        if cache.get('title_num' + 'shijing'):
-            total = int(cache.get('title_num' + 'shijing'))
+        if cache.get('poem_num' + 'shijing'):
+            total = int(cache.get('poem_num' + 'shijing'))
         else:
             total = len(ShiJing.query.all())
-            cache.set('title_num' + 'shijing', total)
+            cache.set('poem_num' + 'shijing', total)
         if cache.get(str(page) + 'shijing'):
-            titles = cache.get(str(page) + 'shijing')
+            poems = cache.get(str(page) + 'shijing')
         else:
             try:
                 items = ShiJing.query.paginate(page=page, per_page=DefaultConfig.PER_PAGE, error_out=False).items
-                titles = list(set([item.title for item in items]))
+                poems = list(set([item.poem for item in items]))
             except Exception as e:
-                titles = []
+                poems = []
                 logger.error(e)
-            cache.set(str(page) + 'shijing', titles)
+            cache.set(str(page) + 'shijing', poems)
         return jsonify({
             'code': 200,
-            'titles': titles,
+            'poems': poems,
             'total': total
         })
     else:  # 获取内容
-        logger.info(title)
-        if cache.get(title + 'shijing'):
-            content = cache.get(title + 'shijing')
-            chapter = cache.get(title + 'chapter')
-            section = cache.get(title + 'section')
+        logger.info(poem)
+        if cache.get(poem + 'shijing'):
+            content = cache.get(poem + 'shijing')
+            chapter = cache.get(poem + 'chapter')
+            section = cache.get(poem + 'section')
         else:
             try:
-                query = ShiJing.query.filter_by(title=title).first()
+                query = ShiJing.query.filter_by(poem=poem).first()
                 content = query.content.split('。')
                 chapter = query.chapter
                 section = query.section
@@ -272,9 +272,9 @@ def get_shijing():
                 content = []
                 chapter = section = ''
                 logger.error(e)
-            cache.set(title + 'shijing', content)
-            cache.set(title + 'chapter', chapter)
-            cache.set(title + 'section', section)
+            cache.set(poem + 'shijing', content)
+            cache.set(poem + 'chapter', chapter)
+            cache.set(poem + 'section', section)
         return jsonify({
             'code': 200,
             'content': content,

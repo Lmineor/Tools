@@ -1,24 +1,23 @@
 <template>
     <div class="main">
         <nya-container :title="title">
-            <!-- <nya-dropdown style="width:33%" label="朝代" :itemlist="itemlist" :nodatatext="nodatatext"></nya-dropdown> -->
+          <div>
             <nya-dropdown
                 style="width:33%"
                 label="诗名"
-                :items="shijingtitles"
-                v-on:change="getcontent"
+                :items="shiJingPoems"
+                v-on:change="getContent"
                 v-on:pagechange="changeTitlePage"
                 :total="total"
             />
-            <div v-if="showcontent" class="shijing">
-                <li class="title"><span class="prefix">『</span>{{shijingtitle}}<span class="prefix">』</span></li>
-                <li class="chapter"><span class="prefix">{{chapter}}·</span>{{section}}</li>
-                <li v-for="item in content" :key="item.index" class="content">
-                    {{ item }}
-                </li>
-            </div>
+          </div>
+          <div v-if="showContent" class="shijing">
+            <li class="title"><span class="prefix">『</span>{{shijingPoem}}<span class="prefix">』</span></li>
+            <li class="chapter"><span class="prefix">{{chapter}}·</span>{{section}}</li>
+            <li v-for="item in content" :key="item.index" class="content">{{ item }}</li>
+          </div>
         </nya-container>
-        
+
     </div>
 </template>
 
@@ -33,21 +32,22 @@ export default {
     },
     data() {
         return {
-            title: '诗经',
-            defaultpage: 1,
-            total: 1,
-            shijingtitles: [],
-            shijingtitle:'',
-            showcontent: false,
-            chapter:'',
-            section:'',
-            content: [],
+          title: '诗经',
+          defaultPage: 1,
+          total: 1,
+          shiJingPoems: [],
+          shijingPoem:'',
+          showContent: false,
+          chapter:'',
+          section:'',
+          content: [],
+          loading_content:true
         };
     },
     computed:{
     },
     mounted (){
-        this.getshijingtitles()
+        this.getShiJingPoems()
     },
     methods: {
         changeTitlePage(current){
@@ -55,43 +55,53 @@ export default {
                 .post(
                     envs.apiUrl + '/poem/shijing',
                     {
-                        title:'',
+                        poem:'',
                         page: current,
                     },
                 )
                 .then(re => {
-                    this.shijingtitles = re.data.titles.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'})).slice(0,10);
+                    this.shiJingPoems = re.data.poems.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'})).slice(0,10);
                     this.total = re.data.total;
                     this.loading = false;
                 })
                 .catch(err => {
-                    this.shijingtitles = [];
+                    this.shiJingPoems = [];
                     this.loading = false;
                 });
         },
-        getshijingtitles (){
-            this.changeTitlePage(this.defaultpage);
+        getShiJingPoems (){
+            this.$store.commit('SET_STORE', {
+                key: 'globalLoading',
+                value: true
+            });
+            this.changeTitlePage(this.defaultPage);
+            this.$store.commit('SET_STORE', {
+              key: 'globalLoading',
+              value: false
+          });
         },
-        getcontent(id){
-            this.shijingtitle = this.shijingtitles[id]
-            this.$axios
-                .post(
-                    envs.apiUrl + '/poem/shijing',
-                    {
-                        title: this.shijingtitle,
-                        page: ''
-                    },
-                )
-                .then(re => {
-                    this.content = re.data.content;
-                    this.chapter = re.data.chapter;
-                    this.section = re.data.section;
-                    this.showcontent = true;
-                })
-                .catch(err => {
-                    this.content = [];
-                    this.loading = false;
-                });
+        getContent(id){
+          this.loading_content = true;
+          this.shijingPoem = this.shiJingPoems[id]
+          this.$axios
+            .post(
+                envs.apiUrl + '/poem/shijing',
+                {
+                    poem: this.shijingPoem,
+                    page: ''
+                },
+            )
+            .then(re => {
+                this.content = re.data.content;
+                this.chapter = re.data.chapter;
+                this.section = re.data.section;
+                this.showContent = true;
+            })
+            .catch(err => {
+                this.content = [];
+                this.loading = false;
+            });
+          this.loading_content = false;
         },
     }
 };
@@ -113,7 +123,6 @@ export default {
             font-weight: 100;
         }
         font-family: "楷体","楷体_GB2312";
-        
     }
 }
 

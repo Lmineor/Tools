@@ -2,10 +2,10 @@
     <div class="main">
         <nya-container :title="title">
             <nya-dropdown
-                v-model="author"
+                v-model="poet"
                 style="width:33%"
                 label="词人"
-                :items="authors"
+                :items="poets"
                 v-on:change="getrhythmics"
                 v-on:pagechange="changeAuthorPage"
                 :total="total"
@@ -21,13 +21,13 @@
             />
             <div v-if="hasparagraphs" class="content">
                 <li class="title"><span class="prefix">『</span>{{rhythmic}}<span class="prefix">』</span></li>
-                <li class="writer"><span class="prefix">宋·</span>{{author}}</li>
+                <li class="writer"><span class="prefix">宋·</span>{{poet}}</li>
                 <li v-for="item in paragraphs" :key="item.index" class="paragraph">
                     {{ item }}
                 </li>
             </div>
         </nya-container>
-        
+
     </div>
 </template>
 
@@ -45,12 +45,12 @@ export default {
             title: '宋词',
             hasparagraphs: false,
             paragraphs: [],
-            author: '',
-            authors: [],
+            poet: '',
+            poets: [],
             rhythmics: [],
             rhythmic: '',
             loading : true,
-            showAuthors: false,
+            showPoets: false,
             showRhythmics: false,
             defaultpage:1,
             total: 1,
@@ -80,30 +80,30 @@ export default {
                 });
         },
         getauthors(){
-            this.showAuthors = true,
-            this.author = '',
+            this.showPoets = true,
+            this.poet = '',
             this.loading = true,
             this.$axios
                 .post(
                     envs.apiUrl + '/poem/songci',
                     {
-                        author: '',
+                        poet: '',
                         rhythmic: '',
                         page: this.defaultpage,
                     },
                 )
                 .then(re => {
-                    this.authors = re.data.authors.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'}));
+                    this.poets = re.data.poets.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'}));
                     this.total = re.data.total;
                     this.loading = false;
                 })
                 .catch(err => {
-                    this.authors = [];
+                    this.poets = [];
                     this.loading = false;
                 });
         },
         getrhythmics (id){
-            this.author = this.authors[id],
+            this.poet = this.poets[id],
             this.showRhythmics = false,
             this.loading = true,
             this.hasparagraphs = false,
@@ -113,7 +113,7 @@ export default {
                 .post(
                     envs.apiUrl + '/poem/songci',
                     {
-                        author: this.authors[id],
+                        poet: this.poets[id],
                         rhythmic: '',
                         page: '',
                     },
@@ -136,7 +136,7 @@ export default {
                 .post(
                     envs.apiUrl + '/poem/songci',
                     {
-                        author: this.author,
+                        poet: this.poet,
                         rhythmic: this.rhythmics[id],
                         page: '',
                     },
