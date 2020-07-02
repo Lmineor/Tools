@@ -116,10 +116,10 @@ def get_content():
         content = cache.get("content" + poet + dynasty + poem)
     else:
         try:
-            content = db.session.query(PoemTangSong).filter(PoemTangSong.poet == poet,
+            item = db.session.query(PoemTangSong).filter(PoemTangSong.poet == poet,
                                                             PoemTangSong.dynasty == dynasty,
-                                                            PoemTangSong.poem == poem).first().paragraphs
-            content = content.split('。')
+                                                            PoemTangSong.poem == poem).first()
+            content = item.paragraphs.split('。') if item else []
             # content = PoemTangSong.query.filter_by(poet=poet, dynasty=dynasty, poem=poem).first().paragraphs
             cache.set("content" + poet + dynasty + poem, content)
         except Exception as e:
