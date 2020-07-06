@@ -96,4 +96,4 @@ sw.*
 *.htaccess
 flask_cache
 local_config.py
-.vscode
+.vscode/

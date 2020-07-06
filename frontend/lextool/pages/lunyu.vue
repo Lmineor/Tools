@@ -9,14 +9,15 @@
                   </p>
                   <ul>
                       <span v-for="item in chapters" :key="item.index">
-                        <Button type="primary" class="author-btn" :title="item" @click="getParagraphs(item)">{{item}}</Button>
+<!--                        <Button type="primary" class="author-btn" :title="item" @click="getParagraphs(item)">{{item}}</Button>-->
+                        <div  class="nya-btn" @click="getParagraphs(item)" :title="item">{{item}}</div>
                       </span>
                   </ul>
               </Card>
             </div>
             <div class="right">
               <Card >
-                  <p slot="title" style="font-size: 20px;color: blue;font-weight: bold;margin-bottom:5px;">
+                  <p slot="title" style="font-size: 20px;font-weight: bold;">
                       {{chapter}}
                   </p>
                   <ul>
@@ -110,10 +111,10 @@ export default {
       width: 33%;
       float:left;
       position: relative;
-      .author-btn{
+      .nya-btn {
         position: relative;
-        margin: 7px;
-        width: calc(40% - 5px);
+        margin: 1px 15px;
+        width: calc(35% - 1px);
         text-align: center;
         box-sizing: border-box;
         overflow: hidden;
@@ -121,16 +122,32 @@ export default {
         text-overflow: ellipsis;
         white-space: nowrap;
         transition: all 0.3s ease;
-        background-color: transparent;
-        font-size: 10px;
-        color: #1f1f1f;
-        border-radius: 4px;
+        /*background-color: transparent;*/
+        font-size: 13px;
+        border-radius: 10px;
         &:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 16px 0px rgba(10, 14, 29, 0.04),
                 0px 8px 64px 0px rgba(10, 14, 29, 0.08);
+            border-color: #024466;
+            color: #ffffff;
+            /*background-color: var(--theme);*/
+            /*border-color: var(--theme);*/
+            /*color: var(--theme);*/
+            background-color: #024466;
         }
-      }
+        @media (max-width: 1050px) {
+            width: calc(25% - 14px);
+        }
+        @media (max-width: 900px) {
+            width: calc(100% / 3 - 14px);
+        }
+        @media (max-width: 700px) {
+            box-shadow: none;
+            margin: 5px;
+            width: calc(50% - 10px);
+        }
+    }
       .page{
         width:100%;
         text-align: center;
@@ -138,7 +155,7 @@ export default {
     }
     .right{
       overflow:scroll;
-      height: 556px;
+      height: 585px;
       width: 65%;
       float:right;
       position: relative;
