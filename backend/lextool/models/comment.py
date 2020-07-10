@@ -16,10 +16,11 @@ class Comment(db.Model):
     comment_type = db.Column(db.String(10), nullable=False, index=True)         # 类型
     is_show = db.Column(db.Boolean, default=True)                               # 是否评论区可见
     can_show = db.Column(db.Boolean, default=False)                             # 是否通过审核予以展示
+    is_useful = db.Column(db.Boolean, default=False)                            # 是否为有效建议
     email = db.Column(db.String(100), nullable=False, index=True)
     create_at = db.Column(db.DateTime, default=datetime.date.today())           # 反馈时间
-    is_solved = db.Column(db.Boolean, default=False)                            # 是否回复
-    solved_at = db.Column(db.DateTime, nullable=True)                           # 回复时间
+    is_solved = db.Column(db.Boolean, default=False)                            # 是否操作
+    solved_at = db.Column(db.DateTime, nullable=True)                           # 操作时间
 
     @classmethod
     def load_show_able_comment(cls):
@@ -37,7 +38,7 @@ class Comment(db.Model):
         return data
 
     @staticmethod
-    def save(content, comment_type, email):
+    def insert(content, comment_type, email):
         try:
             new_comment = Comment(content=content, comment_type=comment_type, email=email)
             db.session.add(new_comment)
@@ -49,3 +50,54 @@ class Comment(db.Model):
             code = 403
             msg = e
         return code, msg
+
+    def save(self, email=None, can_show=None, is_useful=None):
+        if self.id:
+            try:
+                db.session.add(self)
+                db.session.commit()
+                code = 200
+                msg = 'success'
+            except Exception as e:
+                logger.error(e)
+                code = 403
+                msg = e
+            return code, msg
+
+        if can_show and is_useful:
+            self.can_show = can_show
+            self.is_useful = is_useful
+            self.solved_at = datetime.date.today()
+
+        db.session.add(self)
+        db.session.commit()
+        return self
+
+    @classmethod
+    def update(cls, comment_id, can_show=None):
+        try:
+            sess = cls.query.get(comment_id)
+            sess.can_show = can_show
+            sess.is_solved = True
+            db.session.commit()
+            msg = 'success'
+            code = 200
+        except Exception as e:
+            logger.error(e)
+            msg = e
+            code = 400
+        return msg, code
+
+    @classmethod
+    def get_un_solved_queries(cls):
+        try:
+            queries = cls.query.filter_by(is_solved=False).all()
+            data = [{'content': item.content,
+                     'is_solved': item.is_solved,
+                     'comment_type': item.comment_type,
+                     'create_at': str(item.create_at)[:10]
+                     } for item in queries]
+        except Exception as e:
+            logger.error(e)
+            data = []
+        return data
