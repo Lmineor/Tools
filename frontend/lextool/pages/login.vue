@@ -69,12 +69,6 @@ export default {
           let username = re.data.username;
           this.$store.state.user = username;
           this.$store.state.auth = token;
-          // // let info = {"auth": token,'user': username}
-          // // this.$store.SET_STORE(this.$store.state.user, username)
-          // // this.$store.commit("SET_STORE", info);
-          // this.$store.commit("SET_AUTH", token);
-          // this.$store.commit("SET_USER_INFO", username);
-          // console.log(this.$store.state.user)
           Cookie.set("auth", token);
           Cookie.set("user", username);
           this.$swal({
