@@ -224,7 +224,7 @@ export default {
       }
       this.$axios
         .post(
-            envs.apiUrl + '/user/infoupdate',
+            envs.apiUrl + '/user/info/update',
             {
                 username: this.info.username,
                 email: this.info.email,
