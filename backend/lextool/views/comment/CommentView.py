@@ -27,5 +27,17 @@ def add_comment():
     content = request.get_json()['content']
     create_at = request.get_json()['date']
     logger.info("Insert a new comment {}, {} at {}".format(email, comment_type, create_at))
-    code, msg = Comment.save(content, comment_type, email)
+    code, msg = Comment(content, comment_type, email).save()
     return jsonify({'code': code, 'msg': msg})
+
+
+@comment.route("/update", methods=['POST'])
+def review_comment():
+    comment_id = request.get_json()['id']
+    can_show = request.get_json()['can_show']
+    logger.info("Review a comment id:{}".format(comment_id))
+    msg, code = Comment.update(comment_id, can_show)
+    return jsonify({'code': code, 'msg': msg})
+
+
+
