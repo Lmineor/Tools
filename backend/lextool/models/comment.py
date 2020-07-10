@@ -73,12 +73,15 @@ class Comment(db.Model):
         db.session.commit()
         return self
 
+    # TODO：完善admin的相关内容
     @classmethod
-    def update(cls, comment_id, can_show=None):
+    def review(cls, comment_id, key):
         try:
             sess = cls.query.get(comment_id)
-            sess.can_show = can_show
-            sess.is_solved = True
+            if key == "review":
+                sess.can_show = True
+            else:
+                sess.is_solved = True
             db.session.commit()
             msg = 'success'
             code = 200
@@ -92,11 +95,14 @@ class Comment(db.Model):
     def get_un_solved_queries(cls):
         try:
             queries = cls.query.filter_by(is_solved=False).all()
-            data = [{'content': item.content,
-                     'is_solved': item.is_solved,
-                     'comment_type': item.comment_type,
-                     'create_at': str(item.create_at)[:10]
-                     } for item in queries]
+            data = [{
+                'id': item.id,
+                'email': item.email,
+                'content': item.content,
+                'is_solved': item.is_solved,
+                'comment_type': item.comment_type,
+                'create_at': str(item.create_at)[:10]
+                } for item in queries]
         except Exception as e:
             logger.error(e)
             data = []

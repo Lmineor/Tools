@@ -106,9 +106,19 @@ def get_users():
     return jsonify(res)
 
 
-@admin.route("/review_comment", methods=['GET'])
+@admin.route("/load_comment", methods=['GET'])
 @auth.login_required
 @admin_auth_decorator
 def load_un_reviewed_comment():
     data = Comment.get_un_solved_queries()
     return jsonify({'data': data})
+
+
+@admin.route("/review_comment", methods=['POST'])
+@auth.login_required
+@admin_auth_decorator
+def review_comment():
+    index = request.get_json()['id']
+    key = request.get_json()['key']
+    msg, code = Comment.review(index, key)
+    return jsonify({'msg': msg, 'code': code})
