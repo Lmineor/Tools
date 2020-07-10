@@ -1,7 +1,5 @@
 from flask import Blueprint, request
 from flask import jsonify, g
-from flask import session
-from flask import flash
 from flask import redirect
 
 from . import auth
@@ -21,18 +19,17 @@ user = Blueprint('user', __name__)
 
 @user.route("/memo", methods=['GET'])
 @auth.login_required
-def get_user_memo():
+def show_memo():
     memo = g.user.memo.memo
     return jsonify({'memo': memo})
 
 
-@user.route("/memoupdate", methods=['POST', 'GET'])
+@user.route("/memo/update", methods=['POST'])
 @auth.login_required
 def save_memo():
     memo = request.get_json()['memo']
     memo_obj = UserMemo.query.filter_by(user_id=g.user.id).first()
     memo_obj.memo = memo
-    db.session.add(memo_obj)
     db.session.commit()
     return jsonify({'code': 200})
 
@@ -43,7 +40,7 @@ def save_memo():
 
 @user.route("/info", methods=['POST', 'GET'])
 @auth.login_required
-def info():
+def show_info():
     """
     获取当前登录用户的信息
     :return:
@@ -54,9 +51,9 @@ def info():
     return jsonify({'email': email, 'words_book': words_book, 'words_num': str(words_num)})
 
 
-@user.route('/infoupdate', methods=['POST'])
+@user.route('/info/update', methods=['POST'])
 @auth.login_required
-def update():
+def update_info():
     """
     用户信息更新
     """
@@ -65,24 +62,22 @@ def update():
     password = request.get_json()['password']
     words_book = request.get_json()['words_book']
     words_num = request.get_json()['words_num']
-    words_num = int(words_num) if words_num in [20, 50, 100, 200] else 20
+    words_num = int(words_num) if words_num in ['20', '50', '100', '200'] else 20
     try:
         user_config = UserConfig.query.filter_by(user_id=g.user.id).first()
         user_config.words_book = words_book
         user_config.words_num = words_num
-        db.session.add(user_config)
-        db.session.commit()
         current_user = User.query.get(g.user.id)
+        g.user.password = password
         if password:
             current_user.password = password
         current_user.username = username
-        db.session.add(current_user)
         db.session.commit()
 
         msg = "success"
         code = 200
     except Exception as e:
-        print(e)
+        logger.error("info update error {}".format(e))
         msg = "fail"
         code = 400
     res = {
@@ -106,7 +101,6 @@ def logout():
     return jsonify({'code': 200, 'description': 'Logout successful.'})
 
 
-
 @user.route('/register', methods=['POST'])
 def register():
     """
@@ -122,8 +116,7 @@ def register():
             # 先更新密码与用户
             user.password = password
             user.username = username
-            db.session.add(user)
-            db.session.commit()
+
             token = user.generate_auth_token(expiration=5*60).decode('ascii')  # 此时token过期时间为5分钟
             send_register_active_email(user.email, user.username, token)
             flash('邮件已经发送！')
@@ -174,10 +167,8 @@ def activate(token):
     :return: None
     """
     if User.check_activate_token(token):
-        flash('激活成功')
         return redirect('http://' + DefaultConfig.FrontDomain + '/login')
     else:
-        flash('激活失败')
         return jsonify({'code': 401, 'msg': "令牌失效，请重新注册"})
 
 
