@@ -87,7 +87,7 @@ export default {
       }
       this.$axios
         .post(
-            envs.apiUrl + '/user/memoupdate',
+            envs.apiUrl + '/user/memo/update',
             {
                 username: this.user,
                 memo: this.memo,
