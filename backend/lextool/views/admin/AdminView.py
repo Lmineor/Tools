@@ -1,9 +1,12 @@
+from functools import wraps
+
 from flask import Blueprint, request
 from flask import jsonify, g
 
 from ..user import auth
 from ...models import db
 from ...models.user import User, UserConfig
+from ...models.comment import Comment
 from ...logger import logger
 
 admin = Blueprint('admin', __name__)
@@ -13,9 +16,19 @@ admin = Blueprint('admin', __name__)
 # admin模块相关接口
 # ---------------------------------------------------------------------------------
 
+def admin_auth_decorator(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not g.user.config.role:
+            return jsonify({'msg': 'Permission denied'})
+        return f(*args, **kwargs)
+
+    return decorated
+
 
 @admin.route('/updates', methods=['POST'])
 @auth.login_required
+@admin_auth_decorator
 def updates():
     """
     用户信息更新
@@ -74,6 +87,7 @@ def updates():
 
 @admin.route("/users", methods=['GET'])
 @auth.login_required
+@admin_auth_decorator
 def get_users():
     """
     获取用户名列表，供admin使用
@@ -91,3 +105,10 @@ def get_users():
     ]
     return jsonify(res)
 
+
+@admin.route("/review_comment", methods=['GET'])
+@auth.login_required
+@admin_auth_decorator
+def load_un_reviewed_comment():
+    data = Comment.get_un_solved_queries()
+    return jsonify({'data': data})
