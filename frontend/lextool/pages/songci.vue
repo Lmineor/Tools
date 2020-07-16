@@ -6,7 +6,7 @@
                 style="width:33%"
                 label="词人"
                 :items="poets"
-                v-on:change="getrhythmics"
+                v-on:change="getRhythmics"
                 v-on:pagechange="changeAuthorPage"
                 :total="total"
             />
@@ -17,7 +17,7 @@
                 :items="rhythmics"
                 :pageable="false"
                 label="词牌名"
-                v-on:change="getparagraphs"
+                v-on:change="getParagraphs"
             />
             <div v-if="hasparagraphs" class="content">
                 <li class="title"><span class="prefix">『</span>{{rhythmic}}<span class="prefix">』</span></li>
@@ -57,19 +57,12 @@ export default {
         };
     },
     mounted (){
-        this.getauthors()
+        this.getAuthors()
     },
     methods: {
         changeAuthorPage(current){
             this.$axios
-                .post(
-                    envs.apiUrl + '/poem/songci',
-                    {
-                        author: '',
-                        rhythmic: '',
-                        page: current,
-                    },
-                )
+                .get(envs.apiUrl + '/poem/songci?page=' + current)
                 .then(re => {
                     this.authors = re.data.authors.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'}));
                     this.loading = false;
@@ -79,19 +72,12 @@ export default {
                     this.loading = false;
                 });
         },
-        getauthors(){
+        getAuthors(){
             this.showPoets = true,
             this.poet = '',
             this.loading = true,
             this.$axios
-                .post(
-                    envs.apiUrl + '/poem/songci',
-                    {
-                        poet: '',
-                        rhythmic: '',
-                        page: this.defaultpage,
-                    },
-                )
+                .get(envs.apiUrl + '/poem/songci?page=' + this.defaultpage)
                 .then(re => {
                     this.poets = re.data.poets.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'}));
                     this.total = re.data.total;
@@ -102,7 +88,7 @@ export default {
                     this.loading = false;
                 });
         },
-        getrhythmics (id){
+        getRhythmics (id){
             this.poet = this.poets[id],
             this.showRhythmics = false,
             this.loading = true,
@@ -110,14 +96,7 @@ export default {
             this.rhythmics = [],
             this.rhythmic = '',
             this.$axios
-                .post(
-                    envs.apiUrl + '/poem/songci',
-                    {
-                        poet: this.poets[id],
-                        rhythmic: '',
-                        page: '',
-                    },
-                )
+                .get(envs.apiUrl + '/poem/songci?poet=' + this.poets[id])
                 .then(re => {
                     this.rhythmics = re.data.rhythmics.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'}));
                     this.loading = false;
@@ -128,19 +107,13 @@ export default {
                     this.loading = false;
                 });
         },
-        getparagraphs (id){
+        getParagraphs (id){
             this.loading = true,
             this.hasparagraphs = false,
             this.rhythmic = this.rhythmics[id],
             this.$axios
-                .post(
-                    envs.apiUrl + '/poem/songci',
-                    {
-                        poet: this.poet,
-                        rhythmic: this.rhythmics[id],
-                        page: '',
-                    },
-                )
+                .get(
+                    envs.apiUrl + '/poem/songci?poet=' + this.poet + '&rhythmic=' + this.rhythmics[id])
                 .then(re => {
                     this.paragraphs = re.data.paragraphs;
                     this.hasparagraphs = true

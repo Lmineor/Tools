@@ -52,13 +52,7 @@ export default {
     methods: {
         changeTitlePage(current){
             this.$axios
-                .post(
-                    envs.apiUrl + '/poem/shijing',
-                    {
-                        poem:'',
-                        page: current,
-                    },
-                )
+                .get(envs.apiUrl + '/poem/shijing?page=' + current)
                 .then(re => {
                     this.shiJingPoems = re.data.poems.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'})).slice(0,10);
                     this.total = re.data.total;
@@ -84,13 +78,7 @@ export default {
           this.loading_content = true;
           this.shijingPoem = this.shiJingPoems[id]
           this.$axios
-            .post(
-                envs.apiUrl + '/poem/shijing',
-                {
-                    poem: this.shijingPoem,
-                    page: ''
-                },
-            )
+            .get(envs.apiUrl + '/poem/shijing?poem=' + this.shijingPoem)
             .then(re => {
                 this.content = re.data.content;
                 this.chapter = re.data.chapter;

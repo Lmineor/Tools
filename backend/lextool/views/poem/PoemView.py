@@ -1,3 +1,5 @@
+from functools import wraps
+
 from flask import Blueprint
 from flask import request
 from flask import jsonify
@@ -13,13 +15,30 @@ from ...utils.simp2tra import simp2tra
 poem = Blueprint('poem', __name__)
 
 
-@poem.route('/poet/poets', methods=['POST'])
+def check_param(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        param = request.args
+        try:
+            if param.get('page'):
+                int(param.get('page'))
+        except ValueError:
+            return jsonify({'msg': 'Params error'})
+        else:
+            return f(*args, **kwargs)
+
+    return decorated
+
+
+@poem.route('/poets', methods=['GET'])
+@check_param
 def get_author():
     """
     得到某个朝代的作者列表
     """
-    dynasty = request.get_json()['dynasty']
-    page = request.get_json()['page']
+    param = request.args
+    dynasty = param.get('dynasty')
+    page = int(param.get('page'))
     logger.info("Get Poets of {} in page {}".format(dynasty, page))
     if cache.get(str(page) + dynasty):
         total = cache.get('poets_num' + dynasty)
@@ -47,13 +66,15 @@ def get_author():
     return jsonify(data)
 
 
-@poem.route('/poet/poems', methods=['POST'])
+@poem.route('/poems', methods=['GET'])
+@check_param
 def get_poems():
     """
     获取诗人的诗作
     """
-    poet = request.get_json()['poet']
-    dynasty = request.get_json()['dynasty']
+    param = request.args
+    poet = param.get('poet')
+    dynasty = param.get('dynasty')
     logger.info("Get {} {}'s Poems".format(dynasty, poet))
     if cache.get(poet + dynasty + "poems"):
         poems = cache.get(poet + dynasty + "poems")
@@ -72,13 +93,15 @@ def get_poems():
     })
 
 
-@poem.route('/poet/search', methods=['POST'])
+@poem.route('/search', methods=['GET'])
+@check_param
 def search_poets():
     """
     获取诗人的诗作
     """
-    keyword = simp2tra(request.get_json()['keyword'])
-    page = request.get_json()['page']
+    param = request.args
+    keyword = simp2tra(param.get('keyword'))
+    page = param.get('page')
     logger.info("Search Poets has {}".format(keyword))
     has_cache = cache.get('/poet/search' + keyword + str(page))
     if not keyword or not isinstance(keyword, str):
@@ -103,14 +126,16 @@ def search_poets():
     })
 
 
-@poem.route('/poet/content', methods=['POST'])
+@poem.route('/content', methods=['GET'])
+@check_param
 def get_content():
     """
     获取诗歌内容
     """
-    poet = request.get_json()['poet']
-    dynasty = request.get_json()['dynasty']
-    poem = request.get_json()['poem']
+    param = request.args
+    poet = param.get('poet')
+    dynasty = param.get('dynasty')
+    poem = param.get('poem')
     logger.info("Get {}'s {}'s content".format(poet, poem))
     if cache.get(poet + dynasty + poem):
         content = cache.get("content" + poet + dynasty + poem)
@@ -130,12 +155,15 @@ def get_content():
     })
 
 
-@poem.route('/lunyu', methods=['POST', 'GET'])
+@poem.route('/lunyu', methods=['GET'])
+@check_param
 def get_lunyu():
     """
     test
     """
-    if request.method == 'GET':
+    param = request.args
+    chapter = param.get('chapter')
+    if not chapter:
         if cache.get('chapters'):
             chapters = cache.get('chapters')
         else:
@@ -151,7 +179,6 @@ def get_lunyu():
             'chapters': chapters
         })
     else:
-        chapter = request.get_json()['chapter']
         logger.info('chapter: ' + chapter)
         if cache.get('chapter'):
             paragraphs = cache.get('chapter')
@@ -168,14 +195,19 @@ def get_lunyu():
         })
 
 
-@poem.route('/songci', methods=['POST', 'GET'])
+@poem.route('/songci', methods=['GET'])
+@check_param
 def get_songci():
     """
     test
     """
-    poet = request.get_json()['poet']
-    rhythmic = request.get_json()['rhythmic']
-    page = request.get_json()['page']
+    param = request.args
+    poet = param.get('poet')
+    rhythmic = param.get('rhythmic')
+    page = param.get('page')
+    # poet = request.get_json()['poet']
+    # rhythmic = request.get_json()['rhythmic']
+    # page = request.get_json()['page']
     if page:  # 获取作者翻页数据
         if cache.get('poets_num' + 'songci'):
             total = int(cache.get('poets_num' + 'songci'))
@@ -228,14 +260,17 @@ def get_songci():
         })
 
 
-@poem.route('/shijing', methods=['POST'])
+@poem.route('/shijing', methods=['GET'])
+@check_param
 def get_shijing():
     """
     test
     """
-    poem = request.get_json()['poem']
-    page = request.get_json()['page']
+    param = request.args
+    poem = param.get('poem')
+    page = param.get('page')
     if page:  # 获取诗名翻页数据
+        page = int(page)
         if cache.get('poem_num' + 'shijing'):
             total = int(cache.get('poem_num' + 'shijing'))
         else:
@@ -283,13 +318,15 @@ def get_shijing():
         })
 
 
-@poem.route('/poet/introduction', methods=['POST'])
+@poem.route('/introduction', methods=['GET'])
+@check_param
 def get_introduction():
     """
     诗人简介
     """
-    poet = request.get_json()['poet']
-    dynasty = request.get_json()['dynasty']
+    param = request.args
+    poet = param.get('poet')
+    dynasty = param.get('dynasty')
     introduction = cache.get(poet + dynasty)
     if not introduction:
         try:

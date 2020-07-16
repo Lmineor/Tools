@@ -149,13 +149,7 @@ export default {
         this.show_introduction = false;
         this.dynasty = '唐',
         this.$axios
-            .post(
-                envs.apiUrl + '/poem/poet/poets',
-                {
-                    dynasty: '唐',
-                    page: page,
-                },
-            )
+            .get(envs.apiUrl + '/poem/poets?dynasty=唐' + '&page=' + page)
             .then(re => {
                 this.poets = re.data.poets.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'})).slice(0,15);
                 this.poet_total = re.data.total;

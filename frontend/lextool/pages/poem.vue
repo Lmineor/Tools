@@ -66,7 +66,7 @@ export default {
             poet:'',
             content: [''],
             loading : false,
-            defaultpage: 1,
+            defaultPage: 1,
             total: ''
         };
     },
@@ -75,12 +75,8 @@ export default {
     methods: {
         changeAuthorPage(current){
             this.$axios
-                .post(
-                    envs.apiUrl + '/poem/poet/poets',
-                    {
-                        dynasty: this.dynasty,
-                        page: current,
-                    },
+                .get(
+                    envs.apiUrl + '/poem/poets?dynasty='+this.dynasty + '&page=' + current
                 )
                 .then(re => {
                     this.poets = re.data.poets.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'})).slice(0,15);
@@ -103,12 +99,8 @@ export default {
             this.showPoems = false,
             this.hasPoem = false,
             this.$axios
-                .post(
-                    envs.apiUrl + '/poem/poet/poets',
-                    {
-                        dynasty: this.dynastys[id],
-                        page: this.defaultpage,
-                    },
+                .get(
+                  envs.apiUrl + '/poem/poets?dynasty='+this.dynastys[id] + '&page=' +this.defaultPage,
                 )
                 .then(re => {
                     this.poets = re.data.poets.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'})).slice(0,15);
@@ -128,13 +120,7 @@ export default {
             this.hasPoem = false,
             this.showPoems = false,
             this.$axios
-                .post(
-                    envs.apiUrl + '/poem/poet/poems',
-                    {
-                        dynasty: this.dynasty,
-                        poet: this.poet
-                    },
-                )
+                .get(envs.apiUrl + '/poem/poems?dynasty='+this.dynasty + '&poet=' +this.poet)
                 .then(re => {
                     this.poems = re.data.poems.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'}));
                     this.showPoems = true
@@ -148,14 +134,7 @@ export default {
         getContent(id){
             this.poem = this.poems[id]
             this.$axios
-                .post(
-                    envs.apiUrl + '/poem/poet/content',
-                    {
-                        dynasty: this.dynasty,
-                        poet: this.poet,
-                        poem: this.poem
-                    },
-                )
+                .get(envs.apiUrl + '/poem/content?dynasty='+this.dynasty + '&poet=' +this.poet + '&poem=' + this.poem)
                 .then(re => {
                     this.content = re.data.content;
                     this.hasPoem = true

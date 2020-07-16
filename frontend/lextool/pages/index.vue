@@ -1,21 +1,6 @@
 <template>
     <div class="home">
         <Welcome />
-        <!-- <Search v-model="searchText" @enter="enterFirst">
-            <template slot-scope="data">
-                <nuxt-link
-                    v-for="(tool, index) in data.data"
-                    v-show="showBtn(tool)"
-                    :key="index"
-                    :target="$store.state.setting.inNewTab ? '_blank' : '_self'"
-                    :to="tool.path"
-                    class="nya-btn"
-                >
-                    {{ tool.name }}
-                </nuxt-link>
-            </template>
-        </Search> -->
-
         <Favorites v-show="!searchText" />
 
         <nya-container
@@ -139,7 +124,8 @@ export default {
             title: `${process.env.title} - ${process.env.description}`,
             searchText: '',
             isMobile,
-            hidepay:true
+            hidepay:true,
+            loading: false
         };
     },
     computed: {

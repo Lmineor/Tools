@@ -83,12 +83,7 @@ export default {
             this.loading = true,
             this.hasparagraphs = false,
             this.$axios
-                .post(
-                    envs.apiUrl + '/poem/lunyu',
-                    {
-                        chapter: this.chapter,
-                    },
-                )
+                .get(envs.apiUrl + '/poem/lunyu?chapter=' + this.chapter)
                 .then(re => {
                     this.paragraphs = re.data.paragraphs;
                     this.hasparagraphs = true
