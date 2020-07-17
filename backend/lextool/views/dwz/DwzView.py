@@ -15,12 +15,12 @@ from ...utils.generate_dwz import generate_dwz
 dwz = Blueprint('dwz', __name__)
 
 
-@dwz.route('/restore', methods=['POST'])
+@dwz.route('/restore', methods=['GET'])
 def fetch_origin_url():
     """
     短链还原
     """
-    dwz = request.get_json()['dwz']
+    dwz = request.args.get('dwz')
     if not dwz or len(dwz) != 6:
         return jsonify({
             'code': 200,
@@ -37,9 +37,6 @@ def fetch_origin_url():
         'code': 200,
         'url': url
     })
-
-
-# write_lock = Lock()
 
 
 @dwz.route('/dwz', methods=['POST'])
@@ -87,7 +84,6 @@ def __pre_fetch(url):
     res = ''
     try:
         item = db.session.query(DWZ).filter(DWZ.url == url).first()
-        # item = DWZ.query.filter_by(url=url).first()
         res = item.dwz if item else ''
     except Exception as e:
         logger.error("Pre Fetch Error is {}".format(e))

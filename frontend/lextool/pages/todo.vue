@@ -42,11 +42,10 @@
 
 const Cookie = process.client ? require("js-cookie") : undefined;
 import envs from '../env'
-import {validUsername} from '@/utils/validate'
 
 
 export default {
-  // middleware: 'authenticated', // 需要登录
+  middleware: 'authenticated', // 需要登录
   name: 'memo',
   data () {
     return {
@@ -74,31 +73,56 @@ export default {
     }
   },
   mounted (){
-
-    // this.getmemo();
-    // // setInterval(() => {
-    // //     this.savememo();//保存表单信息的操作
-    // //   },20000)
+    this.$axios.defaults.auth = {
+        username: Cookie.get('auth'),
+        password: ''
+    },
     this.loading = false;
   },
   methods: {
+    load_todo(){
+      this.$axios
+        .get(envs.apiUrl + '/todo/todos')
+        .then(re => {
+            this.todos = re.data.todos;
+        })
+        .catch(err => {
+            this.$Message.error(err);
+        });
+    },
+    load_finish(){
+      this.$axios
+        .get(envs.apiUrl + '/todo/load_finish')
+        .then(re => {
+            this.finished_todos = re.data.finished_todos;
+        })
+        .catch(err => {
+            this.$Message.error(err);
+        });
+    },
     finish(index) {
-      //
-      let item = this.todos.splice(index, 1);
-      console.log(item);
-      item.cancel = false;
-      // item.finished = true;
-      this.$forceUpdate();
-      this.finished_todos.push(item);
-
+      this.$axios
+        .post(envs.apiUrl + '/todo/finish',{"id": this.todos[index].id})
+        .then(re => {
+            this.load_todo();
+            this.load_finish()
+        })
+        .catch(err => {
+            this.$Message.error(err);
+        });
+      this.$Message.info("Good Job!");
     },
     cancel(index) {
-      let item = this.finished_todos[index];
-      item.finished = false;
-      item.cancel = true;
-      this.todos.push(item);
-      this.finished_todos.splice(index, 1);
-      console.log(index);
+     this.$axios
+        .post(envs.apiUrl + '/todo/cancel',{"id": this.todos[index].id})
+        .then(re => {
+            this.load_todo();
+            this.load_finish()
+        })
+        .catch(err => {
+            this.$Message.error(err);
+        });
+      this.$Message.info("Good Job!");
     },
   }
 }
