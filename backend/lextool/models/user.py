@@ -40,7 +40,7 @@ class User(db.Model, UserMixin):
     create_at = db.Column(db.DateTime, default=datetime.datetime.now)
     update_at = db.Column(db.DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
     memo = db.relationship("UserMemo", uselist=False, backref="user_user", cascade="delete")
-    todo = db.relationship("TODO", uselist=False, backref="user_user", cascade="delete")
+    # todo = db.relationship("TODO", uselist=False, backref="user_user", cascade="delete")
     config = db.relationship("UserConfig", uselist=False, backref="user_user", cascade="delete")
 
     def __repr__(self):
