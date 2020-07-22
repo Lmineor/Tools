@@ -19,7 +19,7 @@ cd /www/wwwroot
 uwsgi --stop uwsgi.pid
 
 # stop frontend
-#pm2 stop $PROJECT_NAME_F
+pm2 stop $PROJECT_NAME_F
 
 #pull
 cd /www/wwwroot/Tools
@@ -41,13 +41,13 @@ uwsgi --ini uwsgi.ini
 echo "==================Complete Backend=================="
 
 # frontend
-#cd $PROJECT_F_BASE_PATH$PROJECT_NAME_F
-#npm install
-#npm run build
+cd $PROJECT_F_BASE_PATH$PROJECT_NAME_F
+npm install
+npm run build
 
 
 # pm2 start npm --name lextool -- start  # 第一次启动用
 
 ## start
-#pm2 start $PROJECT_NAME_F
-#echo "==================Complete Frontend=================="
+pm2 start $PROJECT_NAME_F
+echo "==================Complete Frontend=================="
