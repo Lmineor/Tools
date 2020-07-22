@@ -44,7 +44,6 @@ export const mutations = {
         state.auth = auth;
     },
     SET_USER_INFO(state, user) {
-      console.log(n);
         state.user = user;
     },
     SET_STORE(state, n) {

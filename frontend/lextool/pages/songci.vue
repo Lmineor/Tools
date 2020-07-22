@@ -64,7 +64,7 @@ export default {
             this.$axios
                 .get(envs.apiUrl + '/poem/songci?page=' + current)
                 .then(re => {
-                    this.authors = re.data.authors.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'}));
+                    this.poets = re.data.poets.sort((a, b) => a.localeCompare(b, 'zh-Hans-CN', {sensitivity: 'accent'}));
                     this.loading = false;
                 })
                 .catch(err => {

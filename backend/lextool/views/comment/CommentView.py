@@ -27,7 +27,7 @@ def add_comment():
     content = request.get_json()['content']
     create_at = request.get_json()['date']
     logger.info("Insert a new comment {}, {} at {}".format(email, comment_type, create_at))
-    code, msg = Comment(content, comment_type, email).save()
+    code, msg = Comment(content, comment_type, emal).save()
     return jsonify({'code': code, 'msg': msg})
 
 

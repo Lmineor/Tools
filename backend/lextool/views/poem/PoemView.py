@@ -142,8 +142,8 @@ def get_content():
     else:
         try:
             item = db.session.query(PoemTangSong).filter(PoemTangSong.poet == poet,
-                                                            PoemTangSong.dynasty == dynasty,
-                                                            PoemTangSong.poem == poem).first()
+                                                         PoemTangSong.dynasty == dynasty,
+                                                         PoemTangSong.poem == poem).first()
             content = item.paragraphs.split('。') if item else []
             cache.set("content" + poet + dynasty + poem, content)
         except Exception as e:
@@ -205,21 +205,18 @@ def get_songci():
     poet = param.get('poet')
     rhythmic = param.get('rhythmic')
     page = param.get('page')
-    # poet = request.get_json()['poet']
-    # rhythmic = request.get_json()['rhythmic']
-    # page = request.get_json()['page']
     if page:  # 获取作者翻页数据
+        page = int(page)
         if cache.get('poets_num' + 'songci'):
             total = int(cache.get('poets_num' + 'songci'))
-        else:
-            total = len(CiAuthor.query.all())
-            cache.set('poets_num' + 'songci', total)
         if cache.get(str(page) + 'songci'):
             poets = cache.get(str(page) + 'songci')
         else:
             try:
-                items = CiAuthor.query.paginate(page=page, per_page=DefaultConfig.PER_PAGE, error_out=False).items
-                poets = list(set([item.poet for item in items]))
+                items = CiAuthor.query.paginate(page=page, per_page=DefaultConfig.PER_PAGE, error_out=False)
+                total = items.total
+                cache.set('poets_num' + 'songci', total)
+                poets = list(set([item.poet for item in items.items]))
             except Exception as e:
                 poets = []
                 logger.error(e)

@@ -59,7 +59,6 @@ export default {
       }
   ],
     link: [
-      //TODO:favicon.ico
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },

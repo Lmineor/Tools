@@ -15,12 +15,12 @@ from ...utils.generate_dwz import generate_dwz
 dwz = Blueprint('dwz', __name__)
 
 
-@dwz.route('/restore', methods=['GET'])
+@dwz.route('/restore', methods=['POST'])
 def fetch_origin_url():
     """
     短链还原
     """
-    dwz = request.args.get('dwz')
+    dwz = request.get_json()['dwz']
     if not dwz or len(dwz) != 6:
         return jsonify({
             'code': 200,
@@ -46,7 +46,7 @@ def main():
         url = str(url)
     logger.info('输入的url为：' + url)
     if not url:
-        return None
+        return jsonify({'code': 400, 'msg': 'error'})
     dwz = __pre_fetch(url)  # 先查库，看是否存在该短链
     code = 200
     msg = 'success'
@@ -56,7 +56,7 @@ def main():
             db.session.add(obj)
             db.session.flush()
             dwz = generate_dwz(obj.id)  # 生成短链
-            logger.info("Raw url is  {}, dwz is {} ，db id is {}".format(url, dwz, obj.id))
+            logger.info("Raw url is  {}, dwz is {}, db id is {}".format(url, dwz, obj.id))
             obj.dwz = dwz
             db.session.commit()
             code = 200

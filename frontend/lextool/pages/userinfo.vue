@@ -129,10 +129,8 @@ export default {
           if(re.data.code === 200) {
             let token = null;
             let username = null;
-            this.$store.state.user = username;
-            this.$store.state.auth = token;
-            // this.$store.commit("SET_AUTH", token);
-            // this.$store.commit("SET_USER_INFO", username);
+            this.$store.commit("SET_AUTH", token);
+            this.$store.commit("SET_USER_INFO", username);
             Cookie.remove("auth");
             Cookie.remove("user");
             this.$router.push("/login");

@@ -67,7 +67,7 @@ export default {
          .then(re => {
           let token = re.data.token;
           let username = re.data.username;
-          this.$store.state.commit('SET_USER_INFO', username);
+          this.$store.commit('SET_USER_INFO', username);
           // this.$store.state.user = username;
           // this.$store.state.auth = token;
           Cookie.set("auth", token);
