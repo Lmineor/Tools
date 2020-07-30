@@ -56,7 +56,7 @@ def main():
             db.session.add(obj)
             db.session.flush()
             dwz = generate_dwz(obj.id)  # 生成短链
-            logger.info("Raw url is  {}, dwz is {}, db id is {}".format(url, dwz, obj.id))
+            logger.info("Raw url is  {}, dwz is {}".format(url, dwz ))
             obj.dwz = dwz
             db.session.commit()
             code = 200

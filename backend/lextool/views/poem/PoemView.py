@@ -30,7 +30,7 @@ def check_param(f):
     return decorated
 
 
-@poem.route('/poets', methods=['GET'])
+@poem.route('/poets/', methods=['GET'])
 @check_param
 def get_author():
     """
@@ -66,7 +66,7 @@ def get_author():
     return jsonify(data)
 
 
-@poem.route('/poems', methods=['GET'])
+@poem.route('/poems/', methods=['GET'])
 @check_param
 def get_poems():
     """
@@ -93,7 +93,7 @@ def get_poems():
     })
 
 
-@poem.route('/search', methods=['GET'])
+@poem.route('/search/', methods=['GET'])
 @check_param
 def search_poets():
     """
@@ -126,7 +126,7 @@ def search_poets():
     })
 
 
-@poem.route('/content', methods=['GET'])
+@poem.route('/content/', methods=['GET'])
 @check_param
 def get_content():
     """
@@ -155,7 +155,7 @@ def get_content():
     })
 
 
-@poem.route('/lunyu', methods=['GET'])
+@poem.route('/lunyu/', methods=['GET'])
 @check_param
 def get_lunyu():
     """
@@ -195,7 +195,7 @@ def get_lunyu():
         })
 
 
-@poem.route('/songci', methods=['GET'])
+@poem.route('/songci/', methods=['GET'])
 @check_param
 def get_songci():
     """
@@ -257,7 +257,7 @@ def get_songci():
         })
 
 
-@poem.route('/shijing', methods=['GET'])
+@poem.route('/shijing/', methods=['GET'])
 @check_param
 def get_shijing():
     """
@@ -315,7 +315,7 @@ def get_shijing():
         })
 
 
-@poem.route('/introduction', methods=['GET'])
+@poem.route('/introduction/', methods=['GET'])
 @check_param
 def get_introduction():
     """
