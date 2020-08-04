@@ -15,6 +15,9 @@ except ImportError:
 
 
 class DefaultConfig(object):
+    """
+    默认配置
+    """
 
     # Default Database URI
     SQLALCHEMY_DATABASE_URI = 'mysql://{username}:{password}@localhost:3306/{db}'.format(**Default_DB)

@@ -37,10 +37,10 @@ class Comment(db.Model):
             data = []
         return data
 
-    @staticmethod
-    def insert(content, comment_type, email):
+    @classmethod
+    def insert(cls, content, comment_type, email):
         try:
-            new_comment = Comment(content=content, comment_type=comment_type, email=email)
+            new_comment = cls(content=content, comment_type=comment_type, email=email)
             db.session.add(new_comment)
             db.session.commit()
             code = 200

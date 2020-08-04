@@ -12,3 +12,4 @@ class DWZ(db.Model):
     url = db.Column(db.Text(65536))
     dwz = db.Column(db.String(10), unique=True, index=True)
     create_at = db.Column(db.DateTime, default=datetime.datetime.now)
+

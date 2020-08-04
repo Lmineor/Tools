@@ -134,7 +134,7 @@ export default {
       };
       this.$axios
         .post(
-          envs.apiUrl + '/comment/new',
+          envs.apiUrl + '/comment/new/',
           {
             mail: this.formValidate.mail,
             type: this.formValidate.type,

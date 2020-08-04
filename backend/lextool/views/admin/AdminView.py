@@ -110,6 +110,7 @@ def get_users():
 @auth.login_required
 @admin_auth_decorator
 def load_un_reviewed_comment():
+    logger.info("load comment")
     data = Comment.get_un_solved_queries()
     return jsonify({'data': data})
 
