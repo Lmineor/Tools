@@ -12,7 +12,7 @@ class PoetIntroduction(Base):
 
     descb = db.Column(db.Text(16777216))
     poet = db.Column(db.String(100), index=True)
-    dynasty = db.Column(db.String(8))
+    dynasty = db.Column(db.String(8), index=True)
 
     @classmethod
     def search_poet(cls, keyword, page):
@@ -33,23 +33,23 @@ class PoemTangSong(Base):
 
     paragraphs = db.Column(db.Text)
     poem = db.Column(db.Text(65536))
-    poet = db.Column(db.String(100))
-    dynasty = db.Column(db.String(8))
+    poet = db.Column(db.String(100), index=True)
+    dynasty = db.Column(db.String(8), index=True)
 
 
 class PoemLunyu(Base):
     __tablename__ = 'poem_lun_yu'
 
     paragraphs = db.Column(db.Text(65536))
-    chapter = db.Column(db.String(50))
+    chapter = db.Column(db.String(50), index=True)
 
 
 class PoemSongci(Base):
     __tablename__ = 'poem_song_ci'
 
     paragraphs = db.Column(db.Text(16777216))
-    rhythmic = db.Column(db.String(40))
-    poet = db.Column(db.String(100))
+    rhythmic = db.Column(db.String(40), index=True)
+    poet = db.Column(db.String(100), index=True)
 
 
 class CiAuthor(Base):
@@ -57,13 +57,13 @@ class CiAuthor(Base):
 
     long_desc = db.Column(db.Text(16777216))
     short_desc = db.Column(db.Text(65536))
-    poet = db.Column(db.String(100))
+    poet = db.Column(db.String(100), index=True)
 
 
 class ShiJing(Base):
     __tablename__ = 'poem_shi_jing'
 
     poem = db.Column(db.Text(16777216))
-    chapter = db.Column(db.String(30))
-    section = db.Column(db.String(30))
+    chapter = db.Column(db.String(30), index=True)
+    section = db.Column(db.String(30), index=True)
     content = db.Column(db.Text(65536))
