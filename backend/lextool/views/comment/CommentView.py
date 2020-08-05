@@ -47,6 +47,3 @@ def review_comment():
     logger.info("Review a comment id:{}".format(comment_id))
     msg, code = Comment.update(comment_id, can_show)
     return jsonify({'code': code, 'msg': msg})
-
-
-
