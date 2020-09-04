@@ -22,7 +22,7 @@
     "js-cookie": "^2.2.1",
     "lodash": "^4.17.19",
     "mavon-editor": "^2.8.3",
-    "node-sass": "^4.12.0",
+    "node-sass": "^4.13.1",
     "normalize.css": "^8.0.1",
     "nuxt": "^2.0.0",
     "nuxt-vuex-localstorage": "^1.2.6",
