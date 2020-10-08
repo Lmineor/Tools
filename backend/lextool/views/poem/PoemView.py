@@ -2,9 +2,7 @@ from functools import wraps
 import json
 import re
 
-from flask import Blueprint
-from flask import request
-from flask import jsonify
+from flask import (Blueprint, request, jsonify, abort)
 
 from ...models.poem import *
 from ...cache import cache
@@ -16,79 +14,59 @@ from ...utils.simp2tra import simp2tra
 poem = Blueprint('poem', __name__)
 
 
-def check_param(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        param = request.args
-        page = param.get('page')
-        limits = param.get('limits')
-        try:
-            if page:
-                int(page)
-            if limits:
-                int(limits)
-        except ValueError:
-            return jsonify({'msg': 'Params error'})
-        else:
-            return f(*args, **kwargs)
-
-    return decorated
-
-
 @poem.route('/poets/', methods=['GET'])
-@check_param
 def get_author():
     """
     得到某个朝代的作者列表
     """
     param = request.args
-    dynasty = param.get('dynasty')
-    page = int(param.get('page', 0))
-    limits = int(param.get('limits', 0))
+    dynasty = param.get('dynasty', '唐')
+    page = param.get('page', 1, type=int)
+    per_page = param.get('per_page', DefaultConfig.PER_PAGE, type=int)
     logger.info("Get Poets of {} in page {}".format(dynasty, page))
-    if cache.get('__poets' + dynasty + str(page) + str(limits)):
-        data = json.loads(cache.get('__poets' + dynasty + str(page)))
-        total = data['total']
-        poets = data['poets']
+    cache_key = '__poets' + dynasty + str(page) + str(per_page)
+    cache_data = cache.get(cache_key)
+    if cache_data:
+        data = json.loads(cache_data)
         logger.info("Get Poets of {} in page {} by cache".format(dynasty, page))
-        code = 200
     else:
         try:
             paginate_obj = PoetIntroduction.query.filter_by(dynasty=dynasty).paginate(
                 page=page,
-                per_page=limits if limits else DefaultConfig.PER_PAGE,
+                per_page=per_page,
                 error_out=False
             )
-            total = paginate_obj.total
             code = 200
-            poets = [item.poet for item in paginate_obj.items]
-            cache.set('__poets' + dynasty + str(page) + str(limits), json.dumps({'total': total, 'poets': poets}))
+            data = {
+                'code': code,
+                'total': paginate_obj.total,
+                'poets': [item.poet for item in paginate_obj.items],
+                'per_page': per_page,
+                'has_next': paginate_obj.has_next,
+                'has_prev': paginate_obj.has_prev,
+                'dynasty': dynasty
+            }
+            cache.set(cache_key, data)
         except Exception as e:
-            code = 404
-            poets = []
-            total = 0
             logger.error("Error: {}".format(e))
-    data = {
-        'code': code,
-        'total': total,
-        'poets': poets,
-        'limits': limits
-    }
+            abort(404, 'Error')
+
     return jsonify(data)
 
 
 @poem.route('/poems/', methods=['GET'])
-@check_param
 def get_poems():
     """
     获取诗人的诗作
     """
     param = request.args
-    poet = simp2tra(param.get('poet'))
-    dynasty = param.get('dynasty')
-    if cache.get(poet + dynasty + "poems"):
+    poet = simp2tra(param.get('poet', '李白'))
+    dynasty = param.get('dynasty', '唐')
+    cache_key = poet + dynasty + "poems"
+    cache_data = cache.get(cache_key)
+    if cache_data:
         logger.info("Get {} {}'s Poems by cache".format(dynasty, poet))
-        poems = cache.get(poet + dynasty + "poems")
+        poems = cache_data
     else:
         try:
             logger.info("Get {} {}'s Poems".format(dynasty, poet))
@@ -105,21 +83,22 @@ def get_poems():
 
 
 @poem.route('/search/', methods=['GET'])
-@check_param
 def search_poets():
     """
     获取诗人的诗作
     """
     param = request.args
     keyword = simp2tra(param.get('keyword'))
-    page = param.get('page')
+    page = param.get('page', 1, type=int)
     logger.info("Search Poets has {}".format(keyword))
-    has_cache = cache.get('/poet/search' + keyword + str(page))
+    cache_key = '__poet_search' + keyword + str(page)
+    cache_data = cache.get(cache_key)
     if not keyword or not isinstance(keyword, str):
         return jsonify({'code': 200, 'poets': []})
-    if has_cache:
-        poets = has_cache
-        total = cache.get('/poet/search' + keyword + 'total')
+    if cache_data:
+        data = json.loads(cache_data)
+        poets = data['poets']
+        total = data['total']
     else:
         try:
             poets = PoetIntroduction.search_poet(keyword, page)
@@ -138,7 +117,6 @@ def search_poets():
 
 
 @poem.route('/content/', methods=['GET'])
-@check_param
 def get_content():
     """
     获取诗歌内容
@@ -146,19 +124,19 @@ def get_content():
     param = request.args
     poet = param.get('poet')
     dynasty = param.get('dynasty')
-    poem = param.get('poem')
+    title = param.get('poem')
+    cache_key = title
     logger.info("Get {}'s {}'s content".format(poet, poem))
-    if cache.get(poet + dynasty + poem):
-        content = cache.get("content" + poet + dynasty + poem)
+    if cache.get(poet + dynasty + title):
+        content = cache.get("content" + poet + dynasty + title)
     else:
         try:
-            item = PoemTangSong.query.\
-                filter_by(
+            item = PoemTangSong.query.filter_by(
                     poet=poet,
                     dynasty=dynasty,
-                    poem=poem).first()
+                    poem=title).first()
             content = re.split("。|？", item.paragraphs) if item else []
-            cache.set("content" + poet + dynasty + poem, content)
+            cache.set("content" + poet + dynasty + title, content)
         except Exception as e:
             content = []
             logger.error("Error is: {}".format(e))
@@ -169,7 +147,6 @@ def get_content():
 
 
 @poem.route('/lunyu/', methods=['GET'])
-@check_param
 def get_lunyu():
     """
     test
@@ -209,7 +186,6 @@ def get_lunyu():
 
 
 @poem.route('/songci/', methods=['GET'])
-@check_param
 def get_songci():
     """
     test
@@ -217,11 +193,9 @@ def get_songci():
     param = request.args
     poet = param.get('poet')
     rhythmic = param.get('rhythmic')
-    page_str = param.get('page', '0')
-    limits_str = param.get('limits', '0')
-    page = int(page_str)
-    limits = int(limits_str)
-    cache_key = '__songCi' + 'page' + page_str + 'limits' + limits_str + poet + rhythmic
+    page = param.get('page', 1, type=int)
+    limits = param.get('limits', 0, type=int)
+    cache_key = '__songCi' + 'page' + str(page) + 'limits' + str(limits) + poet + rhythmic
     cache_data = cache.get(cache_key)
     if cache_data:
         data = json.loads(cache_data)
@@ -292,11 +266,12 @@ def get_songci_content():
     cache_key = '__songCi_content' + poet + rhythmic
     cache_data = cache.get(cache_key)
     if cache_data:
+        logger.info("GET SongCi Content By Cache")
         paragraphs = cache_data
     else:
         try:
-            query_obj = PoemSongci.query.filter_by(poet=poet, rhythmic=rhythmic).first().paragraphs
-            paragraphs = re.split('。|？', query_obj)
+            query_obj = PoemSongci.query.filter_by(poet=poet, rhythmic=rhythmic).first()
+            paragraphs = re.split('。|？', query_obj.paragraphs)
             cache.set(cache_key, paragraphs)
         except Exception as e:
             paragraphs = ''
@@ -336,18 +311,15 @@ def get_songci_poem():
 
 
 @poem.route('/songci/poets/', methods=['GET'])
-@check_param
 def get_songci_poets():
     """
     test
     """
     param = request.args
-    page_str = param.get('page', '0')
-    limits_str = param.get('limits', '0')
-    page = int(page_str)
-    limits = int(limits_str)
-
-    cache_key = '__songCi: ' + 'page: ' + page_str + 'limits: ' + limits_str
+    page = param.get('page', 0, type=int)
+    limits = param.get('limits', 0, type=int)
+    cache_key = '__songCi: ' + 'page: ' + str(page) + 'limits: ' + str(limits)
+    logger.info("GET {}".format(cache_key))
     cache_data = cache.get(cache_key)
     if cache_data:
         data = json.loads(cache_data)
@@ -376,14 +348,13 @@ def get_songci_poets():
 
 
 @poem.route('/shijing/', methods=['GET'])
-@check_param
 def get_shijing():
     """
     test
     """
     param = request.args
     poem = param.get('poem')
-    page = param.get('page')
+    page = param.get('page', 1, type=int)
     if page:  # 获取诗名翻页数据
         page = int(page)
         if cache.get('poem_num' + 'shijing'):
@@ -434,7 +405,6 @@ def get_shijing():
 
 
 @poem.route('/introduction/', methods=['GET'])
-@check_param
 def get_introduction():
     """
     诗人简介

@@ -1,10 +1,4 @@
-from threading import Lock
-
-from flask import request
-from flask import redirect
-from flask import Blueprint
-from flask import jsonify
-from flask import render_template
+from flask import (request, redirect, Blueprint, jsonify, render_template)
 
 from ...logger import logger
 from ...models.dwz import DWZ
@@ -15,7 +9,7 @@ from .DWZGenerator import DWZGenerator
 dwz = Blueprint('dwz', __name__)
 
 
-@dwz.route('/restore', methods=['POST'])
+@dwz.route('/restore/', methods=['POST'])
 def fetch_origin_url():
     """
     短链还原
@@ -39,7 +33,7 @@ def fetch_origin_url():
     })
 
 
-@dwz.route('/dwz', methods=['POST'])
+@dwz.route('/dwz/', methods=['POST'])
 def generator():
     url = request.get_json(force=True)['url']
     logger.info('输入的url为：' + url)

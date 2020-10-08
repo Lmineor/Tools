@@ -1,5 +1,4 @@
-from flask import Blueprint, request
-from flask import jsonify
+from flask import (Blueprint, request, jsonify, abort)
 
 from ...models.comment import Comment
 from ...logger import logger
@@ -13,13 +12,14 @@ comment = Blueprint('comment', __name__)
 # ---------------------------------------------------------------------------------
 
 
-@comment.route("", methods=['GET'])
-@cache.cached(timeout=1000*60, key_prefix='all_comments')
+@comment.route("/", methods=['GET'])
+# @cache.cached(timeout=1000*60, key_prefix='all_comments')
 def get_all_comments():
     """
     加载所有可以展示的意见
     """
     data = Comment.load_show_able_comment()
+    # abort(404, "Post id doesn't exist.")
     return jsonify({'data': data})
 
 

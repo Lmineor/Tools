@@ -53,7 +53,7 @@ export default {
             }
             this.$axios
                 .post(
-                    envs.apiUrl + '/dwz/dwz',
+                    envs.apiUrl + '/dwz/dwz/',
                     {
                         url: this.url,
                     },

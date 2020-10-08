@@ -51,6 +51,10 @@ class PoemSongci(Base):
     rhythmic = db.Column(db.String(40), index=True)
     poet = db.Column(db.String(100), index=True)
 
+    def __repr__(self):
+        return "<PoemSongci(rhythmic='%s', poet='%s')>" % (
+            self.rhythmic, self.poet)
+
 
 class CiAuthor(Base):
     __tablename__ = 'poem_ci_poet'

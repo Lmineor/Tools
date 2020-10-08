@@ -36,7 +36,7 @@ class DefaultConfig(object):
     FILESYSTEM = {
 		'CACHE_TYPE': 'filesystem',
 		'CACHE_DIR': './flask_cache',
-		'CACHE_DEFAULT_TIMEOUT': 922337203685477580,
+		'CACHE_DEFAULT_TIMEOUT': 60*60*24*7,
 		'CACHE_THRESHOLD': 922337203685477580
 	}
 
