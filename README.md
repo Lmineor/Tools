@@ -47,7 +47,7 @@ pip install -r requirements.txt
 2、 数据库初始化与表创建
 
 ```py
-ython manage.py db init     # 初始化数据库
+python manage.py db init     # 初始化数据库
 python manage.py db migrate # 检查模型字段是否修改,如果改变,就产生新的迁移文件.
 python manage.py db upgrade # 对迁移文件进行迁移
 ```
@@ -57,7 +57,7 @@ python manage.py db upgrade # 对迁移文件进行迁移
 - 方式一：传统方法，适合本地调试
 
 ```py
-python run.py # 或者选用nohup的方式
+python run.py
 ```
 
 - 方式二：nohup，稍微高级一点，但仍不够b格
