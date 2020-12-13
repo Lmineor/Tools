@@ -21,26 +21,57 @@
 
 
 ### 工具合集
+
 #### 说明
+
 自己做的或收集的工具合集，项目持续更新中。。。
+
 #### 技术栈
+
 - 前端：vue全家桶 + nuxt
 - 后端：Flask
 - 数据库：MySQL
 
 ## 部署
-### 后端
-1、准备工作
- - conda虚拟环境
- - 安装依赖包
- ```py
- pip install -r requirements.txt
- ```
 
- 2、 启动
- ```py
- python run.py
- ```
+### 后端
+
+1、准备工作
+- 准备好conda虚拟环境
+- 安装依赖包（切换到准备好的虚拟环境中）
+
+```py
+pip install -r requirements.txt
+```
+
+2、 数据库初始化与表创建
+
+```py
+python manage.py db init     # 初始化数据库
+python manage.py db migrate # 检查模型字段是否修改,如果改变,就产生新的迁移文件.
+python manage.py db upgrade # 对迁移文件进行迁移
+```
+
+3、 启动
+
+- 方式一：传统方法，适合本地调试
+
+```py
+python run.py
+```
+
+- 方式二：nohup，稍微高级一点，但仍不够b格
+
+```py
+nohup python run.py >> server.log 2>&1 &
+```
+
+- 方式三：uwsgi的方式（暂且认为最高b格）
+
+```py
+# cd 到根目录然后执行
+uwsgi --ini uwsgi.ini
+```
 
 ### 前端
 1、准备工作
@@ -77,15 +108,3 @@ pm2 restart lextool  // 再重启
 ```
 
 > 前端致敬 [MikuTools](https://tools.miku.ac/)
-
-### 广告时间：
-Github：[https://github.com/Prolht](https://github.com/Prolht) 点个star哟！
-
-个人博客：[https://www.lex666.online](https://www.lex666.online)
-
-新浪微博： [https://weibo.com/u/2415026333](https://weibo.com/u/2415026333)
-
-微信公众号：Pylexton
-<img src="https://yanxuan.nosdn.127.net/6d37e093859295a57cf7a1c9be5ad3b6.jpg" alt="" width="100" height="100" align="bottom" />
-欢迎关注！
-
