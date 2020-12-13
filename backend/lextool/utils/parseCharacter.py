@@ -1,11 +1,11 @@
 # encoding:utf-8
-from ..config.default import DefaultConfig
+from ..common.constants import SpecialChar
 
 def parseSpelling(spelling):
     if not spelling:
         return ''
     spelling.replace('\\\'', '\'')
-    for k, v in DefaultConfig.SpecialChar.items():
+    for k, v in SpecialChar.items():
         if k in spelling:
             spelling = spelling.replace(k, v)
     return spelling

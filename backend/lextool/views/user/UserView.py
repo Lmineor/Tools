@@ -6,8 +6,8 @@ from . import auth
 from ...models import db
 from ...models.user import User, UserConfig, UserMemo
 from ...utils.tasks import send_register_active_email
-from ...logger import logger
-from ...config.default import DefaultConfig
+from ...common.logger import LOG
+from ...config.config import Cfg
 
 user = Blueprint('user', __name__)
 
@@ -77,7 +77,7 @@ def update_info():
         msg = "success"
         code = 200
     except Exception as e:
-        logger.error("info update error {}".format(e))
+        LOG.error("info update error {}".format(e))
         msg = "fail"
         code = 400
     res = {
@@ -97,7 +97,7 @@ def update_info():
 def logout():
     username = request.get_json()['username']
     email = request.get_json()['email']
-    logger.info("User: {}, Email: {} logout.".format(username, email))
+    LOG.info("User: {}, Email: {} logout.".format(username, email))
     return jsonify({'code': 200, 'description': 'Logout successful.'})
 
 
@@ -151,7 +151,7 @@ def register():
                 'msg': msg
             }
     except Exception as e:
-        logger.error(e)
+        LOG.error(e)
         msg = "未知错误，请稍后再试，或直接发邮件到luohai2233@163.com"
         res = {
             'code': 404,
@@ -167,7 +167,7 @@ def activate(token):
     :return: None
     """
     if User.check_activate_token(token):
-        return redirect('http://' + DefaultConfig.FrontDomain + '/login')
+        return redirect('http://' + Cfg.EMAIL.front_domain + '/login')
     else:
         return jsonify({'code': 401, 'msg': "令牌失效，请重新注册"})
 

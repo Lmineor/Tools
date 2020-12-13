@@ -1,8 +1,8 @@
 import datetime
 
 from . import db
-from ..logger import logger
-from ..cache import cache
+from ..common.logger import LOG
+from ..common.cache import cache
 
 
 class Comment(db.Model):

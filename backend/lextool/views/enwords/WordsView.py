@@ -7,10 +7,10 @@ from flask import jsonify, g
 from sqlalchemy.sql.expression import func
 
 from ..user import auth
-from ...logger import logger
+from ...common.logger import LOG
 from ...models.words import *
 from ...models import db
-from ...cache import cache
+from ...common.cache import cache
 from ...utils.parseCharacter import parseSpelling
 
 words = Blueprint('words', __name__)
@@ -28,7 +28,7 @@ def get_daily_words():
     book = g.user.config.words_book
     words_num = g.user.config.words_num
     current_date = str(datetime.date.today())
-    logger.info("User {} get {} words".format(g.user.username, book))
+    LOG.info("User {} get {} words".format(g.user.username, book))
 
     if book == 'CET4':
         source = Cet4
@@ -44,13 +44,13 @@ def get_daily_words():
         data = generate_user_daily_words(source, g.user.id, recited=[], words_num=words_num)
         cache.set(str(g.user.id) + current_date + book, data)
     elif str(word_items[0].create_at)[:10] != current_date or refresh:
-        logger.info("Refresh: {}".format(refresh))
+        LOG.info("Refresh: {}".format(refresh))
         data = generate_user_daily_words(source, g.user.id, recited=[], words_num=words_num)
         cache.set(str(g.user.id) + current_date + book, data)
     else:
         has_cached = cache.get(str(g.user.id) + current_date + book)
         if has_cached:
-            logger.info('Get from cache')
+            LOG.info('Get from cache')
             data = has_cached
         else:
             data = [{'word': item.word, 'translation': item.translation, 'spellingA': parseSpelling(item.spellingA),
@@ -78,6 +78,6 @@ def generate_user_daily_words(source, user_id: int, recited: List, words_num: in
             db.session.add(user_d_w)
         db.session.commit()
     except Exception as e:
-        logger.error("Error is {}".format(e))
+        LOG.error("Error is {}".format(e))
         data = []
     return data

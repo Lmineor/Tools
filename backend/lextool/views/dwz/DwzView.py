@@ -1,6 +1,6 @@
 from flask import (request, redirect, Blueprint, jsonify, render_template)
 
-from ...logger import logger
+from ...common.logger import LOG
 from ...models.dwz import DWZ
 from ...models import db
 from .DWZGenerator import DWZGenerator
@@ -20,13 +20,13 @@ def fetch_origin_url():
             'code': 200,
             'url': '还原失败,短链不存在'
         })
-    logger.info("要还原的短链为：{}".format(dwz))
+    LOG.info("要还原的短链为：{}".format(dwz))
     try:
         item = DWZ.query.filter_by(dwz=dwz).first()
         url = item.url if item else '还原失败,短链不存在'
     except Exception as e:
         url = '还原失败,错误为{}'.format(e)
-        logger.error(e)
+        LOG.error(e)
     return jsonify({
         'code': 200,
         'url': url
@@ -36,7 +36,7 @@ def fetch_origin_url():
 @dwz.route('/dwz/', methods=['POST'])
 def generator():
     url = request.get_json(force=True)['url']
-    logger.info('输入的url为：' + url)
+    LOG.info('The Raw URL to DWZ is {}'.format(url))
     if not url:
         return jsonify({'code': 400, 'msg': 'error'})
     try:
@@ -50,7 +50,7 @@ def generator():
     except Exception as e:
         d = e
         code = 500
-        logger.error("Error is {}".format(e))
+        LOG.error("Error is {}".format(e))
     data = {
         'code': code,
         'url': d
@@ -68,7 +68,7 @@ def redir(code):
         url = item.url
     except Exception as e:
         url = ''
-        logger.error("Error is {}".format(e))
+        LOG.error("Error is {}".format(e))
     if not url:
         return render_template('404.html')
     elif not url.startswith('http'):

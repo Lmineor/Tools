@@ -3,7 +3,7 @@ import time
 from celery import Celery
 
 from .send_email import send_email
-from ..config.default import DefaultConfig
+from ..config.config import Cfg
 
 app = Celery('tasks', broker='redis://127.0.0.1:6379/8')
 
@@ -25,5 +25,5 @@ def send_register_active_email(email, username, token):
         <h2>Hi {}, </h2>Click the link to active your account
         <a href="http://{}/user/active/{}">http://{}/user/active/{}</a>
     """
-    html_message = html_pattern.format(username, DefaultConfig.Domain, token, DefaultConfig.Domain, token)
+    html_message = html_pattern.format(username, Cfg.EMAIL.Domain, token, Cfg.EMAIL.front_domain, token)
     send_email(subject, receiver, html_message=html_message)

@@ -1,8 +1,8 @@
 from flask import (Blueprint, request, jsonify, abort)
 
 from ...models.comment import Comment
-from ...logger import logger
-from ...cache import cache
+from ...common.logger import LOG
+from ...common.cache import cache
 
 comment = Blueprint('comment', __name__)
 

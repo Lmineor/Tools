@@ -3,9 +3,10 @@ import datetime
 from flask import Flask
 from flask_cors import CORS
 
-from .config.default import DefaultConfig
+from .config.config import Cfg
 from .views import register_blueprints
-from .cache import cache
+from .common.cache import cache
+from .common.logger import LOG
 from .models import db
 
 
@@ -17,14 +18,25 @@ __license__ = "MIT License"
 
 
 def create_app():
+    LOG.debug('Starting Lextools...')
     app = Flask(__name__)
     # 数据库配置
-    app.config['SQLALCHEMY_DATABASE_URI'] = DefaultConfig.SQLALCHEMY_DATABASE_URI
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = DefaultConfig.SQLALCHEMY_TRACK_MODIFICATIONS
-    app.config['SECRET_KEY'] = DefaultConfig.SECRET_KEY
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://' \
+                                            '%s:%s@localhost' \
+                                            ':3306/%s' % (Cfg.DB.username, Cfg.DB.password, Cfg.DB.database)
+
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = Cfg.DB.sqlalchemy_track_modifications
+    app.config['SECRET_KEY'] = Cfg.TOOLS.secret_key
     register_blueprint(app)
     register_database(app)
-    cache.init_app(app, config=DefaultConfig.FILESYSTEM)
+    if Cfg.CACHE.type == 'filesystem':
+        filesystem = {
+            'CACHE_TYPE': Cfg.CACHE.type,
+            'CACHE_DIR': Cfg.CACHE.dir,
+            'CACHE_DEFAULT_TIMEOUT': Cfg.CACHE.default_timeout,
+            'CACHE_THRESHOLD': Cfg.CACHE.threshold
+        }
+        cache.init_app(app, config=filesystem)
     CORS(app, supports_credentials=True)
     return app
 
