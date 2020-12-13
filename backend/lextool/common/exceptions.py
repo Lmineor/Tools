@@ -45,3 +45,11 @@ class ConfigOptionCanNotBeAssigned(Exception):
         
     def __str__(self):
         return ("Failed to assign config options: %s " % self.config_op)
+    
+class InvaildOption(ValueError):
+    def __init__(self, section, option):
+        self.option = option
+        self.section = section
+        
+    def __str__(self):
+        return ("Invalid config options <%s: %s>, check it" % (self.section, self.option))

@@ -8,18 +8,18 @@
 The module to parse the config file
 """
 import os
+import copy
 import configparser
 
-from ..common.exceptions import ConfigFileNotFoundError
+from ..common.exceptions import ConfigFileNotFoundError, InvaildOption
+from ..common.constants import CONFIGFILE
 
 
 config_default = {
-    'DEFAULT':
-        {'debug': False, 'log_path': '/var/log/lextools'},
     'DB':
         {'username': None, 'password': None, 'database': None, 'sqlalchemy_track_modifications': True},
     'TOOLS':
-        {'pagination': 10},
+        {'pagination': 10, 'debug': False, 'log_path': '/var/log/lextools'},
     'MAIL':
         {'username': None, 'password': None, 'host': None, 'domain':'127.0.0.1:5000', 'front_domain': '127.0.0.1:3000'},
     'AUTH':
@@ -30,6 +30,12 @@ config_default = {
         {'word': []}
 }
 
+config_op = copy.deepcopy(config_default)
+
+def update_default_config(section, options):
+    for k, v in options.items():
+        config_op[section][k] = v
+    
 
 class DictAttr(object):
     """
@@ -38,19 +44,29 @@ class DictAttr(object):
 
     def __init__(self, dict_obj):
         self.dict_obj = dict_obj
-        for k, v in dict_obj.items():
+        self.validate()
+        for k, v in self.dict_obj.items():
+            setattr(self, k, v)
+
+    def validate(self):
+        for k, v in self.dict_obj.items():
             if k == 'ENGLISH':
                 if v:
-                    setattr(self, k, v.split(','))
+                    self.dict_obj[k] = v.split(',')
             elif  k == 'debug':
                 if v in ['False', 'false', False]:
-                    setattr(self, k, False)
+                    self.dict_obj[k] = False
                 elif v in ['True', 'true', True]:
-                    setattr(self, k, True)
+                    self.dict_obj[k] = True
                 else:
-                    raise Exception("Debug option wrong, check it")
+                    raise Exception("Debug option wrong, Check it")
+            elif k in ['token_expiration', 'token_expiration', 'pagination']:
+                try:
+                    self.dict_obj[k] = int(v)
+                except ValueError:
+                    raise InvaildOption(k, v)
             else:
-                setattr(self, k, v)
+                pass
 
     def __getitem__(self, item):
         if self.dict_obj.get(item):
@@ -59,9 +75,8 @@ class DictAttr(object):
 
 class Config(object):
     def __init__(self):
-        self.set_default_val()
         self._conf_path = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config.ini')
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))), CONFIGFILE)
         self.config_parser = configparser.ConfigParser()
         if os.path.exists(self._conf_path):
             self.config_parser.read(self._conf_path, encoding="utf-8")
@@ -73,11 +88,8 @@ class Config(object):
         sections = self.get_sections()
         for section in sections:
             items = self.get_items(section)
-            setattr(self, section, DictAttr(dict(items)))      
-
-    def set_default_val(self):
-        for k, v in config_default.items():
-            setattr(self, k, DictAttr(v))
+            update_default_config(section, dict(items))
+            setattr(self, section, DictAttr(config_op[section]))
 
     def get_sections(self):
         return self.config_parser.sections()

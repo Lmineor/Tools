@@ -9,3 +9,6 @@
 """
 
 SpecialChar = {'&#230;': 'æ'}
+
+LOGINURL = '/auth/login'
+CONFIGFILE = 'config.ini'

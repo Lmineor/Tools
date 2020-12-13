@@ -4,7 +4,7 @@ from flask import Flask
 from flask_cors import CORS
 
 from .config.config import Cfg
-from .views import register_blueprints
+from .register_blueprints import register_blueprints
 from .common.cache import cache
 from .common.logger import LOG
 from .models import db
@@ -26,7 +26,7 @@ def create_app():
                                             ':3306/%s' % (Cfg.DB.username, Cfg.DB.password, Cfg.DB.database)
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = Cfg.DB.sqlalchemy_track_modifications
-    app.config['SECRET_KEY'] = Cfg.TOOLS.secret_key
+    app.config['SECRET_KEY'] = Cfg.AUTH.secret_key
     register_blueprint(app)
     register_database(app)
     if Cfg.CACHE.type == 'filesystem':

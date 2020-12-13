@@ -17,15 +17,11 @@ import logging.handlers
 
 from ..config.config import Cfg
 
-log_level = 'INFO'
-
-if hasattr(Cfg.DEFAULT, 'debug'):
-    log_level = 'DEBUG' if  Cfg.DEFAULT.debug else 'INFO'
-
+log_level = 'DEBUG' if  Cfg.TOOLS.debug else 'INFO'
 platform = 'win32'
 platform = sys.platform
 if platform == 'win32':
-    log_path = 'E:/'
+    log_path = 'J:\log'
 else:
     log_path = Cfg.DEFAULT.log
 
@@ -35,7 +31,7 @@ FILE_LOG_FMT = "[%(asctime)s] [%(levelname)s] [%(threadName)s] [%(filename)s:%(l
 FILE_DATE_FMT = "%Y-%m-%d %H:%M:%S"
 
 
-def _get_logger(log_level='INFO'):
+def _get_logger():
 
     _logger = logging.getLogger(__name__)
 
@@ -46,7 +42,7 @@ def _get_logger(log_level='INFO'):
         os.makedirs(log_path)
     except OSError:
         pass
-    log_filename = time.strftime('%Y%m%d', time.localtime(time.time())) + '.log'
+    log_filename = time.strftime('%Y%m%d', time.localtime(time.time())) + '-server.log'
     log_file_path = os.path.join(log_path, log_filename)
     
     file_handler = logging.handlers.TimedRotatingFileHandler(

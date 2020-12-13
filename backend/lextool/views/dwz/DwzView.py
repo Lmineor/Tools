@@ -9,7 +9,7 @@ from .DWZGenerator import DWZGenerator
 dwz = Blueprint('dwz', __name__)
 
 
-@dwz.route('/restore/', methods=['POST'])
+@dwz.route('/restore', methods=['POST'])
 def fetch_origin_url():
     """
     短链还原
@@ -33,7 +33,7 @@ def fetch_origin_url():
     })
 
 
-@dwz.route('/dwz/', methods=['POST'])
+@dwz.route('/dwz', methods=['POST'])
 def generator():
     url = request.get_json(force=True)['url']
     LOG.info('The Raw URL to DWZ is {}'.format(url))

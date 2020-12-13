@@ -7,3 +7,7 @@
 @File    : __init__.py.py
 @Software: PyCharm
 """
+
+from flask_httpauth import HTTPBasicAuth
+
+auth = HTTPBasicAuth()
