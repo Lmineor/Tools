@@ -1,11 +1,10 @@
 import datetime
 
-from . import db
+from .base_model import db, Base, ModelWithCreateAt
 
 
-class WordBase(db.Model):
+class WordBase(Base):
     __abstract__ = True  # 把__abstract__这个属性设置为True,这个类为基类，不会被创建为表
-    id = db.Column(db.Integer, primary_key=True)
     word = db.Column(db.String(32), index=True)
     translation = db.Column(db.String(512), nullable=False)
     spellingA = db.Column(db.String(64), nullable=True)  # 美音

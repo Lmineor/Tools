@@ -1,36 +1,16 @@
-from . import db
-from ..config.config import Cfg
+from .base_model import Base, PoetIntroductionMixin, db
 
 
-class Base(db.Model):
-    __abstract__ = True
-    id = db.Column(db.Integer, primary_key=True)
-
-
-class PoetIntroduction(Base):
+class PoetIntroduction(Base, PoetIntroductionMixin):
     __tablename__ = 'poem_poet_introduction'  # 诗人简介
-
     descb = db.Column(db.Text(16777216))
     poet = db.Column(db.String(100), index=True)
     dynasty = db.Column(db.String(8), index=True)
 
-    @classmethod
-    def search_poet(cls, keyword, page):
-        items = cls.query.filter(
-                cls.poet.like("%%{}%%".format(keyword)) if keyword is not None else "")\
-            .paginate(page=page, per_page=Cfg.TOOLS.pagination, error_out=False).items
-        return [item.poet for item in items]
-
-    @classmethod
-    def search_keyword_total(cls, keyword):
-        total = len(cls.query.filter(
-            cls.poet.like("%%{}%%".format(keyword)) if keyword is not None else "").all())
-        return total
-
 
 class PoemTangSong(Base):
     __tablename__ = 'poem_tang_song_poem'
-
+    
     paragraphs = db.Column(db.Text)
     poem = db.Column(db.Text(65536))
     poet = db.Column(db.String(100), index=True)
@@ -51,7 +31,7 @@ class PoemSongci(Base):
     rhythmic = db.Column(db.String(40), index=True)
     poet = db.Column(db.String(100), index=True)
 
-    def __repr__(self):
+    def __str__(self):
         return "<PoemSongci(rhythmic='%s', poet='%s')>" % (
             self.rhythmic, self.poet)
 

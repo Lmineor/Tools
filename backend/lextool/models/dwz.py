@@ -1,15 +1,9 @@
 import datetime
 
-from . import db
+from .base_model import db, ModelWithCreateAt
 
 
-class DWZ(db.Model):
-    """
-    短网址数据库
-    """
-    __tablename__ = 'dwz'  # 未设置__bind_key__,则采用默认的数据库引擎
-    id = db.Column(db.Integer, primary_key=True)
+class DWZ(ModelWithCreateAt):
+    __tablename__ = 'dwz'
     url = db.Column(db.Text(65536))
     dwz = db.Column(db.String(10), unique=True, index=True)
-    create_at = db.Column(db.DateTime, default=datetime.datetime.now)
-
