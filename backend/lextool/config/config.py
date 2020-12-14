@@ -60,7 +60,7 @@ class DictAttr(object):
                     self.dict_obj[k] = True
                 else:
                     raise Exception("Debug option wrong, Check it")
-            elif k in ['token_expiration', 'token_expiration', 'pagination']:
+            elif k in ['token_expiration', 'threshold', 'pagination', 'default_timeout']:
                 try:
                     self.dict_obj[k] = int(v)
                 except ValueError:

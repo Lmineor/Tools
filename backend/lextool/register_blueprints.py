@@ -15,7 +15,6 @@ from .views.enwords import WordsView
 from .views.admin import AdminView
 from .views.comment import CommentView
 from .views.sci import SciTestView
-# from..views.todo import TodoView
 
 
 def register_blueprints(app):
@@ -27,4 +26,3 @@ def register_blueprints(app):
     app.register_blueprint(AdminView.admin, url_prefix='/admin')
     app.register_blueprint(CommentView.comment, url_prefix='/comment')
     app.register_blueprint(SciTestView.sci, url_prefix='/sci')
-    # app.register_blueprint(TodoView.todo, url_prefix='/todo')
