@@ -21,35 +21,48 @@ class AuthenticationError(ToolsError):
     description = "Invalid username and password combination."
 
 
-class ParseError(Exception):
-    def __init__(self, message, lineno, line):
-        self.msg = message
-        self.line = line
-        self.lineno = lineno
-
+# Config Error
+class ConfigBaseError(Exception):
+    def __init(self, msg):
+        self.msg = msg
+        
     def __str__(self):
-        return 'at line %d, %s: %r' % (self.lineno, self.msg, self.line)
+        return self.msg
 
 
-class ConfigFileNotFoundError(Exception):
+class ConfigFileNotFoundError(ConfigBaseError):
+    """Raised if config file  does not exist"""
     def __init__(self, config_dir):
         self.config_dir = config_dir
     
     def __str__(self):
         return ('Failed to read config file directory: %s' % self.config_dir)
-    
-    
-class ConfigOptionCanNotBeAssigned(Exception):
-    def __init__(self, config_op):
-        self.config_op = config_op
-        
+
+
+class NoSuchGroupError(ConfigBaseError):
+    """Raised if config does not has such group"""
+    def __init__(self, group_name):
+        self.group_name = group_name
+
     def __str__(self):
-        return ("Failed to assign config options: %s " % self.config_op)
-    
-class InvaildOption(ValueError):
-    def __init__(self, section, option):
-        self.option = option
-        self.section = section
-        
+        return "no such group [%s]" % self.group_name
+
+
+class NoSuchOptError(ConfigBaseError, AttributeError):
+    """Raised if config does not has such option"""
+    def __init__(self, opt_name, group=None):
+        self.opt_name = opt_name
+        self.group = group
+
     def __str__(self):
-        return ("Invalid config options <%s: %s>, check it" % (self.section, self.option))
+        group_name = "DEFAULT" if self.group is None else self.group.name
+        return "no such option %s in group [%s]" % (self.opt_name, group_name)
+    
+    
+class ConfigFileValueError(ConfigBaseError, ValueError):
+    """Raised if a config file value does not match its opt type"""
+    pass
+
+
+class InvaildOption(ConfigBaseError):
+    pass

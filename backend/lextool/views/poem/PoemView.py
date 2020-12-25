@@ -14,8 +14,12 @@ from ...utils.simp2tra import simp2tra
 poem = Blueprint('poem', __name__)
 
 
+def _make_resp_dict():
+    pass
+
+
 @poem.route('/poets/', methods=['GET'])
-def get_author():
+def get_poets():
     """
     得到某个朝代的作者列表
     """
@@ -27,14 +31,14 @@ def get_author():
     cache_key = '__poets' + dynasty + str(page) + str(per_page)
     cache_data = cache.get(cache_key)
     if cache_data:
-        data = json.loads(cache_data)
+        data = cache_data
         LOG.info("Get Poets of {} in page {} by cache".format(dynasty, page))
     else:
         try:
             paginate_obj = PoetIntroduction.query.filter_by(dynasty=dynasty).paginate(
                 page=page,
                 per_page=per_page,
-                error_out=False
+                error_out=True
             )
             code = 200
             data = {
