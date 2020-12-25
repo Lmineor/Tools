@@ -1,27 +1,14 @@
 #!/bin/bash
 # author:lex<luohai2233@163.com>
 
-# config variables
-# Path
 CONDA_ENV=tools
-PROJECT_F_BASE_PATH=/www/wwwroot/Tools/frontend/    # frontend
 PROJECT_B_BASE_PATH=/www/wwwroot/Tools/backend/     # backend
-PROJECT_PORT=5000                                   # backend port
-GIT=git@github.com:Prolht/Tools.git
 
-# Frontend Name
-PROJECT_NAME_F=lextool                              # frontend name
-
-
-# stop backend
-#lsof -i:${PROJECT_PORT}|awk '{print$2}' |grep -v PID|xargs kill -9 # 暂停
+# Stop service
 cd /www/wwwroot
 uwsgi --stop uwsgi.pid
 
-# stop frontend
-pm2 stop $PROJECT_NAME_F
-
-#pull
+#git pull
 cd /www/wwwroot/Tools
 git pull
 
@@ -39,15 +26,3 @@ python manage.py db upgrade # 对迁移文件进行迁移
 cd ..
 uwsgi --ini uwsgi.ini
 echo "==================Complete Backend=================="
-
-# frontend
-cd $PROJECT_F_BASE_PATH$PROJECT_NAME_F
-npm install
-npm run build
-
-
-# pm2 start npm --name lextool -- start  # 第一次启动用
-
-## start
-pm2 start $PROJECT_NAME_F
-echo "==================Complete Frontend=================="
