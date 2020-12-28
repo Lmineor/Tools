@@ -6,56 +6,61 @@ from flask import (Blueprint, request, jsonify, abort)
 
 from ...models.poem import *
 from ...common.cache import cache
-from ...config.config import Cfg
 from ...common.logger import LOG
+from ...common.response import not_found_resp, success_resp
+from ...config.config import Cfg
 from ...utils.simp2tra import simp2tra
+from ...common.exceptions import PoemNotFound
 
 
 poem = Blueprint('poem', __name__)
 
 
-def _make_resp_dict():
-    pass
+def _make_cache_key(url, cache_info):
+    cache_key = {'url': url}
+    cache_key.update(cache_info)
+    return json.dumps(cache_key)
 
 
 @poem.route('/poets/', methods=['GET'])
 def get_poets():
     """
-    得到某个朝代的作者列表
+    获取指定朝代的所有作者，若不指定朝代，则默认返回“唐”朝的作者信息
     """
     param = request.args
+    req_path = request.path
     dynasty = param.get('dynasty', '唐')
     page = param.get('page', 1, type=int)
     per_page = param.get('per_page', Cfg.TOOLS.pagination, type=int)
     LOG.info("Get Poets of {} in page {}".format(dynasty, page))
-    cache_key = '__poets' + dynasty + str(page) + str(per_page)
+    
+    cache_key = _make_cache_key(
+        req_path, {'dynasty': dynasty,'page': page,'per_page': per_page}
+    )
     cache_data = cache.get(cache_key)
+    
     if cache_data:
         data = cache_data
         LOG.info("Get Poets of {} in page {} by cache".format(dynasty, page))
+        return jsonify(data)
     else:
-        try:
-            paginate_obj = PoetIntroduction.query.filter_by(dynasty=dynasty).paginate(
-                page=page,
-                per_page=per_page,
-                error_out=True
-            )
-            code = 200
-            data = {
-                'code': code,
-                'total': paginate_obj.total,
-                'poets': [item.poet for item in paginate_obj.items],
-                'per_page': per_page,
-                'has_next': paginate_obj.has_next,
-                'has_prev': paginate_obj.has_prev,
-                'dynasty': dynasty
-            }
-            cache.set(cache_key, data)
-        except Exception as e:
-            LOG.error("Error: {}".format(e))
-            abort(404, 'Error')
-
-    return jsonify(data)
+        paginate_obj = PoetIntroduction.query.filter_by(dynasty=dynasty).paginate(
+            page=page,
+            per_page=per_page,
+            error_out=True
+        )
+        if not paginate_obj.items:
+            return not_found_resp({'poem': dynasty})
+        data = {
+            'total': paginate_obj.total,
+            'poets': [item.poet for item in paginate_obj.items],
+            'per_page': per_page,
+            'has_next': paginate_obj.has_next,
+            'has_prev': paginate_obj.has_prev,
+            'dynasty': dynasty
+        }
+        cache.set(cache_key, data)
+        return success_resp(data)
 
 
 @poem.route('/poems/', methods=['GET'])
