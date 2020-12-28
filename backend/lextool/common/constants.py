@@ -12,3 +12,6 @@ SpecialChar = {'&#230;': 'æ'}
 
 LOGINURL = '/auth/login'
 CONFIGFILE = 'config.ini'
+
+SUCCESS_CODE = 200
+NOTFOUND_CODE = 404
