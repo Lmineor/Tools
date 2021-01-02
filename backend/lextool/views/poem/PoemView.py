@@ -16,8 +16,8 @@ from ...common.exceptions import PoemNotFound
 poem = Blueprint('poem', __name__)
 
 
-def _make_cache_key(url, cache_info):
-    cache_key = {'url': url}
+def _make_cache_key(request, cache_info):
+    cache_key = {'url': request.path}
     cache_key.update(cache_info)
     return json.dumps(cache_key)
 
@@ -28,14 +28,13 @@ def get_poets():
     获取指定朝代的所有作者，若不指定朝代，则默认返回“唐”朝的作者信息
     """
     param = request.args
-    req_path = request.path
     dynasty = param.get('dynasty', '唐')
     page = param.get('page', 1, type=int)
     per_page = param.get('per_page', Cfg.TOOLS.pagination, type=int)
     LOG.info("Get Poets of {} in page {}".format(dynasty, page))
     
     cache_key = _make_cache_key(
-        req_path, {'dynasty': dynasty,'page': page,'per_page': per_page}
+        request, {'dynasty': dynasty,'page': page,'per_page': per_page}
     )
     cache_data = cache.get(cache_key)
     
@@ -71,30 +70,33 @@ def get_poems():
     param = request.args
     poet = simp2tra(param.get('poet', '李白'))
     dynasty = param.get('dynasty', '唐')
-    cache_key = poet + dynasty + "poems"
+    req_info = {'poet': poet, 'dynasty': dynasty}
+    
+    LOG.info("Get {} {}'s Poems".format(dynasty, poet))
+
+    cache_key = _make_cache_key(request, req_info)
     cache_data = cache.get(cache_key)
+    
     if cache_data:
         LOG.info("Get {} {}'s Poems by cache".format(dynasty, poet))
         poems = cache_data
+        return success_resp(req_info + {'poems': poems})
     else:
         try:
-            LOG.info("Get {} {}'s Poems".format(dynasty, poet))
             items = PoemTangSong.query.filter_by(poet=poet, dynasty=dynasty).all()
             poems = [item.poem for item in items]
-            cache.set(poet + dynasty + "poems", poems)
+            cache.set(cache_key, poems)
         except Exception as e:
-            poems = []
             LOG.error("Error : {}".format(e))
-    return jsonify({
-        'code': 200,
-        'poems': poems
-    })
+            return not_found_resp(req_info)
+        return success_resp(req_info + {'poems': poems})
 
 
 @poem.route('/search/', methods=['GET'])
 def search_poets():
     """
     获取诗人的诗作
+    TODO(lex):优化代码逻辑
     """
     param = request.args
     keyword = simp2tra(param.get('keyword'))
@@ -133,65 +135,75 @@ def get_content():
     param = request.args
     poet = param.get('poet')
     dynasty = param.get('dynasty')
-    title = param.get('poem')
-    cache_key = title
+    poem = param.get('poem')
+    req_info = {'poet': poet, 'dynasty': dynasty, 'poem': poem}
+    
+    cache_key = _make_cache_key(request, req_info)
     LOG.info("Get {}'s {}'s content".format(poet, poem))
-    if cache.get(poet + dynasty + title):
-        content = cache.get("content" + poet + dynasty + title)
+    
+    if cache.get(cache_key):
+        content = cache.get(cache_key)
+        return success_resp(req_info + {'content': content})
     else:
         try:
             item = PoemTangSong.query.filter_by(
                     poet=poet,
                     dynasty=dynasty,
-                    poem=title).first()
-            content = re.split("。|？", item.paragraphs) if item else []
-            cache.set("content" + poet + dynasty + title, content)
+                    poem=poem).first()
+            content = re.split("。|？", item.paragraphs) if item else ["这个人写过诗嘛？？？"]
+            cache.set(cache_key, content)
         except Exception as e:
-            content = []
             LOG.error("Error is: {}".format(e))
-    return jsonify({
-        'code': 200,
-        'content': content
-    })
+            return not_found_resp(req_info)
+        return success_resp(req_info + {'content': content})
 
+def get_lunyu_chapters():
+    """
+    获取论语所有的章名
+    """
+    try:
+        items = PoemLunyu.query.all()
+        chapters = list(set([item.chapter for item in items]))
+    except Exception as e:
+        chapters = []
+        LOG.error(e)
+    return chapters
+
+
+def get_lunyu_paragraphs(chapter):
+    try:
+        paragraphs = PoemLunyu.query.filter_by(chapter=chapter).first().paragraphs
+    except Exception as e:
+        paragraphs = ''
+        LOG.error(e)
+    return paragraphs.split('|')
 
 @poem.route('/lunyu/', methods=['GET'])
 def get_lunyu():
     """
-    test
+    获取论语的内容
+    chapter: 章
     """
     param = request.args
-    chapter = param.get('chapter')
+    chapter = param.get('chapter', None)
     if not chapter:
+        # 若不指定chapter，则处理逻辑为：
+        # 获取论语的所有章，简化接口
         if cache.get('chapters'):
             chapters = cache.get('chapters')
         else:
-            try:
-                items = PoemLunyu.query.all()
-                chapters = list(set([item.chapter for item in items]))
-            except Exception as e:
-                chapters = []
-                LOG.error(e)
+            chapters = get_lunyu_chapters()
             cache.set('chapters', chapters)
-        return jsonify({
-            'code': 200,
-            'chapters': chapters
-        })
+
+        return success_resp({'chapters': chapters})
     else:
         LOG.info('chapter: ' + chapter)
         if cache.get('chapter'):
             paragraphs = cache.get('chapter')
         else:
-            try:
-                paragraphs = PoemLunyu.query.filter_by(chapter=chapter).first().paragraphs
-            except Exception as e:
-                paragraphs = ''
-                LOG.error(e)
+            paragraphs = get_lunyu_paragraphs(chapter) 
             cache.set(chapter, paragraphs)
-        return jsonify({
-            'code': 200,
-            'paragraphs': paragraphs.split('|')
-        })
+        return success_resp({'chapter': chapter, 'paragraphs': paragraphs})
 
 
 @poem.route('/songci/', methods=['GET'])
