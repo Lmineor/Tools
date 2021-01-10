@@ -1,0 +1,8 @@
+FROM python:3.6
+COPY . /app
+WORKDIR /app
+RUN mkdir -p /$HOME/.ssh/ \
+    && mv /app/pip.conf /$HOME/.ssh/ \
+    &&pip install --no-cache-dir -r requirements.txt
+EXPOSE 5000
+CMD ["python", "docker_app.py"]
