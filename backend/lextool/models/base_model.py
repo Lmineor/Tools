@@ -17,7 +17,7 @@ class Base(db.Model):
     
 
 class ModelWithCreateAt(Base):
-    __abstrace__ = True
+    __abstract__ = True
     create_at = db.Column(db.DateTime, default=datetime.datetime.now)
 
 
