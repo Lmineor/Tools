@@ -102,5 +102,3 @@ __pycache__
 local_config.py
 
 .vscode
-
-migrations
