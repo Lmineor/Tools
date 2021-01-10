@@ -1,9 +1,11 @@
-from .base_model import Base, PoetIntroductionMixin, db
+from .base_model import Base, PoetMixin, db
     
 
-class Poet(Base, PoetIntroductionMixin):
+class Poet(Base, PoetMixin):
     """诗人"""
     __tablename__ = 'poets'
+    fields = ('poet', 'poet_sim', 'dynasty', 'dynasty_sim',
+    'descb', 'descb_sim')
     
     poet = db.Column(db.String(32), index=True)
     poet_sim = db.Column(db.String(32), index=True)
@@ -20,6 +22,7 @@ class Poet(Base, PoetIntroductionMixin):
 class Poem(Base):
     """诗"""
     __tablename__ = 'poems'
+    fields = ('paragraphs', 'paragraphs_sim', 'poem', 'poem_sim')
     
     paragraphs = db.Column(db.Text)
     paragraphs_sim = db.Column(db.Text)
@@ -32,7 +35,7 @@ class Poem(Base):
     
 class Lunyu(Base):
     __tablename__ = 'lun_yu'
-
+    fields = ('paragraphs', 'paragraphs_sim', 'chapter', 'chaper_sim')
     paragraphs = db.Column(db.Text(65536))
     paragraphs_sim = db.Column(db.Text(65536))
 
@@ -42,7 +45,7 @@ class Lunyu(Base):
 
 class Songci(Base):
     __tablename__ = 'song_ci'
-
+    fields = ('paragraphs', 'paragraphs_sim', 'rhythmic', 'rhythmic_sim')
     paragraphs = db.Column(db.Text)
     paragraphs_sim = db.Column(db.Text)
     
@@ -58,6 +61,7 @@ class Songci(Base):
 
 class CiPoet(Base):
     __tablename__ = 'ci_poet'
+    fields = ('long_desc', 'long_desc_sim', 'short_desc', 'short_desc_sim', 'poet', 'poet_sim')
 
     long_desc = db.Column(db.Text)
     long_desc_sim = db.Column(db.Text)
@@ -73,7 +77,9 @@ class CiPoet(Base):
 
 class ShiJing(Base):
     __tablename__ = 'shi_jing'
-
+    fields = ('poem', 'poem_sim', 'chapter', 'chapter_sim',
+    'section', 'section_sim', 'content', 'content_sim')
+    
     poem = db.Column(db.Text)
     poem_sim = db.Column(db.Text)
     
@@ -83,5 +89,5 @@ class ShiJing(Base):
     section = db.Column(db.String(64), index=True)
     section_sim = db.Column(db.String(64), index=True)
     
-    content = db.Column(db.Text)    
+    content = db.Column(db.Text)
     content_sim = db.Column(db.Text)

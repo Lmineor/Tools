@@ -17,12 +17,16 @@ poem = Blueprint('poem', __name__)
 
 
 def _make_cache_key(request, cache_info):
+    """
+    request: current request
+    cache_info: the info to make cache. a format of dict
+    """
     cache_key = {'url': request.path}
     cache_key.update(cache_info)
     return json.dumps(cache_key)
 
 
-@poem.route('/poets/', methods=['GET'])
+@poem.route('/poets', methods=['GET'])
 def get_poets():
     """
     获取指定朝代的所有作者，若不指定朝代，则默认返回“唐”朝的作者信息
@@ -38,12 +42,12 @@ def get_poets():
     )
     cache_data = cache.get(cache_key)
     
-    if cache_data:
+    if cache_data and not Cfg.TOOLS.debug:
         data = cache_data
         LOG.info("Get Poets of {} in page {} by cache".format(dynasty, page))
-        return jsonify(data)
+        return success_resp(data)
     else:
-        paginate_obj = PoetIntroduction.query.filter_by(dynasty=dynasty).paginate(
+        paginate_obj = Poet.query.filter_by(dynasty=dynasty).paginate(
             page=page,
             per_page=per_page,
             error_out=True
@@ -52,20 +56,19 @@ def get_poets():
             return not_found_resp({'poem': dynasty})
         data = {
             'total': paginate_obj.total,
-            'poets': [item.poet for item in paginate_obj.items],
+            'poets': [item.to_dict() for item in paginate_obj.items],
             'per_page': per_page,
             'has_next': paginate_obj.has_next,
             'has_prev': paginate_obj.has_prev,
-            'dynasty': dynasty
         }
         cache.set(cache_key, data)
         return success_resp(data)
 
 
-@poem.route('/poems/', methods=['GET'])
+@poem.route('/poems', methods=['GET'])
 def get_poems():
     """
-    获取诗人的诗作
+    获取诗人的诗作， 若不指定诗人，则默认返回唐-李白的诗作
     """
     param = request.args
     poet = simp2tra(param.get('poet', '李白'))
@@ -73,26 +76,26 @@ def get_poems():
     req_info = {'poet': poet, 'dynasty': dynasty}
     
     LOG.info("Get {} {}'s Poems".format(dynasty, poet))
-
     cache_key = _make_cache_key(request, req_info)
     cache_data = cache.get(cache_key)
     
-    if cache_data:
+    if cache_data and not Cfg.TOOLS.debug:
         LOG.info("Get {} {}'s Poems by cache".format(dynasty, poet))
         poems = cache_data
-        return success_resp(req_info + {'poems': poems})
+        return success_resp(req_info, {'poems': poems})
     else:
         try:
-            items = PoemTangSong.query.filter_by(poet=poet, dynasty=dynasty).all()
-            poems = [item.poem for item in items]
+            poet_obj = Poet.query.filter_by(poet=poet, dynasty=dynasty).first()
+            poems = [poem.to_dict() for poem in poet_obj.poems]
+            req_info.update({'poems': poems})
             cache.set(cache_key, poems)
         except Exception as e:
             LOG.error("Error : {}".format(e))
             return not_found_resp(req_info)
-        return success_resp(req_info + {'poems': poems})
+        return success_resp(req_info, {'poems': poems})
 
 
-@poem.route('/search/', methods=['GET'])
+@poem.route('/search', methods=['GET'])
 def search_poets():
     """
     获取诗人的诗作
@@ -102,7 +105,9 @@ def search_poets():
     keyword = simp2tra(param.get('keyword'))
     page = param.get('page', 1, type=int)
     LOG.info("Search Poets has {}".format(keyword))
-    cache_key = '__poet_search' + keyword + str(page)
+
+    req_info = {'keyword': keyword, 'page': page}
+    cache_key = _make_cache_key(request, req_info)
     cache_data = cache.get(cache_key)
     if not keyword or not isinstance(keyword, str):
         return jsonify({'code': 200, 'poets': []})
@@ -112,8 +117,8 @@ def search_poets():
         total = data['total']
     else:
         try:
-            poets = PoetIntroduction.search_poet(keyword, page)
-            total = PoetIntroduction.search_keyword_total(keyword)
+            poets = Poet.search_poet(keyword, page)
+            total = Poet.search_keyword_total(keyword)
             cache.set('/poet/search' + keyword + str(page), poets)
             cache.set('/poet/search' + keyword + 'total', total)
         except Exception as e:
@@ -127,7 +132,7 @@ def search_poets():
     })
 
 
-@poem.route('/content/', methods=['GET'])
+@poem.route('/content', methods=['GET'])
 def get_content():
     """
     获取诗歌内容
@@ -143,27 +148,27 @@ def get_content():
     
     if cache.get(cache_key):
         content = cache.get(cache_key)
-        return success_resp(req_info + {'content': content})
+        return success_resp(req_info.update({'content': content}))
     else:
         try:
-            item = PoemTangSong.query.filter_by(
+            poet_obj = Poet.query.filter_by(
                     poet=poet,
-                    dynasty=dynasty,
-                    poem=poem).first()
-            content = re.split("。|？", item.paragraphs) if item else ["这个人写过诗嘛？？？"]
+                    dynasty=dynasty).first()
+            content = poet_obj.poems.filter_by(poem=poem).first().to_dict()
             cache.set(cache_key, content)
         except Exception as e:
             LOG.error("Error is: {}".format(e))
             return not_found_resp(req_info)
-        return success_resp(req_info + {'content': content})
+        return success_resp(req_info, {'content': content})
+
 
 def get_lunyu_chapters():
     """
     获取论语所有的章名
     """
     try:
-        items = PoemLunyu.query.all()
-        chapters = list(set([item.chapter for item in items]))
+        items = Lunyu.query.all()
+        chapters = list(set([item.to_dict(filter='chapter') for item in items]))
     except Exception as e:
         chapters = []
         LOG.error(e)
@@ -172,7 +177,7 @@ def get_lunyu_chapters():
 
 def get_lunyu_paragraphs(chapter):
     try:
-        paragraphs = PoemLunyu.query.filter_by(chapter=chapter).first().paragraphs
+        paragraphs = Lunyu.query.filter_by(chapter=chapter).first().paragraphs
     except Exception as e:
         paragraphs = ''
         LOG.error(e)
@@ -232,7 +237,7 @@ def get_songci():
             poets = cache.get(str(page) + 'songci')
         else:
             try:
-                items = CiAuthor.query.paginate(page=page, per_page=Cfg.TOOLS.pagination, error_out=False)
+                items = CiPoet.query.paginate(page=page, per_page=Cfg.TOOLS.pagination, error_out=False)
                 total = items.total
                 cache.set('poets_num' + 'songci', total)
                 poets = list(set([item.poet for item in items.items]))
@@ -250,7 +255,7 @@ def get_songci():
             rhythmics = cache.get(poet + '_ci')
         else:
             try:
-                items = PoemSongci.query.filter_by(poet=poet).all()
+                items = Songci.query.filter_by(poet=poet).all()
                 rhythmics = list(set([item.rhythmic for item in items]))
             except Exception as e:
                 rhythmics = []
@@ -265,7 +270,7 @@ def get_songci():
             paragraphs = cache.get(poet + rhythmic + '_ci')
         else:
             try:
-                paragraphs = PoemSongci.query.filter_by(poet=poet, rhythmic=rhythmic).first().paragraphs.split('。')
+                paragraphs = Songci.query.filter_by(poet=poet, rhythmic=rhythmic).first().paragraphs.split('。')
             except Exception as e:
                 paragraphs = ''
                 LOG.error(e)
@@ -291,7 +296,7 @@ def get_songci_content():
         paragraphs = cache_data
     else:
         try:
-            query_obj = PoemSongci.query.filter_by(poet=poet, rhythmic=rhythmic).first()
+            query_obj = Songci.query.filter_by(poet=poet, rhythmic=rhythmic).first()
             paragraphs = re.split('。|？', query_obj.paragraphs)
             cache.set(cache_key, paragraphs)
         except Exception as e:
@@ -318,7 +323,7 @@ def get_songci_poem():
         rhythmics = cache_data
     else:
         try:
-            items = PoemSongci.query.filter_by(poet=poet).all()
+            items = Songci.query.filter_by(poet=poet).all()
             rhythmics = [item.rhythmic for item in items]
         except Exception as e:
             rhythmics = []
@@ -348,7 +353,7 @@ def get_songci_poets():
         poets = data['poets']
     else:
         try:
-            query_obj = CiAuthor.query.paginate(
+            query_obj = CiPoet.query.paginate(
                 page=page,
                 per_page=limits if limits else Cfg.TOOLS.pagination,
                 error_out=False)
@@ -436,7 +441,7 @@ def get_introduction():
     introduction = cache.get(poet + dynasty)
     if not introduction:
         try:
-            item = PoetIntroduction.query.filter_by(dynasty=dynasty, poet=poet).first()
+            item = Poet.query.filter_by(dynasty=dynasty, poet=poet).first()
             code = 200
             introduction = item.descb
             cache.set(poet + dynasty, introduction)
