@@ -72,7 +72,7 @@ class CiPoet(Base):
     poet = db.Column(db.String(32), index=True)
     poet_sim = db.Column(db.String(32), index=True)
 
-    ci = db.relationship('Songci', backref=db.backref('poet'))
+    ci = db.relationship('Songci', backref=db.backref('poet'), lazy='dynamic')
     
 
 class ShiJing(Base):
