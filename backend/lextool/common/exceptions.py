@@ -57,3 +57,11 @@ class PoemNotFound(ToolsBaseError, HTTPException):
     description = "The poem you refer does not exist, check your input"
     code = 404
     response = 404
+    
+    
+class FilterInvaild(ToolsBaseError):
+    def __init__(self, filters):
+        self.filters = filters
+        
+    def __str__(self):
+        return "The filter %s you refer is invalid!" % ','.join(self.filters)

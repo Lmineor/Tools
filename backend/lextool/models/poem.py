@@ -35,7 +35,7 @@ class Poem(Base):
     
 class Lunyu(Base):
     __tablename__ = 'lun_yu'
-    fields = ('paragraphs', 'paragraphs_sim', 'chapter', 'chaper_sim')
+    fields = ('paragraphs', 'paragraphs_sim', 'chapter', 'chapter_sim')
     paragraphs = db.Column(db.Text(65536))
     paragraphs_sim = db.Column(db.Text(65536))
 

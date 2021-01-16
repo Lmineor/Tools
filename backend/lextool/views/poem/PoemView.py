@@ -3,9 +3,10 @@ import json
 import re
 
 from flask import (Blueprint, request, jsonify, abort)
+from sqlalchemy import or_
 
 from ...models.poem import *
-from ...common.cache import cache
+from ...common.cache import cache, return_if_has_cache
 from ...common.logger import LOG
 from ...common.response import not_found_resp, success_resp
 from ...config.config import Cfg
@@ -16,7 +17,7 @@ from ...common.exceptions import PoemNotFound
 poem = Blueprint('poem', __name__)
 
 
-def _make_cache_key(request, cache_info):
+def _make_cache_key(request, cache_info: dict):
     """
     request: current request
     cache_info: the info to make cache. a format of dict
@@ -131,18 +132,23 @@ def search_poets():
         'total': total
     })
 
+def _make_content_dict(request) -> dict:
+    """
+    tranfer request to dict which needed in get_content()
+    """
+    param = request.args
+    return {
+        'poet': param.get('poet'),
+        'dynasty': param.get('dynasty'),
+        'poem': param.get('poem')
+    }
 
 @poem.route('/content', methods=['GET'])
 def get_content():
     """
     获取诗歌内容
-    """
-    param = request.args
-    poet = param.get('poet')
-    dynasty = param.get('dynasty')
-    poem = param.get('poem')
-    req_info = {'poet': poet, 'dynasty': dynasty, 'poem': poem}
-    
+    """    
+    req_info = _make_content_dict(request)
     cache_key = _make_cache_key(request, req_info)
     LOG.info("Get {}'s {}'s content".format(poet, poem))
     
@@ -168,7 +174,7 @@ def get_lunyu_chapters():
     """
     try:
         items = Lunyu.query.all()
-        chapters = list(set([item.to_dict(filter='chapter') for item in items]))
+        chapters = [item.to_dict(filters=['chapter', 'chapter_sim']) for item in items]
     except Exception as e:
         chapters = []
         LOG.error(e)
@@ -177,11 +183,22 @@ def get_lunyu_chapters():
 
 def get_lunyu_paragraphs(chapter):
     try:
-        paragraphs = Lunyu.query.filter_by(chapter=chapter).first().paragraphs
+        chapter_filter = {or_(Lunyu.chapter==chapter, Lunyu.chapter_sim==chapter)}
+        paragraphs_data = Lunyu.query.filter(*chapter_filter).first().to_dict()
+        paragraphs_data['paragraphs'] = paragraphs_data['paragraphs'].split('|')
+        return paragraphs_data
     except Exception as e:
         paragraphs = ''
         LOG.error(e)
-    return paragraphs.split('|')
+        raise Exception("Erro")
+    
+
+def _make_lunyu_dict(request) -> dict:
+    param = request.args
+    return {
+        'chapter': param.get('chapter', None),
+    }
+
 
 @poem.route('/lunyu/', methods=['GET'])
 def get_lunyu():
@@ -189,26 +206,29 @@ def get_lunyu():
     获取论语的内容
     chapter: 章
     """
-    param = request.args
-    chapter = param.get('chapter', None)
-    if not chapter:
-        # 若不指定chapter，则处理逻辑为：
-        # 获取论语的所有章，简化接口
-        if cache.get('chapters'):
-            chapters = cache.get('chapters')
+    req_info = _make_lunyu_dict(request)
+    cache_key = _make_cache_key(request, req_info)
+    if req_info['chapter'] is None:
+        # 若不指定chapter，则处理逻辑为, 获取论语的所有章，简化接口
+        if cache.get(cache_key) and not Cfg.TOOLS.debug:
+            resp_data = cache.get(cache_key)
+            return success_resp(req_info, resp_data)
         else:
             chapters = get_lunyu_chapters()
-            cache.set('chapters', chapters)
-
-        return success_resp({'chapters': chapters})
+            resp_data = {'chapters': chapters}
+            cache.set(cache_key, resp_data)
+            req_info.pop('chapter') # in this case, `chapter` is None, so we pop it
+            return success_resp(req_info, resp_data)
     else:
-        LOG.info('chapter: ' + chapter)
-        if cache.get('chapter'):
-            paragraphs = cache.get('chapter')
+        LOG.info('chapter: ' + req_info['chapter'])
+        if cache.get(cache_key) and not Cfg.TOOLS.debug:
+            resp_data = cache.get(cache_key)
+            return success_resp(req_info, resp_data)
         else:
-            paragraphs = get_lunyu_paragraphs(chapter) 
-            cache.set(chapter, paragraphs)
-        return success_resp({'chapter': chapter, 'paragraphs': paragraphs})
+            paragraphs = get_lunyu_paragraphs(req_info['chapter'])
+            resp_data = {'paragraphs': paragraphs}
+            cache.set(cache_key, resp_data)
+        return success_resp(req_info, resp_data)
 
 
 @poem.route('/songci/', methods=['GET'])

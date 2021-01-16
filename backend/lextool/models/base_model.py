@@ -9,20 +9,29 @@ import datetime
 
 from . import db
 from ..config.config import Cfg
+from ..common.exceptions import FilterInvaild
 
 
 class Base(db.Model):
     __abstract__ = True
     id = db.Column(db.Integer, primary_key=True)
 
-    def to_dict(self, filter=None):
+    def to_dict(self, filters=None, lst=False):
         res_dict = {}
-        if filter is None:
-            filter = self.fields
-        for key in filter:
+        filters = self._validate_filters(filters)
+        for key in filters:
             res_dict[key] = getattr(self, key)
                 
         return res_dict
+    
+    def _validate_filters(self, filters):
+        if filters is None:
+            return self.fields
+        filters = filters if isinstance(filters, list) else [filters]
+        for filter in filters:
+            if filter not in self.fields:
+                raise FilterInvaild(filters)
+        return filters
 
 
 class ModelWithCreateAt(Base):

@@ -44,7 +44,7 @@ def _get_logger():
         pass
     log_filename = time.strftime('%Y%m%d', time.localtime(time.time())) + '-server.log'
     log_file_path = os.path.join(log_path, log_filename)
-    
+
     file_handler = logging.handlers.TimedRotatingFileHandler(
         log_file_path, when="midnight", backupCount=30, encoding='utf-8'
     )
