@@ -52,5 +52,3 @@ class PoetMixin(object):
         total = len(cls.query.filter(
             cls.poet.like("%%{}%%".format(keyword)) if keyword is not None else "").all())
         return total
-
-    

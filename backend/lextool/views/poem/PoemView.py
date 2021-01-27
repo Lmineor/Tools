@@ -29,43 +29,57 @@ def _make_cache_key(request, req_info: dict):
     return json.dumps(cache_key)
 
 
+def _make_poets_dict(request):
+    param = request.args
+    return {
+        'dynasty': param.get('dynasty', '唐'),
+        'page': param.get('page', 1, type=int),
+        'per_page': param.get('per_page', Cfg.TOOLS.pagination, type=int)
+    }
+
 @poem.route('/poets', methods=['GET'])
 def get_poets():
     """
     获取指定朝代的所有作者，若不指定朝代，则默认返回“唐”朝的作者信息
     """
-    param = request.args
-    dynasty = param.get('dynasty', '唐')
-    page = param.get('page', 1, type=int)
-    per_page = param.get('per_page', Cfg.TOOLS.pagination, type=int)
-    LOG.info("Get Poets of {} in page {}".format(dynasty, page))
+    req_info = _make_poets_dict(request)
+    LOG.info("Get Poets of {dynasty} in page {page}, as per page {per_page}".format(**req_info))
     
-    cache_key = _make_cache_key(
-        request, {'dynasty': dynasty,'page': page,'per_page': per_page}
-    )
+    cache_key = _make_cache_key(request, req_info)
     cache_data = cache.get(cache_key)
     
     if cache_data and not Cfg.TOOLS.debug:
         data = cache_data
-        LOG.info("Get Poets of {} in page {} by cache".format(dynasty, page))
+        LOG.info("Get Poets of {} in page {} by cache".format(req_info['dynasty'], req_info['page']))
         return success_resp(data)
     else:
-        paginate_obj = Poet.query.filter_by(dynasty=dynasty).paginate(
-            page=page,
-            per_page=per_page,
-            error_out=True
-        )
-        if not paginate_obj.items:
-            return not_found_resp({'poem': dynasty})
-        data = {
-            'total': paginate_obj.total,
-            'poets': [item.to_dict() for item in paginate_obj.items],
-            'per_page': per_page,
-            'has_next': paginate_obj.has_next,
-            'has_prev': paginate_obj.has_prev,
-        }
-        cache.set(cache_key, data)
-        return success_resp(data)
+        try:
+            filters = or_(
+                Poet.dynasty_sim == req_info['dynasty'],
+                Poet.dynasty == req_info['dynasty']
+                )
+            paginate_obj = Poet.query.filter(filters).paginate(
+                page=req_info['page'],
+                per_page=req_info['per_page'],
+                error_out=True
+            )
+            if not paginate_obj.items:
+                return not_found_resp(req_info)
+            
+            data = {
+                'total': paginate_obj.total,
+                'poets': [item.poet for item in paginate_obj.items],
+                'per_page': req_info['per_page'],
+                'has_next': paginate_obj.has_next,
+                'has_prev': paginate_obj.has_prev,
+            }
+            
+            cache.set(cache_key, data)
+            return success_resp(req_info, data)
+        except Exception as e:
+            LOG.error(e)
+            resp_data = {'msg': 'error'}
+            return not_found_resp(resp_data)
 
 
 @poem.route('/poems', methods=['GET'])
