@@ -11,19 +11,21 @@ from ...common.logger import LOG
 from ...common.response import not_found_resp, success_resp
 from ...config.config import Cfg
 from ...utils.simp2tra import simp2tra
-from ...common.exceptions import PoemNotFound
+from ...common.exceptions import PoemNotFound, FiltersTypeError
 
 
 poem = Blueprint('poem', __name__)
 
 
-def _make_cache_key(request, cache_info: dict):
+def _make_cache_key(request, req_info: dict):
     """
-    request: current request
-    cache_info: the info to make cache. a format of dict
+    make cache key
+    :param request: current wsgi request
+    :param req_info: the info to make cache. depends on each models
+    :return: json.dumps()
     """
     cache_key = {'url': request.path}
-    cache_key.update(cache_info)
+    cache_key.update(req_info)
     return json.dumps(cache_key)
 
 
@@ -231,22 +233,35 @@ def get_lunyu():
         return success_resp(req_info, resp_data)
 
 
-def _make_songci_req_info(request):
+def _make_songci_req_info(request, filters=None) -> dict:
+    """
+    make songci request info dict
+    :param request: wsgi request
+    :param filters: list, for what you need when use this func
+    :return: 
+    """
     param = request.args
-    return {
-        'poet': param.get('poet'),
-        'rhythmic': param.get('rhythmic'),
-        'page': param.get('page', 1, type=int),
-        'limits': param.get('limits', 0, type=int)
-        }
-
+    if filters is None:
+        return {
+            'poet': param.get('poet'),
+            'rhythmic': param.get('rhythmic'),
+            'page': param.get('page', 1, type=int),
+            'limits': param.get('limits', 0, type=int)
+            }
+    else:
+        if not isinstance(filters, list):
+            raise FiltersTypeError()
+        return {key: param.get(key) for key in filters}
 
 @poem.route('/songci/content', methods=['GET'])
 def get_songci_content():
     """
-    get poet's poem
+    获取宋词的内容
+    param
+    poet: must
+    rhythmic: must   
     """
-    req_info = _make_songci_req_info(request)
+    req_info = _make_songci_req_info(request, filters=['poet', 'rhythmic'])
     cache_key = _make_cache_key(request, req_info)
     cache_data = cache.get(cache_key)
     if cache_data and not Cfg.TOOLS.debug:
@@ -274,36 +289,38 @@ def get_songci_content():
 def get_songci_poem():
     """
     获取作者名下的所有词
+    param:
+    poet: must
     """
-    req_info = _make_songci_req_info(request)
-    cache_key = '__songCi_poem' + 'poet:' + poet
+    req_info = _make_songci_req_info(request, filters=['poet'])
+    cache_key = _make_cache_key(request, req_info)
     cache_data = cache.get(cache_key)
-    if cache_data:
+    if cache_data and not Cfg.TOOLS.debug:
         LOG.info("GET By Cache Req {}".format(cache_key))
-        rhythmics = cache_data
+        return success_resp(req_info, cache_data)
     else:
         try:
-            items = Songci.query.filter_by(poet=poet).all()
-            rhythmics = [item.rhythmic for item in items]
+            filter = or_(CiPoet.poet==req_info['poet'], CiPoet.poet_sim==req_info['poet'])
+            ci_poet_obj = CiPoet.query.filter(filter).first()
+            rhythmics = list(set(ci.rhythmic for ci in ci_poet_obj.ci))
+            resp_data = {'rhythmics': rhythmics}
+            cache.set(cache_key, resp_data)
         except Exception as e:
-            rhythmics = []
             LOG.error(e)
-        cache.set(cache_key, rhythmics)
-
-    return jsonify({
-            'code': 200,
-            'rhythmics': rhythmics
-        })
+            return not_found_resp(req_info)
+        return success_resp(req_info, resp_data)
 
 
 @poem.route('/songci/poets', methods=['GET'])
 def get_songci_poets():
     """
-    test
+    获取宋词的所有作者
     """
-    req_info = _make_songci_req_info(request)
+    req_info = _make_songci_req_info(request, filters=['limits', 'page'])
     cache_key = _make_cache_key(request, req_info)
+    
     LOG.info("GET {}".format(cache_key))
+    
     cache_data = cache.get(cache_key)
     if cache_data and not Cfg.TOOLS.debug:
         return success_resp(cache_data)
@@ -316,18 +333,21 @@ def get_songci_poets():
             total = query_obj.total
             poets = [item.to_dict(filters=['poet', 'poet_sim']) for item in query_obj.items]
             resp_data = {'total': total, 'poets': poets}
+            
             cache.set(cache_key, resp_data)
-            req_info.pop('poet')
-            req_info.pop('rhythmic')
+            
             req_info['limits'] = req_info['limits'] if req_info['limits'] else Cfg.TOOLS.pagination
+            req_info['page'] = req_info['page'] if req_info['page'] else 1
+            
             return success_resp(req_info, resp_data)
+        
         except Exception as e:
             poets = []
             total = 0
             return not_found_resp(req_info)
 
 
-@poem.route('/shijing/', methods=['GET'])
+@poem.route('/shijing', methods=['GET'])
 def get_shijing():
     """
     test

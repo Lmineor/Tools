@@ -65,3 +65,6 @@ class FilterInvaild(ToolsBaseError):
         
     def __str__(self):
         return "The filter %s you refer is invalid!" % ','.join(self.filters)
+
+class FiltersTypeError(ToolsBaseError):
+    description = "Filters must be the type of `list`"

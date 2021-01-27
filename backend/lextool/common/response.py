@@ -20,7 +20,7 @@ def not_found_resp(data):
         'description': 'The info you request does not exist...',
         'request_data': data
     })
-        
+
 
 def success_resp(req_info, data):
     """
