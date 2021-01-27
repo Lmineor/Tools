@@ -25,6 +25,9 @@
 #### 说明
 
 自己做的或收集的工具合集，项目持续更新中。。。
+Ps 目前先着重按照自己的兴趣把诗词部分做好，其他的以后有时间慢慢更新
+- 前端部分为frontend分支
+- 后端部分为master分支
 
 #### 技术栈
 
@@ -60,7 +63,7 @@ python manage.py db upgrade # 对迁移文件进行迁移
 python run.py
 ```
 
-- 方式二：nohup，稍微高级一点，但仍不够b格
+- 方式二：nohup
 
 ```py
 nohup python run.py >> server.log 2>&1 &
@@ -69,7 +72,7 @@ nohup python run.py >> server.log 2>&1 &
 - 方式三：uwsgi的方式（暂且认为最高b格）
 
 ```py
-# cd 到根目录然后执行
+# cd 到项目根目录然后执行
 uwsgi --ini uwsgi.ini
 ```
 
@@ -83,7 +86,7 @@ git clone git@github.com:Prolht/Tools.git
 ```
 
 3、运行
-cd进入改目录下，安装依赖：
+cd进入项目前端根目录下，安装依赖：
 ```bash
 npm install
 npm run build
