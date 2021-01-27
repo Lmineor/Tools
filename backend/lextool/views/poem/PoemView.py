@@ -404,25 +404,42 @@ def get_shijing():
         })
 
 
-@poem.route('/introduction/', methods=['GET'])
+def _make_intro_dict(request):
+    """
+    make poet's introduction dict
+    :param request: wsgi request
+    :return: dict
+    """
+    param = request.args
+    return {
+        'poet': param.get('poet', '李白'),
+        'dynasty': param.get('dynasty', '唐')
+    }
+
+
+@poem.route('/introduction', methods=['GET'])
 def get_introduction():
     """
     诗人简介
     """
-    param = request.args
-    poet = param.get('poet')
-    dynasty = param.get('dynasty')
-    introduction = cache.get(poet + dynasty)
-    if not introduction:
+    req_info = _make_intro_dict(request)
+    cache_key = _make_cache_key(request, req_info)
+    cache_data = cache.get(cache_key)
+    if cache_data and not Cfg.TOOLS.debug:
+        return success_resp(req_info, cache_data)
+    else:
         try:
-            item = Poet.query.filter_by(dynasty=dynasty, poet=poet).first()
-            code = 200
-            introduction = item.descb
-            cache.set(poet + dynasty, introduction)
+            filters = and_(
+                or_(Poet.dynasty == req_info['dynasty'], Poet.dynasty_sim == req_info['dynasty']),
+                or_(Poet.poet == req_info['poet'], Poet.poet_sim == req_info['poet'])
+            )
+            poet_obj = Poet.query.filter(filters).first()
+            resp_data = poet_obj.to_dict()
+            
+            cache.set(cache_key, resp_data)
+            
+            return success_resp(req_info, resp_data)
         except Exception as e:
             LOG.error("Get Introduction Error {}".format(e))
-            introduction = 'error'
-            code = 404
-    else:
-        code = 200
-    return jsonify({'code': code, 'introduction': introduction})
+            resp_data = {'msg': 'error'}
+            return not_found_resp(resp_data)
