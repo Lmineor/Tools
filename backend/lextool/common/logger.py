@@ -1,14 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-
-r"""python log with color
-log.py
-    log module
-Usage:
-    from log import logger
-    logger.debug("Hello World")
-"""
 import os
 import sys
 import time
@@ -18,7 +10,7 @@ import logging.handlers
 from ..config.config import Cfg
 
 log_level = 'DEBUG' if  Cfg.TOOLS.debug else 'INFO'
-platform = 'win32'
+
 platform = sys.platform
 if platform == 'win32':
     log_path = 'J:\log'

@@ -70,7 +70,7 @@ python run.py
 nohup python run.py >> server.log 2>&1 &
 ```
 
-- 方式三：uwsgi的方式（暂且认为最高b格）
+- 方式三：uwsgi的方式
 
 ```py
 # cd 到项目根目录然后执行

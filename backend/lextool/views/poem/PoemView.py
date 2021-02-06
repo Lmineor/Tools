@@ -3,7 +3,6 @@ import json
 import re
 
 from flask import (Blueprint, request, jsonify, abort)
-from sqlalchemy import or_, and_
 
 from ...models.poem import *
 from ...common.cache import cache, return_if_has_cache
@@ -54,11 +53,7 @@ def get_poets():
         return success_resp(data)
     else:
         try:
-            filters = or_(
-                Poet.dynasty_sim == req_info['dynasty'],
-                Poet.dynasty == req_info['dynasty']
-                )
-            paginate_obj = Poet.query.filter(filters).paginate(
+            paginate_obj = Poet.query.filter(Poet.dynasty == req_info['dynasty']).paginate(
                 page=req_info['page'],
                 per_page=req_info['per_page'],
                 error_out=True
@@ -103,7 +98,7 @@ def get_poems():
     else:
         try:
             poet_obj = Poet.query.filter_by(poet=poet, dynasty=dynasty).first()
-            poems = [poem.to_dict() for poem in poet_obj.poems]
+            poems = [item.poem for item in poet_obj.poems]
             req_info.update({'poems': poems})
             cache.set(cache_key, poems)
         except Exception as e:
@@ -148,6 +143,7 @@ def search_poets():
         'total': total
     })
 
+
 def _make_content_dict(request) -> dict:
     """
     tranfer request to dict which needed in get_content()
@@ -159,6 +155,7 @@ def _make_content_dict(request) -> dict:
         'poem': param.get('poem')
     }
 
+
 @poem.route('/content', methods=['GET'])
 def get_content():
     """
@@ -166,22 +163,30 @@ def get_content():
     """    
     req_info = _make_content_dict(request)
     cache_key = _make_cache_key(request, req_info)
-    LOG.info("Get {}'s {}'s content".format(poet, poem))
+    LOG.info("Get {dynasty} {poet}'s {poem}'s content".format(**req_info))
     
-    if cache.get(cache_key):
-        content = cache.get(cache_key)
-        return success_resp(req_info.update({'content': content}))
+    if cache.get(cache_key) and not Cfg.TOOLS.debug:
+        resp_data = cache.get(cache_key)
+        return success_resp(req_info, resp_data)
     else:
         try:
-            poet_obj = Poet.query.filter_by(
-                    poet=poet,
-                    dynasty=dynasty).first()
-            content = poet_obj.poems.filter_by(poem=poem).first().to_dict()
-            cache.set(cache_key, content)
+            poet_obj = Poet.query.filter(
+                Poet.dynasty == req_info['dynasty'],
+                Poet.poet == req_info['poet']
+            ).first()
+            content = poet_obj.poems.filter(Poem.poem == req_info['poem']).\
+                first().paragraphs
+            
+            content['paragraphs'] = content['paragraphs'].split('。')
+            
+            resp_data = {'content': content}
+            cache.set(cache_key, resp_data)
+            
+            return success_resp(req_info, resp_data)
         except Exception as e:
             LOG.error("Error is: {}".format(e))
             return not_found_resp(req_info)
-        return success_resp(req_info, {'content': content})
+        
 
 
 def get_lunyu_chapters():
@@ -190,7 +195,7 @@ def get_lunyu_chapters():
     """
     try:
         items = Lunyu.query.all()
-        chapters = [item.to_dict(filters=['chapter', 'chapter_sim']) for item in items]
+        chapters = [item.chapter for item in items]
     except Exception as e:
         chapters = []
         LOG.error(e)
@@ -199,17 +204,17 @@ def get_lunyu_chapters():
 
 def get_lunyu_paragraphs(chapter):
     try:
-        chapter_filter = {or_(Lunyu.chapter==chapter, Lunyu.chapter_sim==chapter)}
-        paragraphs_data = Lunyu.query.filter(*chapter_filter).first().to_dict()
+        paragraphs_data = Lunyu.query.filter(Lunyu.chapter == chapter).first().to_dict()
+
         paragraphs_data['paragraphs'] = paragraphs_data['paragraphs'].split('|')
         return paragraphs_data
     except Exception as e:
         paragraphs = ''
         LOG.error(e)
-        raise Exception("Erro")
+        raise Exception("Error")
     
 
-def _make_lunyu_dict(request) -> dict:
+def _make_lunyu_dict(request):
     param = request.args
     return {
         'chapter': param.get('chapter', None),
@@ -233,7 +238,7 @@ def get_lunyu():
             chapters = get_lunyu_chapters()
             resp_data = {'chapters': chapters}
             cache.set(cache_key, resp_data)
-            req_info.pop('chapter') # in this case, `chapter` is None, so we pop it
+            req_info.pop('chapter')  # in this case, `chapter` is None, so we pop it
             return success_resp(req_info, resp_data)
     else:
         LOG.info('chapter: ' + req_info['chapter'])
@@ -267,6 +272,7 @@ def _make_songci_req_info(request, filters=None) -> dict:
             raise FiltersTypeError()
         return {key: param.get(key) for key in filters}
 
+
 @poem.route('/songci/content', methods=['GET'])
 def get_songci_content():
     """
@@ -284,12 +290,11 @@ def get_songci_content():
         return success_resp(req_info, resp_data)
     else:
         try:
-            ci_poet_filter = {or_(CiPoet.poet == req_info['poet'], CiPoet.poet_sim == req_info['poet'])}
-            ci_poem_filter = or_(Songci.rhythmic == req_info['rhythmic'], Songci.rhythmic_sim == req_info['rhythmic'])
-            poet_obj = CiPoet.query.filter(*ci_poet_filter).first()
-            poem_dict = poet_obj.ci.filter(ci_poem_filter).first().to_dict()
+            poet_obj = CiPoet.query.filter(CiPoet.poet == req_info['poet']).first()
+            poem_dict = poet_obj.ci.filter(Songci.rhythmic == req_info['rhythmic']).first().to_dict()
+
             poem_dict['paragraphs'] = re.split('。|？', poem_dict['paragraphs'])
-            poem_dict['paragraphs_sim'] = re.split('。|？', poem_dict['paragraphs_sim'])
+
             resp_data = poem_dict
             cache.set(cache_key, resp_data)
             return success_resp(req_info, resp_data)
@@ -314,10 +319,12 @@ def get_songci_poem():
         return success_resp(req_info, cache_data)
     else:
         try:
-            filter = or_(CiPoet.poet==req_info['poet'], CiPoet.poet_sim==req_info['poet'])
-            ci_poet_obj = CiPoet.query.filter(filter).first()
+            ci_poet_obj = CiPoet.query.filter(CiPoet.poet == req_info['poet']).first()
+
             rhythmics = list(set(ci.rhythmic for ci in ci_poet_obj.ci))
+
             resp_data = {'rhythmics': rhythmics}
+
             cache.set(cache_key, resp_data)
         except Exception as e:
             LOG.error(e)
@@ -345,7 +352,7 @@ def get_songci_poets():
                 per_page=req_info['limits'] if req_info['limits'] else Cfg.TOOLS.pagination,
                 error_out=False)
             total = query_obj.total
-            poets = [item.to_dict(filters=['poet', 'poet_sim']) for item in query_obj.items]
+            poets = [item.poet for item in query_obj.items]
             resp_data = {'total': total, 'poets': poets}
             
             cache.set(cache_key, resp_data)
@@ -443,11 +450,10 @@ def get_introduction():
         return success_resp(req_info, cache_data)
     else:
         try:
-            filters = and_(
-                or_(Poet.dynasty == req_info['dynasty'], Poet.dynasty_sim == req_info['dynasty']),
-                or_(Poet.poet == req_info['poet'], Poet.poet_sim == req_info['poet'])
-            )
-            poet_obj = Poet.query.filter(filters).first()
+            poet_obj = Poet.query.filter(
+                Poet.dynasty == req_info['dynasty'],
+                Poet.poet == req_info['poet']
+            ).first()
             resp_data = poet_obj.to_dict()
             
             cache.set(cache_key, resp_data)
