@@ -2,9 +2,9 @@
 import re
 
 
-class DWZGenerator:
+class UidGenerator(object):
     """
-    短网址生成
+    短网址(uid)生成
     """
     base_scale = 62
     chars = [
@@ -15,14 +15,6 @@ class DWZGenerator:
             'C', 'V', 'N', 'z', 'X', 'S', 'F', '1', 'P', '9', 'B',
             '0', 'p', 'v', 'W', 'R', 'g', 'r'
     ]
-
-    def __get_domain(self, url):
-        if not url.endswith('/'):
-            url += '/'
-        pattern = "((http://)|(https://))?([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}(/)"
-        domain = re.match(pattern, url).group() if re.match(pattern, url) else None
-        routers = url[len(domain) + 1:] if len(domain) != len(url) else ''
-        return domain, routers
 
     @classmethod
     def generate(cls, token):
@@ -36,3 +28,16 @@ class DWZGenerator:
             for _ in range(6 - len(res)):
                 res = '0' + res
         return res
+
+
+class DWZGenerator(UidGenerator):
+    def __init__(self):
+        super(DWZGenerator, self).__init__()
+
+    def __get_domain(self, url):
+        if not url.endswith('/'):
+            url += '/'
+        pattern = "((http://)|(https://))?([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}(/)"
+        domain = re.match(pattern, url).group() if re.match(pattern, url) else None
+        routers = url[len(domain) + 1:] if len(domain) != len(url) else ''
+        return domain, routers

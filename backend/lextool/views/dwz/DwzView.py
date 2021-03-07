@@ -3,7 +3,7 @@ from flask import (request, redirect, Blueprint, jsonify, render_template)
 from ...common.logger import LOG
 from ...models.dwz import DWZ
 from ...models import db
-from .DWZGenerator import DWZGenerator
+from ...utils.Generator import DWZGenerator
 
 
 dwz = Blueprint('dwz', __name__)

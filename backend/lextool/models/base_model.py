@@ -52,3 +52,10 @@ class PoetMixin(object):
         total = len(cls.query.filter(
             cls.poet.like("%%{}%%".format(keyword)) if keyword is not None else "").all())
         return total
+
+
+class Like(Base):
+    __abstract__ = True
+    id = db.Column(db.Integer, primary_key=True)
+    i_like = db.Column(db.Integer)
+    uid = db.Column(db.String(8), index=True)
