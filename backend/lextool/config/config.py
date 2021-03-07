@@ -19,7 +19,7 @@ config_default = {
     'DB':
         {'username': None, 'password': None, 'database': None, 'sqlalchemy_track_modifications': True},
     'TOOLS':
-        {'pagination': 10, 'debug': False, 'log_path': '/var/log/lextools'},
+        {'pagination': 10, 'debug': False, 'log_path': '../../log'},
     'MAIL':
         {'username': None, 'password': None, 'host': None, 'domain':'127.0.0.1:5000', 'front_domain': '127.0.0.1:3000'},
     'AUTH':
