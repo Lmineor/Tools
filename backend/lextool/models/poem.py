@@ -15,7 +15,7 @@ class Poet(Base, PoetMixin):
 class Poem(Base):
     """诗"""
     __tablename__ = 'poems'
-    fields = ('paragraphs', 'poem')
+    fields = ('paragraphs', 'poem', 'u_id')
     
     paragraphs = db.Column(db.Text)
     poem = db.Column(db.Text)
@@ -25,7 +25,7 @@ class Poem(Base):
     
 class Lunyu(Base):
     __tablename__ = 'lun_yu'
-    fields = ('paragraphs', 'chapter')
+    fields = ('paragraphs', 'chapter', 'u_id')
     paragraphs = db.Column(db.Text(65536))
     chapter = db.Column(db.String(64), index=True)
     u_id = db.Column(db.String(8), db.ForeignKey('like_lunyu.uid'))
@@ -33,7 +33,7 @@ class Lunyu(Base):
 
 class Songci(Base):
     __tablename__ = 'song_ci'
-    fields = ('paragraphs', 'rhythmic')
+    fields = ('paragraphs', 'rhythmic', 'u_id')
 
     paragraphs = db.Column(db.Text)
     rhythmic = db.Column(db.String(64), index=True)
@@ -57,7 +57,7 @@ class CiPoet(Base):
 
 class ShiJing(Base):
     __tablename__ = 'shi_jing'
-    fields = ('poem', 'chapter', 'section', 'content')
+    fields = ('poem', 'chapter', 'section', 'content', 'u_id')
     
     poem = db.Column(db.Text)
     chapter = db.Column(db.String(64), index=True)
