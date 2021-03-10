@@ -53,8 +53,27 @@ class PoetMixin(object):
             cls.poet.like("%%{}%%".format(keyword)) if keyword is not None else "").all())
         return total
 
+    @classmethod
+    def get_poet_by_id(cls, id):
+        poet = cls.query.filter_by(id=id).first()
+        return {
+            'dynasty': poet.dynasty,
+            'descb': poet.descb,
+            'poet': poet.poet
+        }
 
-class Like(Base):
+
+class LikeMixin(object):
+    @classmethod
+    def i_like_it(cls, uid):
+        like = cls.query.filter_by(uid=uid).first()
+        like_num = like.i_like + 1
+        like.i_like = like_num
+        db.session.commit()
+        return like_num
+
+
+class Like(Base, LikeMixin):
     __abstract__ = True
     id = db.Column(db.Integer, primary_key=True)
     i_like = db.Column(db.Integer)

@@ -463,3 +463,55 @@ def get_introduction():
             LOG.error("Get Introduction Error {}".format(e))
             resp_data = {'msg': 'error'}
             return not_found_resp(resp_data)
+
+
+def _make_poem_like_dict(request):
+    param = request.args
+    return {
+        'page': param.get('page', 1, type=int),
+        'per_page': param.get('per_page', Cfg.TOOLS.pagination, type=int)
+    }
+
+
+def get_poet_intro_by_id(id):
+    """
+    get poet intro by id
+    :param id:
+    :return:
+    """
+    return Poet.get_poet_by_id(id)
+
+
+@poem.route('/get_poems_by_like', methods=['GET'])
+def get_poem_by_like():
+    req_info = _make_poem_like_dict(request)
+    try:
+        # res = LikePoem.query.order_by(LikePoem.i_like.desc()).all()
+        query_objs = LikePoem.query.order_by(LikePoem.i_like.desc()).paginate(
+            page=req_info['page'],
+            per_page=req_info['per_page'],
+            error_out=False)
+        items = query_objs.items
+        resp_data = {
+            'poems':
+                [{'like': item.i_like,
+                  'uid': item.uid,
+                  'content': item.content.first().paragraphs.split('｜'),
+                  'poem': item.content.first().poem,
+                  'poet': get_poet_intro_by_id(item.content.first().poet_id),
+                  } for item in items],
+            'total': query_objs.total
+        }
+
+        return success_resp(req_info, resp_data)
+    except Exception as e:
+        LOG.error("Get like poem wrong %s" % e)
+        resp_data = {'msg': 'error'}
+        return not_found_resp(resp_data)
+
+
+@poem.route('/i_like', methods=['POST'])
+def i_like_poem():
+    uid = request.get_json()['uid']
+
+    return success_resp({}, {'like': LikePoem.i_like_it(uid)})
