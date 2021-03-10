@@ -28,6 +28,6 @@ def success_resp(req_info, data):
     req_info: request info
     data: the data to return
     """
-    resp_body = req_info
-    resp_body.update(data)
-    return jsonify({'code': SUCCESS_CODE, 'data': resp_body})
+    # resp_body = req_info
+    # resp_body.update(data)
+    return jsonify({'code': SUCCESS_CODE, 'data': data})
