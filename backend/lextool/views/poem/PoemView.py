@@ -473,20 +473,19 @@ def _make_poem_like_dict(request):
     }
 
 
-def get_poet_intro_by_id(id):
+def get_poet_intro_by_id(uid):
     """
     get poet intro by id
-    :param id:
+    :param uid:
     :return:
     """
-    return Poet.get_poet_by_id(id)
+    return Poet.get_poet_by_id(uid)
 
 
 @poem.route('/get_poems_by_like', methods=['GET'])
 def get_poem_by_like():
     req_info = _make_poem_like_dict(request)
     try:
-        # res = LikePoem.query.order_by(LikePoem.i_like.desc()).all()
         query_objs = LikePoem.query.order_by(LikePoem.i_like.desc()).paginate(
             page=req_info['page'],
             per_page=req_info['per_page'],
