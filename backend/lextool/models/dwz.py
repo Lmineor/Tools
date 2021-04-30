@@ -1,5 +1,3 @@
-import datetime
-
 from .base_model import db, ModelWithCreateAt
 
 

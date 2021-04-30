@@ -7,12 +7,14 @@ from flask import jsonify, g
 from sqlalchemy.sql.expression import func
 
 from ..user import auth
-from ...common.logger import LOG
+from ...common.logger import _get_logger
 from ...models.words import *
 from ...models import db
 from ...common.cache import cache
 from ...utils.parseCharacter import parseSpelling
 
+
+LOG = _get_logger()
 words = Blueprint('words', __name__)
 
 

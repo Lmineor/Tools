@@ -7,23 +7,22 @@ import time
 import logging
 import logging.handlers
 
-from ..config.config import Cfg
-
-log_level = 'DEBUG' if Cfg.TOOLS.debug else 'INFO'
-
-platform = sys.platform
-if platform == 'win32':
-    log_path = 'J:\log'
-else:
-    log_path = Cfg.TOOLS.log_path
-
-STDOUT_LOG_FMT = "%(log_color)s[%(asctime)s] [%(levelname)s] [%(threadName)s] [%(filename)s:%(lineno)d] %(message)s"
-STDOUT_DATE_FMT = "%Y-%m-%d %H:%M:%S"
-FILE_LOG_FMT = "[%(asctime)s] [%(levelname)s] [%(threadName)s] [%(filename)s:%(lineno)d] %(message)s"
-FILE_DATE_FMT = "%Y-%m-%d %H:%M:%S"
+from oocfg import cfg
 
 
 def _get_logger():
+    log_level = 'DEBUG' if cfg.CONF.TOOLS.debug else 'INFO'
+
+    platform = sys.platform
+    if platform == 'win32':
+        log_path = 'J:\log'
+    else:
+        log_path = cfg.CONF.TOOLS.log_path
+
+    STDOUT_LOG_FMT = "%(log_color)s[%(asctime)s] [%(levelname)s] [%(threadName)s] [%(filename)s:%(lineno)d] %(message)s"
+    STDOUT_DATE_FMT = "%Y-%m-%d %H:%M:%S"
+    FILE_LOG_FMT = "[%(asctime)s] [%(levelname)s] [%(threadName)s] [%(filename)s:%(lineno)d] %(message)s"
+    FILE_DATE_FMT = "%Y-%m-%d %H:%M:%S"
 
     _logger = logging.getLogger(__name__)
 
@@ -50,6 +49,3 @@ def _get_logger():
 
     _logger.setLevel(log_level)
     return _logger
-
-
-LOG = _get_logger()

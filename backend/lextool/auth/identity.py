@@ -9,14 +9,17 @@
 from flask import (Blueprint, request,
                    jsonify, g, redirect)
 
+from oocfg import cfg
+
 from . import auth
-from ..config.config import Cfg
-from ..common.logger import LOG
+from ..common.logger import _get_logger
 from ..models import db
 from ..models.user import User, UserMemo, UserConfig
 from ..utils.tasks import send_register_active_email
 from ..common.constants import LOGINURL
 
+
+LOG = _get_logger()
 
 identity = Blueprint('auth', __name__)
 
@@ -94,7 +97,7 @@ def activate(token):
     :return: None
     """
     if User.check_activate_token(token):
-        return redirect('http://' + Cfg.EMAIL.front_domain + '/login')
+        return redirect('http://' + cfg.CONF.EMAIL.front_domain + '/login')
     else:
         return jsonify({'code': 401, 'msg': "令牌失效，请重新注册"})
 

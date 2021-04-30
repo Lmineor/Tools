@@ -5,10 +5,12 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.header import Header
-from email.message import EmailMessage
 
-from ..config.config import Cfg
-from ..common.logger import LOG
+from oocfg import cfg
+
+from ..common.logger import _get_logger
+
+LOG = _get_logger()
 
 
 def send_email(subject, receiver, html_message):
@@ -22,9 +24,9 @@ def send_email(subject, receiver, html_message):
     msg.attach(html)
     try:
         smtp_obj = smtplib.SMTP()
-        smtp_obj.connect(Cfg.EMAIL.host, 25)    # 25 为 SMTP 端口号
-        smtp_obj.login(Cfg.MAIL.username, Cfg.MAIL.password)
-        smtp_obj.sendmail(Cfg.MAIL.username, receiver, msg.as_string())
+        smtp_obj.connect(cfg.CONF.EMAIL.host, 25)    # 25 为 SMTP 端口号
+        smtp_obj.login(cfg.CONF.MAIL.username, cfg.CONF.MAIL.password)
+        smtp_obj.sendmail(cfg.CONF.MAIL.username, receiver, msg.as_string())
         smtp_obj.quit()
         LOG.info("邮件发送成功")
     except smtplib.SMTPException as e:

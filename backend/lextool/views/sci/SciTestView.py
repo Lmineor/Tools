@@ -3,7 +3,9 @@ import requests
 from flask import Blueprint, request
 from flask import jsonify
 
-from ...common.logger import LOG
+from ...common.logger import _get_logger
+
+LOG = _get_logger()
 
 sci = Blueprint('sci', __name__)
 

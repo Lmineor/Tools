@@ -5,7 +5,9 @@ from flask_security import UserMixin  # 登录和角色需要继承的对象
 from itsdangerous import BadSignature, SignatureExpired
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
-from ..config.config import Cfg
+from oocfg import cfg
+
+
 from ..models import db
 """ from ..models.todo import TODO"""
 
@@ -60,14 +62,14 @@ class User(db.Model, UserMixin):
         return check_password_hash(self.password_hash, password)
 
     # 获取token
-    def generate_auth_token(self, expiration=Cfg.AUTH.token_expiration):
-        s = Serializer(Cfg.AUTH.secret_key, expires_in=expiration)
+    def generate_auth_token(self, expiration=cfg.CONF.AUTH.token_expiration):
+        s = Serializer(cfg.CONF.AUTH.secret_key, expires_in=expiration)
         return s.dumps({'id': self.id})
 
     # 解析token，确认登录的用户身份
     @staticmethod
     def verify_auth_token(token):
-        s = Serializer(Cfg.AUTH.secret_key)
+        s = Serializer(cfg.CONF.AUTH.secret_key)
         try:
             data = s.loads(token)
         except BadSignature as e:
@@ -79,7 +81,7 @@ class User(db.Model, UserMixin):
 
     @staticmethod
     def check_activate_token(token):
-        s = Serializer(Cfg.AUTH.secret_key)
+        s = Serializer(cfg.CONF.AUTH.secret_key)
         try:
             data = s.loads(token)
         except:

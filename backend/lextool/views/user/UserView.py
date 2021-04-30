@@ -6,9 +6,9 @@ from ...auth import auth
 from ...models import db
 from ...models.user import User, UserConfig, UserMemo
 
-from ...common.logger import LOG
-from ...config.config import Cfg
+from ...common.logger import _get_logger
 
+LOG = _get_logger()
 user = Blueprint('user', __name__)
 
 
@@ -18,7 +18,7 @@ user = Blueprint('user', __name__)
 
 
 @user.route("/memo", methods=['GET'])
-@auth.login_required
+# @auth.login_required
 def show_memo():
     memo = g.user.memo.memo
     return jsonify({'memo': memo})

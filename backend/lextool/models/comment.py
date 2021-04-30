@@ -1,9 +1,11 @@
 import datetime
 
 from . import db
-from ..common.logger import LOG
+from ..common.logger import _get_logger
 from ..common.cache import cache
 
+
+LOG = _get_logger()
 
 class Comment(db.Model):
     """
@@ -33,7 +35,7 @@ class Comment(db.Model):
                      } for item in all_comment if (item.is_show and item.can_show)
                     ]
         except Exception as e:
-            logger.error('Error : {}'.format(e))
+            LOG.error('Error : {}'.format(e))
             data = []
         return data
 
@@ -46,7 +48,7 @@ class Comment(db.Model):
             code = 200
             msg = 'success'
         except Exception as e:
-            logger.error(e)
+            LOG.error(e)
             code = 403
             msg = e
         return code, msg
@@ -59,7 +61,7 @@ class Comment(db.Model):
                 code = 200
                 msg = 'success'
             except Exception as e:
-                logger.error(e)
+                LOG.error(e)
                 code = 403
                 msg = e
             return code, msg
@@ -86,7 +88,7 @@ class Comment(db.Model):
             msg = 'success'
             code = 200
         except Exception as e:
-            logger.error(e)
+            LOG.error(e)
             msg = e
             code = 400
         return msg, code
@@ -104,6 +106,6 @@ class Comment(db.Model):
                 'create_at': str(item.create_at)[:10]
                 } for item in queries]
         except Exception as e:
-            logger.error(e)
+            LOG.error(e)
             data = []
         return data

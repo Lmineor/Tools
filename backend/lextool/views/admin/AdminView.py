@@ -7,8 +7,9 @@ from ..user import auth
 from ...models import db
 from ...models.user import User, UserConfig
 from ...models.comment import Comment
-from ...common.logger import LOG
+from ...common.logger import _get_logger
 
+LOG = _get_logger()
 admin = Blueprint('admin', __name__)
 
 

@@ -1,17 +1,18 @@
-from functools import wraps
 import json
 import re
 
-from flask import (Blueprint, request, jsonify, abort)
+from flask import (Blueprint, request, jsonify)
+from oocfg import cfg
 
 from ...models.poem import *
-from ...common.cache import cache, return_if_has_cache
-from ...common.logger import LOG
+from ...common.cache import cache
+from ...common.logger import _get_logger
 from ...common.response import not_found_resp, success_resp
-from ...config.config import Cfg
 from ...utils.simp2tra import simp2tra
-from ...common.exceptions import PoemNotFound, FiltersTypeError
+from ...common.exceptions import FiltersTypeError
 
+
+LOG = _get_logger()
 
 poem = Blueprint('poem', __name__)
 
@@ -33,7 +34,7 @@ def _make_poets_dict(request):
     return {
         'dynasty': param.get('dynasty', '唐'),
         'page': param.get('page', 1, type=int),
-        'per_page': param.get('per_page', Cfg.TOOLS.pagination, type=int)
+        'per_page': param.get('per_page', cfg.CONF.TOOLS.pagination, type=int)
     }
 
 @poem.route('/poets', methods=['GET'])
@@ -47,7 +48,7 @@ def get_poets():
     cache_key = _make_cache_key(request, req_info)
     cache_data = cache.get(cache_key)
     
-    if cache_data and not Cfg.TOOLS.debug:
+    if cache_data and not cfg.CONF.TOOLS.debug:
         data = cache_data
         LOG.info("Get Poets of {} in page {} by cache".format(req_info['dynasty'], req_info['page']))
         return success_resp(data)
@@ -91,7 +92,7 @@ def get_poems():
     cache_key = _make_cache_key(request, req_info)
     cache_data = cache.get(cache_key)
     
-    if cache_data and not Cfg.TOOLS.debug:
+    if cache_data and not cfg.CONF.TOOLS.debug:
         LOG.info("Get {} {}'s Poems by cache".format(dynasty, poet))
         poems = cache_data
         return success_resp(req_info, {'poems': poems})
@@ -165,7 +166,7 @@ def get_content():
     cache_key = _make_cache_key(request, req_info)
     LOG.info("Get {dynasty} {poet}'s {poem}'s content".format(**req_info))
     
-    if cache.get(cache_key) and not Cfg.TOOLS.debug:
+    if cache.get(cache_key) and not cfg.CONF.TOOLS.debug:
         resp_data = cache.get(cache_key)
         return success_resp(req_info, resp_data)
     else:
@@ -231,7 +232,7 @@ def get_lunyu():
     cache_key = _make_cache_key(request, req_info)
     if req_info['chapter'] is None:
         # 若不指定chapter，则处理逻辑为, 获取论语的所有章，简化接口
-        if cache.get(cache_key) and not Cfg.TOOLS.debug:
+        if cache.get(cache_key) and not cfg.CONF.TOOLS.debug:
             resp_data = cache.get(cache_key)
             return success_resp(req_info, resp_data)
         else:
@@ -242,7 +243,7 @@ def get_lunyu():
             return success_resp(req_info, resp_data)
     else:
         LOG.info('chapter: ' + req_info['chapter'])
-        if cache.get(cache_key) and not Cfg.TOOLS.debug:
+        if cache.get(cache_key) and not cfg.CONF.TOOLS.debug:
             resp_data = cache.get(cache_key)
             return success_resp(req_info, resp_data)
         else:
@@ -284,7 +285,7 @@ def get_songci_content():
     req_info = _make_songci_req_info(request, filters=['poet', 'rhythmic'])
     cache_key = _make_cache_key(request, req_info)
     cache_data = cache.get(cache_key)
-    if cache_data and not Cfg.TOOLS.debug:
+    if cache_data and not cfg.CONF.TOOLS.debug:
         LOG.info("GET SongCi Content By Cache")
         resp_data = cache_data
         return success_resp(req_info, resp_data)
@@ -314,7 +315,7 @@ def get_songci_poem():
     req_info = _make_songci_req_info(request, filters=['poet'])
     cache_key = _make_cache_key(request, req_info)
     cache_data = cache.get(cache_key)
-    if cache_data and not Cfg.TOOLS.debug:
+    if cache_data and not cfg.CONF.TOOLS.debug:
         LOG.info("GET By Cache Req {}".format(cache_key))
         return success_resp(req_info, cache_data)
     else:
@@ -343,13 +344,13 @@ def get_songci_poets():
     LOG.info("GET {}".format(cache_key))
     
     cache_data = cache.get(cache_key)
-    if cache_data and not Cfg.TOOLS.debug:
+    if cache_data and not cfg.CONF.TOOLS.debug:
         return success_resp(cache_data)
     else:
         try:
             query_obj = CiPoet.query.paginate(
                 page=req_info['page'],
-                per_page=req_info['limits'] if req_info['limits'] else Cfg.TOOLS.pagination,
+                per_page=req_info['limits'] if req_info['limits'] else cfg.CONF.TOOLS.pagination,
                 error_out=False)
             total = query_obj.total
             poets = [item.poet for item in query_obj.items]
@@ -357,7 +358,7 @@ def get_songci_poets():
             
             cache.set(cache_key, resp_data)
             
-            req_info['limits'] = req_info['limits'] if req_info['limits'] else Cfg.TOOLS.pagination
+            req_info['limits'] = req_info['limits'] if req_info['limits'] else cfg.CONF.TOOLS.pagination
             req_info['page'] = req_info['page'] if req_info['page'] else 1
             
             return success_resp(req_info, resp_data)
@@ -387,7 +388,7 @@ def get_shijing():
             poems = cache.get(str(page) + 'shijing')
         else:
             try:
-                items = ShiJing.query.paginate(page=page, per_page=Cfg.TOOLS.pagination, error_out=False).items
+                items = ShiJing.query.paginate(page=page, per_page=cfg.CONF.TOOLS.pagination, error_out=False).items
                 poems = list(set([item.poem for item in items]))
             except Exception as e:
                 poems = []
@@ -446,7 +447,7 @@ def get_introduction():
     req_info = _make_intro_dict(request)
     cache_key = _make_cache_key(request, req_info)
     cache_data = cache.get(cache_key)
-    if cache_data and not Cfg.TOOLS.debug:
+    if cache_data and not cfg.CONF.TOOLS.debug:
         return success_resp(req_info, cache_data)
     else:
         try:
@@ -469,7 +470,7 @@ def _make_poem_like_dict(request):
     param = request.args
     return {
         'page': param.get('page', 1, type=int),
-        'per_page': param.get('per_page', Cfg.TOOLS.pagination, type=int)
+        'per_page': param.get('per_page', cfg.CONF.TOOLS.pagination, type=int)
     }
 
 

@@ -5,7 +5,7 @@ class ToolsBaseError(Exception):
     """Root exception for tools"""
     description = "An internal error has occured"
     
-    def __init__(self, msg = None):
+    def __init__(self, msg=None):
         self.msg = msg
         
     def __str__(self):

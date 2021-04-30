@@ -22,7 +22,7 @@ import {validUsername} from '@/utils/validate'
 
 
 export default {
-  middleware: 'authenticated', // 需要登录
+  // middleware: 'authenticated', // 需要登录
   name: 'memo',
   data () {
     return {

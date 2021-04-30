@@ -6,9 +6,9 @@
 @Author  : lex(luohai2233@163.com)
 """
 import datetime
+from oocfg import cfg
 
 from . import db
-from ..config.config import Cfg
 from ..common.exceptions import FilterInvaild
 
 
@@ -44,7 +44,7 @@ class PoetMixin(object):
     def search_poet(cls, keyword, page):
         items = cls.query.filter(
             cls.poet.like("%%{}%%".format(keyword)) if keyword is not None else "") \
-            .paginate(page=page, per_page=Cfg.TOOLS.pagination, error_out=False).items
+            .paginate(page=page, per_page=cfg.CONF.TOOLS.pagination, error_out=False).items
         return [item.poet for item in items]
 
     @classmethod
