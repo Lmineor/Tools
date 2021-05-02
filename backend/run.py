@@ -50,9 +50,8 @@ cfg_group['english'] = eng_options
 
 def run_server():
     from backend.lextool import create_app
-    from backend.lextool.common.logger import _get_logger
+    from backend.lextool.common.logger import LOG
 
-    LOG = _get_logger()
     app = create_app()
     debug = cfg.CONF.TOOLS.debug
     LOG.info("Running server...")

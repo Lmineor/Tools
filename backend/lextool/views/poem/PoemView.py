@@ -4,15 +4,13 @@ import re
 from flask import (Blueprint, request, jsonify)
 from oocfg import cfg
 
-from ...models.poem import *
-from ...common.cache import cache
-from ...common.logger import _get_logger
-from ...common.response import not_found_resp, success_resp
-from ...utils.simp2tra import simp2tra
-from ...common.exceptions import FiltersTypeError
+from backend.lextool.models.poem import *
+from backend.lextool.common.cache import cache
+from backend.lextool.common.logger import LOG
+from backend.lextool.common.response import not_found_resp, success_resp
+from backend.lextool.utils.simp2tra import simp2tra
+from backend.lextool.common.exceptions import FiltersTypeError
 
-
-LOG = _get_logger()
 
 poem = Blueprint('poem', __name__)
 

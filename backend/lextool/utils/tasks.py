@@ -2,7 +2,8 @@ from celery import Celery
 
 from oocfg import cfg
 
-from .send_email import send_email
+from backend.lextool.utils.send_email import send_email
+
 
 app = Celery('tasks', broker='redis://127.0.0.1:6379/8')
 

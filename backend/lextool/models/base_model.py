@@ -8,8 +8,8 @@
 import datetime
 from oocfg import cfg
 
-from . import db
-from ..common.exceptions import FilterInvaild
+from backend.lextool.models import db
+from backend.lextool.common.exceptions import FilterInvaild
 
 
 class Base(db.Model):

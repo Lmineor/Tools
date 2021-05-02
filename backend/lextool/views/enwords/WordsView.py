@@ -6,15 +6,14 @@ from flask import Blueprint
 from flask import jsonify, g
 from sqlalchemy.sql.expression import func
 
-from ..user import auth
-from ...common.logger import _get_logger
-from ...models.words import *
-from ...models import db
-from ...common.cache import cache
-from ...utils.parseCharacter import parseSpelling
+from backend.lextool.views.user import auth
+from backend.lextool.common.logger import LOG
+from backend.lextool.models.words import *
+from backend.lextool.models import db
+from backend.lextool.common.cache import cache
+from backend.lextool.utils.parseCharacter import parseSpelling
 
 
-LOG = _get_logger()
 words = Blueprint('words', __name__)
 
 

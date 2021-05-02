@@ -2,7 +2,7 @@ import functools
 
 from flask_caching import Cache
 
-from .response import success_resp
+from backend.lextool.common.response import success_resp
 
 cache = Cache()
 

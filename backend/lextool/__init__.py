@@ -4,10 +4,10 @@ from flask import Flask
 from flask_cors import CORS
 from oocfg import cfg
 
-from .register_blueprints import register_blueprints
-from .common.cache import cache
-from .common.logger import _get_logger
-from .models import db
+from backend.lextool.register_blueprints import register_blueprints
+from backend.lextool.common.cache import cache
+from backend.lextool.common.logger import LOG
+from backend.lextool.models import db
 
 
 __version__ = '1.0'
@@ -15,9 +15,6 @@ __status__ = 'dev'
 __description__ = 'tools'
 __github__ = 'https://github.com/Prolht/Tools'
 __license__ = "MIT License"
-
-
-LOG = _get_logger()
 
 
 def create_app():

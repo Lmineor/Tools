@@ -1,11 +1,11 @@
 from flask import (request, redirect, Blueprint, jsonify, render_template)
 
-from ...common.logger import _get_logger
-from ...models.dwz import DWZ
-from ...models import db
-from ...utils.Generator import DWZGenerator
+from backend.lextool.common.logger import LOG
+from backend.lextool.models.dwz import DWZ
+from backend.lextool.models import db
+from backend.lextool.utils.Generator import DWZGenerator
 
-LOG = _get_logger()
+
 dwz = Blueprint('dwz', __name__)
 
 

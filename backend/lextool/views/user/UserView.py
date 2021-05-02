@@ -1,14 +1,13 @@
 from flask import Blueprint, request
 from flask import jsonify, g
 
+from backend.lextool.auth import auth
+from backend.lextool.models import db
+from backend.lextool.models.user import User
+from backend.lextool.models.user import UserConfig
+from backend.lextool.models.user import UserMemo
 
-from ...auth import auth
-from ...models import db
-from ...models.user import User, UserConfig, UserMemo
 
-from ...common.logger import _get_logger
-
-LOG = _get_logger()
 user = Blueprint('user', __name__)
 
 

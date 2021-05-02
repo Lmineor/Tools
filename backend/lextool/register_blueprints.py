@@ -7,14 +7,14 @@
 @File    : register_blueprints.py
 @Software: PyCharm
 """
-from .auth import identity
-from .views.poem import PoemView
-from .views.dwz import DwzView
-from .views.user import UserView
-from .views.enwords import WordsView
-from .views.admin import AdminView
-from .views.comment import CommentView
-from .views.sci import SciTestView
+from backend.lextool.auth import identity
+from backend.lextool.views.poem import PoemView
+from backend.lextool.views.dwz import DwzView
+from backend.lextool.views.user import UserView
+from backend.lextool.views.enwords import WordsView
+from backend.lextool.views.admin import AdminView
+from backend.lextool.views.comment import CommentView
+from backend.lextool.views.sci import SciTestView
 
 
 def register_blueprints(app):

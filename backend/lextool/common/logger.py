@@ -49,3 +49,6 @@ def _get_logger():
 
     _logger.setLevel(log_level)
     return _logger
+
+
+LOG = _get_logger()

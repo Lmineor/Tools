@@ -7,9 +7,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 from oocfg import cfg
 
-
-from ..models import db
-""" from ..models.todo import TODO"""
+from backend.lextool.models import db
 
 
 class UserConfig(db.Model):

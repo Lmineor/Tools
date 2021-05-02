@@ -3,13 +3,14 @@ from functools import wraps
 from flask import Blueprint, request
 from flask import jsonify, g
 
-from ..user import auth
-from ...models import db
-from ...models.user import User, UserConfig
-from ...models.comment import Comment
-from ...common.logger import _get_logger
+from backend.lextool.views.user import auth
+from backend.lextool.models import db
+from backend.lextool.models.user import User
+from backend.lextool.models.user import UserConfig
+from backend.lextool.models.comment import Comment
+from backend.lextool.common.logger import LOG
 
-LOG = _get_logger()
+
 admin = Blueprint('admin', __name__)
 
 

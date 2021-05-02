@@ -1,11 +1,9 @@
 from flask import (Blueprint, request, jsonify, abort)
 
-from ...models.comment import Comment
-from ...common.logger import _get_logger
-from ...common.cache import cache
+from backend.lextool.common.logger import LOG
+from backend.lextool.common.cache import cache
+from backend.lextool.models.comment import Comment
 
-
-LOG = _get_logger()
 comment = Blueprint('comment', __name__)
 
 
@@ -34,7 +32,7 @@ def add_comment():
     comment_type = request.get_json()['type']
     content = request.get_json()['content']
     create_at = request.get_json()['date']
-    logger.info("Insert a new comment {}, {} at {}".format(email, comment_type, create_at))
+    LOG.info("Insert a new comment {}, {} at {}".format(email, comment_type, create_at))
     code, msg = Comment.insert(content, comment_type, email)
     return jsonify({'code': code, 'msg': msg})
 

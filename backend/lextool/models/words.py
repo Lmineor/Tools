@@ -1,6 +1,7 @@
 import datetime
 
-from .base_model import db, Base, ModelWithCreateAt
+from backend.lextool.models.base_model import db
+from backend.lextool.models.base_model import Base
 
 
 class WordBase(Base):

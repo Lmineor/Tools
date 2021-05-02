@@ -3,9 +3,8 @@ import requests
 from flask import Blueprint, request
 from flask import jsonify
 
-from ...common.logger import _get_logger
+from backend.lextool.common.logger import LOG
 
-LOG = _get_logger()
 
 sci = Blueprint('sci', __name__)
 

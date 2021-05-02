@@ -11,15 +11,15 @@ from flask import (Blueprint, request,
 
 from oocfg import cfg
 
-from . import auth
-from ..common.logger import _get_logger
-from ..models import db
-from ..models.user import User, UserMemo, UserConfig
-from ..utils.tasks import send_register_active_email
-from ..common.constants import LOGINURL
+from backend.lextool.auth import auth
+from backend.lextool.common.logger import LOG
+from backend.lextool.models import db
+from backend.lextool.models.user import User
+from backend.lextool.models.user import UserMemo
+from backend.lextool.models.user import UserConfig
+from backend.lextool.utils.tasks import send_register_active_email
+from backend.lextool.common.constants import LOGINURL
 
-
-LOG = _get_logger()
 
 identity = Blueprint('auth', __name__)
 

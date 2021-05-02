@@ -1,11 +1,9 @@
 import datetime
 
-from . import db
-from ..common.logger import _get_logger
-from ..common.cache import cache
+from backend.lextool.models import db
+from backend.lextool.common.logger import LOG
+from backend.lextool.common.cache import cache
 
-
-LOG = _get_logger()
 
 class Comment(db.Model):
     """

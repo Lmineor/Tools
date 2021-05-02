@@ -7,7 +7,8 @@
 """
 
 from flask import jsonify
-from .constants import SUCCESS_CODE, NOTFOUND_CODE
+
+from backend.lextool.common.constants import SUCCESS_CODE, NOTFOUND_CODE
 
 
 def not_found_resp(data):

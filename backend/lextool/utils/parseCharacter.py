@@ -1,5 +1,5 @@
-# encoding:utf-8
-from ..common.constants import SpecialChar
+from backend.lextool.common.constants import SpecialChar
+
 
 def parseSpelling(spelling):
     if not spelling:

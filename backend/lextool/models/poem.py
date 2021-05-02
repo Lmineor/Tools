@@ -1,5 +1,8 @@
-from .base_model import Base, PoetMixin, db, Like
-    
+from backend.lextool.models.base_model import Base
+from backend.lextool.models.base_model import PoetMixin
+from backend.lextool.models.base_model import db
+from backend.lextool.models.base_model import Like
+
 
 class Poet(Base, PoetMixin):
     """诗人"""

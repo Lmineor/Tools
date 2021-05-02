@@ -8,9 +8,7 @@ from email.header import Header
 
 from oocfg import cfg
 
-from ..common.logger import _get_logger
-
-LOG = _get_logger()
+from backend.lextool.common.logger import LOG
 
 
 def send_email(subject, receiver, html_message):

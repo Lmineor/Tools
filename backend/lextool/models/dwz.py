@@ -1,4 +1,5 @@
-from .base_model import db, ModelWithCreateAt
+from backend.lextool.models.base_model import db
+from backend.lextool.models.base_model import ModelWithCreateAt
 
 
 class DWZ(ModelWithCreateAt):
