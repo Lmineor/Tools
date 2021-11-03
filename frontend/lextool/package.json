@@ -31,7 +31,7 @@
     "sass-loader": "^8.0.0",
     "shortid": "^2.2.15",
     "v-viewer": "^1.4.2",
-    "validator": "^11.1.0",
+    "validator": "^13.7.0",
     "view-design": "^4.2.0",
     "vue-clipboard2": "^0.3.1",
     "vue-color": "^2.7.0",
